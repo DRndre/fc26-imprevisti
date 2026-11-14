@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Imprevisti Carriera FC26</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: panchina a bordo campo, diretta e sportiva, zero fronzoli
+   IDEA: il cartellino dell'arbitro estratto prima del fischio d'inizio
+   PICTURE: un campo a strisce con il cerchio di centrocampo e il cartellino che si gira
+   COLOUR and TYPE: verde prato dominante, bianco gesso, giallo cartellino come accento; rosso/verde/giallo per il tono — Barlow Condensed + Barlow
+   LAYOUT: tabellone in alto, schede in barra, campo a sinistra e situazione a destra; sotto 600px tutto in colonna */
+:root{color-scheme:light dark;--bg:light-dark(#eef3ee,#05130b);--ink:light-dark(#0b1d12,#e8f1eb);--mut:light-dark(#4b6052,#9fb6a7);--panel:light-dark(#fff,#0b2116);--line:light-dark(#d3ddd5,#1b3a28);--pitch:#0e4a2b;--pitch2:#125a35;--yel:#ffd21f;--red:#e0322c;--grn:#1d9e55;--chalk:rgba(255,255,255,.55)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Barlow,system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3,.cond{font-family:"Barlow Condensed",Barlow,sans-serif;line-height:1.05;margin:0}
+h2{font-size:32px;text-wrap:balance}h3{font-size:22px;margin-bottom:10px}
+button,input,select,textarea{font:inherit;font-size:16px;color:inherit}
+button{cursor:pointer;border:0;border-radius:10px;min-height:44px;padding:0 16px;background:var(--line);font-weight:600}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid var(--yel);outline-offset:2px}
+button:disabled{opacity:.45;cursor:not-allowed}
+.pri{background:var(--yel);color:#1a1500}.dang{background:transparent;border:1px solid var(--line);color:var(--mut)}
+.sm{min-height:36px;padding:0 10px;font-size:14px}
+input,select,textarea{background:var(--panel);border:1px solid var(--line);border-radius:10px;min-height:44px;padding:8px 10px;width:100%}
+textarea{min-height:110px;font-family:ui-monospace,monospace;font-size:14px}
+label{display:grid;gap:4px;font-size:14px;color:var(--mut);font-weight:500}
+.top{background:var(--pitch);color:#fff;padding:18px max(5vw,16px) 0}
+.board{display:flex;flex-wrap:wrap;gap:12px 28px;align-items:flex-end;justify-content:space-between;max-width:1240px;margin:0 auto}
+.board h1{font-size:clamp(32px,6vw,52px);font-weight:800}
+.board .sub{color:#cfe6d6;font-size:15px}
+.led{display:flex;gap:10px}
+.led div{background:#06281a;border:1px solid #1f6b44;border-radius:10px;padding:6px 14px;text-align:center}
+.led b{display:block;font:800 32px/1 "Barlow Condensed";color:var(--yel)}
+.led span{font-size:13px;color:#bfe0cb}
+nav{display:flex;flex-wrap:wrap;gap:4px;max-width:1240px;margin:16px auto 0}
+nav a{color:#d8ecdf;text-decoration:none;font:700 19px/1 "Barlow Condensed";padding:12px 14px;border-radius:10px 10px 0 0}
+nav a.on{background:var(--bg);color:var(--ink)}
+main{max-width:1240px;margin:0 auto;padding:24px max(5vw,16px) 60px}
+section{display:none}section.on{display:block}
+.grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:24px;align-items:start}
+@media(max-width:820px){.grid{grid-template-columns:minmax(0,1fr)}}
+.pitch{position:relative;border-radius:18px;overflow:hidden;min-height:440px;display:grid;place-items:center;padding:28px 16px;background:repeating-linear-gradient(90deg,var(--pitch) 0 56px,var(--pitch2) 56px 112px)}
+.pitch svg.lines{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.stage{position:relative;display:grid;gap:16px;justify-items:center;width:100%}
+.card{width:min(300px,78vw);aspect-ratio:3/4;border-radius:16px;padding:22px 20px;display:flex;flex-direction:column;gap:12px;box-shadow:0 18px 40px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.35);transform:rotate(-2.5deg);color:#fff;background:linear-gradient(160deg,#2a2f2c,#121614)}
+.card .tag{font:800 15px/1 "Barlow Condensed";letter-spacing:.02em;opacity:.9}
+.card .txt{font-size:18px;line-height:1.4;flex:1;overflow:auto}
+.card .txt b{font-weight:700}
+.card.t-n{background:linear-gradient(160deg,#f0463f,#b31d18)}
+.card.t-p{background:linear-gradient(160deg,#2bbd6b,#137a3f)}
+.card.t-x{background:linear-gradient(160deg,#ffe25a,#e8b800);color:#2a2000}
+.card.none{background:linear-gradient(160deg,#f7faf8,#d9e4dc);color:#173022}
+.card.back{background:repeating-linear-gradient(45deg,#ffd21f 0 14px,#f2c300 14px 28px);color:#2a2000;align-items:center;justify-content:center;text-align:center}
+.card.back .big{font:800 44px/1 "Barlow Condensed"}
+.card .big{font:800 34px/1 "Barlow Condensed"}
+.card ul{margin:0;padding-left:18px;font-size:14px}
+.card.flip{animation:flip .55s ease-out}
+@keyframes flip{from{transform:rotateY(90deg) rotate(-2.5deg)}to{transform:rotateY(0) rotate(-2.5deg)}}
+@media(prefers-reduced-motion:reduce){.card.flip{animation:none}}
+.roll{color:#e1f2e7;font-size:14px;text-align:center}
+.acts{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:18px}
+.box h3 small{font:500 14px Barlow;color:var(--mut);margin-left:6px}
+.list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.list li{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:8px}
+.list li:last-child{border-bottom:0;padding-bottom:0}
+.pill{display:inline-block;font:700 13px/1 Barlow;padding:5px 8px;border-radius:999px;background:var(--line);white-space:nowrap}
+.p-inj{background:#e0322c;color:#fff}.p-ban{background:var(--yel);color:#231c00}.p-out{background:#5c6f63;color:#fff}.p-rec{background:#1d9e55;color:#fff}
+.muted{color:var(--mut);font-size:14px}
+.empty{color:var(--mut);font-size:15px;margin:0}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:#06281a;color:#fff;border-radius:999px;padding:6px 12px;font-size:14px}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;align-items:end}
+.checks{display:grid;gap:10px}
+.ck{display:grid;grid-template-columns:28px minmax(0,1fr);gap:8px;align-items:start}
+.ck i{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font:700 14px/1 Barlow;font-style:normal;color:#fff;margin-top:2px}
+.ck.ok i{background:var(--grn)}.ck.ko i{background:var(--red)}.ck.in i{background:#5c6f63}
+.ck b{display:block}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:13px;color:var(--mut);font-weight:600}
+td.n,th.n{text-align:right}
+td.nm{white-space:normal;font-weight:600}
+.scroll{overflow-x:auto}
+.seslist{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;justify-items:center}
+.seslist .card{transform:rotate(1.5deg)}.seslist .card:first-child{transform:rotate(-2deg)}
+.rules ol{padding-left:22px;margin:6px 0 14px}.rules h4{margin:14px 0 4px;font:700 19px "Barlow Condensed"}
+.tbar{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:18px;color:var(--ink);font-size:15px}.tbar input{width:22px;min-height:22px;margin-top:2px}.tbar.on{border-color:var(--yel);box-shadow:inset 4px 0 0 var(--yel)}
+.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#06281a;color:#fff;padding:10px 16px;border-radius:12px;display:flex;gap:12px;align-items:center;z-index:9;max-width:92vw}
+.toast[hidden]{display:none}
+@media(max-width:600px){table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}.stack td{display:flex;justify-content:space-between;gap:12px;border:0;padding:3px 0;white-space:normal}.stack td::before{content:attr(data-l);color:var(--mut)}.led b{font-size:26px}nav a{font-size:17px;padding:10px 10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="board">
+    <div>
+      <h1 id="club">La mia carriera</h1>
+      <div class="sub" id="lega">League Two</div>
+    </div>
+  </div>
+  <nav id="nav">
+    <a href="#partita" data-t="partita">Prepartita</a>
+    <a href="#sessione" data-t="sessione">Sessione</a>
+    <a href="#rosa" data-t="rosa">Rosa e regole</a>
+    <a href="#infermeria" data-t="infermeria">Infermeria</a>
+    <a href="#impostazioni" data-t="impostazioni">Impostazioni</a>
+  </nav>
+</header>
+
+<main>
+<section id="partita">
+  <label class="tbar"><input type="checkbox" class="tTog"> <span><b>Modalità prova</b> — le estrazioni mostrano cosa succederebbe, ma non contano partite e non toccano infermeria ed effetti.</span></label>
+  <div class="grid">
+    <div class="pitch">
+      <svg class="lines" viewBox="0 0 400 440" preserveAspectRatio="none" aria-hidden="true"><g fill="none" stroke="rgba(255,255,255,.45)" stroke-width="2"><rect x="10" y="10" width="380" height="420"/><line x1="10" y1="220" x2="390" y2="220"/><circle cx="200" cy="220" r="62"/><rect x="110" y="10" width="180" height="60"/><rect x="110" y="370" width="180" height="60"/></g></svg>
+      <div class="stage" id="stage"></div>
+    </div>
+    <div>
+      <div class="box"><h3>Non disponibili oggi</h3><ul class="list" id="unav"></ul></div>
+      <div class="box"><h3>Effetti attivi</h3><ul class="list" id="effs"></ul><div class="chips" id="flags" style="margin-top:12px"></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="sessione">
+  <h2>Imprevisti di sessione</h2>
+  <p class="muted">Due estrazioni nella sessione estiva e due a gennaio. Gli effetti durano fino alla sessione successiva; quelli "fino a fine stagione" si chiudono alla sessione estiva seguente.</p>
+  <label class="tbar"><input type="checkbox" class="tTog"> <span><b>Modalità prova</b> — le estrazioni mostrano cosa succederebbe, ma non contano partite e non toccano infermeria ed effetti.</span></label>
+  <div class="acts" style="justify-content:flex-start;margin:16px 0 24px">
+    <button class="pri" id="bEst"></button>
+    <button class="pri" id="bGen"></button>
+  </div>
+  <div class="pitch" style="min-height:380px"><div class="seslist" id="sesCards"></div></div>
+  <div class="box" style="margin-top:18px"><h3>Effetti di sessione in corso</h3><ul class="list" id="sesEffs"></ul></div>
+</section>
+
+<section id="rosa">
+  <div class="grid">
+    <div>
+      <div class="box"><h3>Controllo regole</h3><div class="checks" id="checks"></div></div>
+    </div>
+    <div>
+      <div class="box">
+        <h3 id="fTitle">Aggiungi giocatore</h3>
+        <form id="pForm" class="row">
+          <label style="grid-column:1/-1">Nome<input id="fNome" required autocomplete="off"></label>
+          <label>Reparto<select id="fRep"><option>POR</option><option>DIF</option><option selected>CEN</option><option>ATT</option></select></label>
+          <label>OVR<input id="fOvr" type="number" min="30" max="99" value="60" inputmode="numeric"></label>
+          <label>Età<input id="fEta" type="number" min="15" max="45" value="24" inputmode="numeric"></label>
+          <label>Ruolo<select id="fRuolo"></select></label>
+          <label>Stipendio (€/sett.)<input id="fStip" type="number" min="0" step="50" value="1000" inputmode="numeric"></label>
+          <label>Tipo<select id="fTipo"><option value="P">Di proprietà</option><option value="IN">Prestito in entrata</option><option value="OUT">Prestito in uscita</option></select></label>
+          <div class="acts" style="grid-column:1/-1;justify-content:flex-start"><button class="pri" type="submit" id="fSave">Aggiungi</button><button type="button" id="fCancel" hidden>Annulla modifica</button></div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="box">
+    <h3>Rosa <small id="rCount"></small></h3>
+    <div class="scroll"><table class="stack"><thead><tr><th>Nome</th><th>Rep.</th><th class="n">OVR</th><th class="n">Età</th><th>Ruolo</th><th class="n">Stipendio</th><th>Tipo</th><th></th></tr></thead><tbody id="rBody"></tbody></table></div>
+    <p class="empty" id="rEmpty">Rosa vuota: finché non la inserisci, gli imprevisti indicano "un giocatore a tua scelta" invece di un nome.</p>
+  </div>
+  <div class="box">
+    <h3>Importa rosa da testo</h3>
+    <p class="muted">Una riga per giocatore: Nome; Reparto; OVR; Età; Ruolo; Stipendio; Tipo (P, IN, OUT — facoltativo). Esempio: <code>Mario Rossi; ATT; 64; 22; importante; 1500</code></p>
+    <textarea id="imp"></textarea>
+    <div class="acts" style="justify-content:flex-start;margin-top:10px"><button id="bImp">Aggiungi alla rosa</button></div>
+  </div>
+</section>
+
+<section id="infermeria">
+  <div class="grid">
+    <div class="box"><h3>Infermeria e squalifiche</h3><ul class="list" id="infList"></ul></div>
+    <div class="box">
+      <h3>Aggiungi dal gioco</h3>
+      <p class="muted">Per gli infortuni veri di FC26: lascia vuote le partite e premi "Rientrato" quando il gioco lo rimette a disposizione; da lì partono le partite di rientro. Se inserisci un numero di partite, scendono a ogni estrazione.</p>
+      <form id="iForm" class="row">
+        <label style="grid-column:1/-1">Giocatore<select id="iPl"></select></label>
+        <label style="grid-column:1/-1" id="iFreeL">Nome (se non è in rosa)<input id="iFree" autocomplete="off"></label>
+        <label>Tipo<select id="iK"><option value="inj">Infortunio</option><option value="ban">Squalifica</option><option value="out">Indisponibile</option></select></label>
+        <label>Durata infortunio<select id="iC"><option value="1">≤1 mese</option><option value="2">1-3 mesi</option><option value="3">3-6 mesi</option><option value="4">&gt;6 mesi</option></select></label>
+        <label>Partite fuori<input id="iN" type="number" min="1" max="60" placeholder="vuoto = fino al rientro" inputmode="numeric"></label>
+        <div class="acts" style="grid-column:1/-1;justify-content:flex-start"><button class="pri" type="submit">Aggiungi</button></div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<section id="impostazioni">
+  <div class="grid">
+    <div>
+      <div class="box">
+        <h3>Carriera</h3>
+        <div class="row">
+          <label style="grid-column:1/-1">Nome del club<input id="sClub" autocomplete="off"></label>
+          <label>Campionato<select id="sLega"><option>League Two</option><option>League One</option><option>Championship</option><option>Premier League</option></select></label>
+          <label>Probabilità prepartita: <span id="sProbV"></span><input id="sProb" type="range" min="5" max="80" step="5"></label>
+        </div>
+      </div>
+      <div class="box">
+        <h3>Trofei e mercato</h3>
+        <div class="row">
+          <label>Coppe nazionali vinte<input id="sCoppe" type="number" min="0" inputmode="numeric"></label>
+          <label>Campionati e trofei internazionali<input id="sMagg" type="number" min="0" inputmode="numeric"></label>
+          <label>Svincolati presi quest'anno<input id="sSvi" type="number" min="0" inputmode="numeric"></label>
+          <label style="grid-template-columns:auto 1fr;align-items:center;gap:10px;color:var(--ink)"><input id="sReg5" type="checkbox" style="width:22px;min-height:22px">Obbligo offerte dai campioni (regola 5) attivo</label>
+        </div>
+        <p class="muted">Ogni coppa vale +1 importante. Ogni campionato o trofeo internazionale vale +1 importante e +1 cruciale.</p>
+      </div>
+      <div class="box">
+        <h3>Backup</h3>
+        <p class="muted" id="sync">Salvataggio solo in questo browser</p>
+        <div class="acts" style="justify-content:flex-start"><button id="bCopy">Copia backup</button><button id="bRest">Ripristina da testo</button><button id="bKeep">Ricomincia tenendo la rosa</button><button class="dang" id="bReset">Azzera tutto</button></div>
+        <textarea id="bTxt" placeholder="Incolla qui un backup e premi Ripristina" style="margin-top:10px"></textarea>
+        <p class="muted" id="bMsg"></p>
+      </div>
+    </div>
+    <div class="box rules">
+      <h3>Il regolamento</h3>
+      <h4>Requisiti rosa</h4>
+      <ol><li>Massimo 25 giocatori, prestiti inclusi, under 21 esclusi.</li><li>Massimo un cruciale per reparto (POR, DIF, CEN, ATT).</li><li>Massimo 7 importanti.</li><li>Nessuno guadagna più del cruciale più pagato: il tetto si alza solo comprando o rinnovando un cruciale.</li><li>Ogni trofeo: +1 importante.</li><li>Ogni campionato o trofeo internazionale: +1 cruciale.</li></ol>
+      <h4>Mercato</h4>
+      <ol><li>Acquisti fino a +2 OVR rispetto al migliore della rosa.</li><li>Svincolati all'anno: 3 in League Two, 2 in League One, 1 in Championship e Premier League.</li><li>Massimo 5 prestiti in entrata.</li><li>Massimo 5 prestiti in uscita.</li><li>Obbligo di accettare le offerte di chi ha vinto Champions, Europa League, Premier League o Conference League.</li></ol>
+      <h4>Osservatori giovanili</h4>
+      <ol><li>Massimo 2 stelle fino alla Championship.</li><li>Massimo 3 stelle in Championship.</li><li>Liberi in Premier League.</li></ol>
+      <h4>Rientro dagli infortuni</h4>
+      <ol><li>Fino a 1 mese: salta 1 partita dopo il rientro.</li><li>1-3 mesi: salta 3 partite.</li><li>3-6 mesi: salta 5 partite.</li><li>Oltre 6 mesi: salta 7 partite.</li></ol>
+      <h4>Imprevisti</h4>
+      <p class="muted">Prepartita: estrazione prima di ogni partita con la probabilità scelta. Ogni estrazione conta come una partita: prima scendono di 1 infortuni, squalifiche ed effetti, poi esce il nuovo imprevisto. Chi aggiungi a mano in infermeria inizia a scalare dalla partita successiva; tono circa 65% negativi, 20% positivi, 15% neutri. 100 imprevisti prepartita e 60 di sessione; circa uno su quattro esce solo nella categoria a cui è legato, e alcuni di sessione solo in estate o solo a gennaio. Gli ultimi 20 prepartita e gli ultimi 12 di sessione non si ripetono. Infortuni da imprevisto: ≤1 mese = 2-4 partite, 1-3 mesi = 5-12, 3-6 mesi = 13-24, oltre 6 mesi = 25-38.</p>
+    </div>
+  </div>
+</section>
+</main>
+
+<div class="toast" id="toast" hidden><span id="toastT"></span><button class="sm pri" id="bUndo">Annulla</button></div>
+
+<script>
+{
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const RUOLI=['cruciale','importante','turnover','sporadico','promessa'];
+const RL={cruciale:'Cruciale',importante:'Importante',turnover:'Turnover',sporadico:'Sporadico',promessa:'Promessa'};
+const OLDR={rotazione:'turnover',prospetto:'promessa'};
+const REP=['POR','DIF','CEN','ATT'];
+const REPL={POR:'portiere',DIF:'difensore',CEN:'centrocampista',ATT:'attaccante'};
+const INJR=[null,[2,4],[5,12],[13,24],[25,38]];
+const POST=[0,1,3,5,7];
+const CLS=[null,'≤1 mese','1-3 mesi','3-6 mesi','oltre 6 mesi'];
+const TONEW={n:65,p:20,x:15};
+const TONEL={n:'Imprevisto negativo',p:'Imprevisto positivo',x:'Imprevisto neutro'};
+const FLAGL={imm:'Immunità dagli imprevisti',shield:'Scudo: annulla il prossimo imprevisto negativo',force:'Prossimo prepartita: imprevisto garantito',med:'Staff medico: prossimo infortunio più lieve',sshield:'Scudo sessione: annulla il prossimo negativo di sessione',medbad:'Medico part-time: prossimo infortunio più grave'};
+const SVI={'League Two':3,'League One':2,'Championship':1,'Premier League':1};
+const STARS={'League Two':2,'League One':2,'Championship':3,'Premier League':null};
+
+const E=(t,w,s,o={})=>({t,w,s,tg:o.tg||null,tg2:o.tg2||null,fx:o.fx||[],sc:o.sc||'ses',mod:o.mod||null,ne:o.ne||0,lg:o.lg||null,when:o.when||null});
+const TIER={'League Two':'B','League One':'B','Championship':'C','Premier League':'P'};
+const inj=(c,who)=>({k:'inj',c,who}),out=(n,why,who)=>({k:'out',n,why,who}),ban=(n,who)=>({k:'ban',n,who}),eff=(n,s)=>({k:'eff',n,s}),ses=(s,sc,mod)=>({k:'ses',s,sc,mod}),flag=(f,n)=>({k:'flag',f,n});
+const ANY={},TOP={pk:'best'},BIG={st:['cruciale','importante']};
+
+const PRE=[
+E('n',3,'Infortunio in allenamento: {A} si ferma (≤1 mese).',{tg:ANY,fx:[inj(1)]}),
+E('n',2,'Problema muscolare per {A}: stop di 1-3 mesi.',{tg:ANY,fx:[inj(2)]}),
+E('n',.6,'Brutto infortunio per {A}: 3-6 mesi di stop.',{tg:ANY,fx:[inj(3)]}),
+E('n',.25,'Rottura del crociato: {A} starà fuori più di 6 mesi.',{tg:ANY,fx:[inj(4)]}),
+E('n',1,'Contrasto duro in allenamento con il tuo uomo chiave: {A} si fa male (≤1 mese).',{tg:{st:['cruciale']},fx:[inj(1)]}),
+E('n',1.2,'Infortunio nel riscaldamento: {A} parte titolare ma va sostituito al 1\' (cambio sprecato). Poi stop ≤1 mese.',{tg:TOP,fx:[inj(1)]}),
+E('n',2.5,'Febbre: {A} salta la partita di oggi.',{tg:ANY,fx:[out(1,'Febbre')]}),
+E('n',1.2,'Virus nello spogliatoio: {A} e {B} saltano la partita.',{tg:ANY,tg2:ANY,fx:[out(1,'Virus'),out(1,'Virus','B')]}),
+E('n',1.5,'Mal di schiena per il portiere titolare: {A} non gioca, tocca al secondo.',{tg:{r:'POR',pk:'best'},fx:[out(1,'Mal di schiena')]}),
+E('n',2,'Ritardo all\'allenamento: {A} parte dalla panchina.',{tg:BIG}),
+E('n',1.5,'Lite con l\'allenatore: {A} è fuori rosa per 2 partite.',{tg:TOP,fx:[out(2,'Fuori rosa')]}),
+E('n',1.5,'Notte in discoteca: {A} multato e in tribuna per 2 partite.',{tg:ANY,fx:[out(2,'Punizione')]}),
+E('n',1,'Senatori contro il mister: il più anziano, {A}, è fuori rosa per 1 partita.',{tg:{pk:'old'},fx:[out(1,'Fuori rosa')]}),
+E('n',1,'Motivi familiari: {A} ottiene un permesso e salta 2 partite.',{tg:ANY,fx:[out(2,'Permesso')]}),
+E('n',1,'Problemi con i documenti: {A} non è convocabile oggi.',{tg:ANY,fx:[out(1,'Documenti')]}),
+E('n',1.5,'Proteste social contro l\'arbitro: {A} squalificato per 1 giornata.',{tg:ANY,fx:[ban(1)]}),
+E('n',.6,'Gesto antisportivo rivisto con la prova TV: {A} squalificato per 3 giornate.',{tg:ANY,fx:[ban(3)]}),
+E('n',1.5,'Il capitano è in crisi di forma: parte dalla panchina.'),
+E('n',2,'Squadra tesa: nessun cambio prima del 60\'.'),
+E('n',1.5,'Allenatore squalificato: i cambi si possono fare solo all\'intervallo.'),
+E('n',1,'Derby sentitissimo: difficoltà +1 livello e almeno 2 under 21 titolari.'),
+E('n',1.5,'Il presidente vuole spettacolo: schiera almeno 3 attaccanti o ali di ruolo.'),
+E('n',1.5,'Il presidente vuole vedere i giovani: almeno 2 under 21 titolari.'),
+E('n',1.5,'Lo staff medico impone il turnover: almeno 4 titolari diversi rispetto all\'ultima partita.'),
+E('n',1.5,'Il direttore sportivo impone la difesa a 3 per questa partita.'),
+E('n',1.2,'Tattica bloccata: non puoi cambiare modulo né mentalità durante la partita.'),
+E('n',1,'Formazione bloccata: stessi 11 dell\'ultima partita, salvo indisponibili.'),
+E('n',1.5,'{A} e {B} hanno litigato: per 3 partite non possono stare in campo insieme.',{tg:ANY,tg2:ANY,fx:[eff(3,'{A} e {B} non possono stare in campo insieme')]}),
+E('n',1.5,'Il bomber è a secco e nervoso: {A} parte dalla panchina ed entra solo dopo il 60\'.',{tg:{r:'ATT',pk:'best'}}),
+E('n',1,'Rigore sbagliato in allenamento: {A} non può calciare rigori per 5 partite.',{tg:TOP,fx:[eff(5,'{A} non può calciare i rigori')]}),
+E('n',1.5,'Fastidio al flessore: {A} gioca al massimo 45 minuti.',{tg:TOP}),
+E('n',1.5,'Rientrato stanco dalla nazionale: {A} gioca al massimo 60 minuti.',{tg:BIG}),
+E('n',1.2,'Esperimento del mister: {A} gioca fuori ruolo per tutta la partita.',{tg:ANY}),
+E('n',1.2,'Contestazione dei tifosi: il prossimo prepartita avrà sicuramente un imprevisto.',{fx:[flag('force')]}),
+E('n',1,'Ultimatum del presidente: vinci le prossime 2 partite o {A} va in lista trasferimenti alla prossima sessione.',{tg:TOP,fx:[eff(2,'Ultimatum: vinci o {A} va in lista trasferimenti')]}),
+E('n',1.2,'Niente numeri: vietate le skill moves in questa partita.'),
+E('n',1,'Cartellini pesanti: il primo ammonito di oggi salta la prossima partita.'),
+E('n',1,'Clima teso con gli arbitri: per 3 partite ogni espulsione vale 1 giornata di squalifica in più.',{fx:[eff(3,'Ogni espulsione vale +1 giornata di squalifica')]}),
+E('n',1,'Radar rotto: gioca con il radar disattivato.'),
+E('n',1,'Il presidente taglia i premi partita: i tuoi 2 giocatori migliori partono dalla panchina.'),
+E('n',1,'Ricaduta: {A} torna in infermeria (≤1 mese).',{tg:{src:'rec'},fx:[inj(1)]}),
+E('n',1,'Complicazioni nel recupero: {A} resta fuori 3 partite in più.',{tg:{src:'inj'},fx:[{k:'ext',n:3}]}),
+E('n',1.2,'Panchina corta: puoi usare solo 4 riserve, da scegliere prima del calcio d\'inizio.'),
+E('n',.8,'Sindrome da trasferta: per le prossime 4 partite, in trasferta giochi a difficoltà +1.',{fx:[eff(4,'In trasferta difficoltà +1')]}),
+E('n',1,'Stanchezza accumulata: i 3 giocatori con più presenze stagionali partono dalla panchina.'),
+E('n',.8,'Il mister è senza voce: niente comandi tattici rapidi durante la partita.'),
+
+E('p',1.5,'Recupero lampo: {A} è subito disponibile, senza partite di rientro.',{tg:{src:'inj'},fx:[{k:'heal'}]}),
+E('p',1.5,'Fisioterapia top: {A} non deve scontare le partite di rientro.',{tg:{src:'rec'},fx:[{k:'heal'}]}),
+E('p',1,'Ricorso accolto: la squalifica di {A} è annullata.',{tg:{src:'ban'},fx:[{k:'heal'}]}),
+E('p',1,'Tutti a disposizione: {A} recupera 2 partite di stop.',{tg:{src:'inj'},fx:[{k:'ext',n:-2}]}),
+E('p',1.5,'Spogliatoio carico: il prossimo imprevisto negativo verrà annullato.',{fx:[flag('shield')]}),
+E('p',1,'Il capitano trascina il gruppo: niente imprevisti nelle prossime 3 partite.',{fx:[flag('imm',3)]}),
+E('p',1,'Clima sereno: un effetto negativo attivo viene cancellato.',{fx:[{k:'cure'}]}),
+E('p',1.2,'Staff medico potenziato: il prossimo infortunio grave scende di una fascia.',{fx:[flag('med')]}),
+E('p',1.2,'Tifo da brividi: difficoltà -1 livello per questa partita.'),
+E('p',1,'Allenamento perfetto: oggi ignori tutti gli effetti attivi su cambi e formazione.'),
+E('p',.8,'Il DS trova un affare: +1 svincolato in questa stagione.',{fx:[ses('+1 svincolato in questa stagione','sea',{svi:1})]}),
+E('p',.8,'Sponsor generoso: puoi dare a {A} un aumento oltre il tetto ingaggi, una volta.',{tg:{st:['importante','turnover','sporadico','promessa']},fx:[ses('Aumento oltre il tetto consentito per {A}','ses')]}),
+E('p',.8,'Osservatore ispirato: +1 stella agli osservatori fino alla prossima sessione.',{fx:[ses('+1 stella agli osservatori','ses',{stel:1})]}),
+E('p',.6,'Gruppo in fiducia: +1 slot importante fino alla prossima sessione.',{fx:[ses('+1 slot importante','ses',{imp:1})]}),
+E('p',.8,'Il presidente è contento: il prossimo imprevisto negativo di sessione sarà annullato.',{fx:[flag('sshield')]}),
+
+E('x',1,'Terza maglia: gioca con la divisa alternativa.'),
+E('x',1,'Cambio di prospettiva: gioca con una visuale diversa dal solito.'),
+E('x',1,'Fascia a sorpresa: oggi il capitano è {A}.',{tg:ANY}),
+E('x',1,'Rigorista estratto: oggi i rigori li calcia {A}.',{tg:ANY}),
+E('x',1,'Specialista: {A} batte tutti i calci piazzati di oggi.',{tg:ANY}),
+E('x',1,'Occasione per {A}: deve partire titolare.',{tg:{st:['turnover','sporadico','promessa']}}),
+E('x',1,'Il mister prova un modulo mai usato in questa carriera.'),
+E('x',1,'All\'arrembaggio: mentalità offensiva o molto offensiva per tutti i 90 minuti.'),
+E('x',1,'Catenaccio: mentalità difensiva finché non subisci un gol.'),
+E('x',1,'Il più giovane della rosa, {A}, parte titolare.',{tg:{pk:'young'}}),
+E('x',1,'Esperienza prima di tutto: il più anziano, {A}, parte titolare.',{tg:{pk:'old'}}),
+E('x',1,'Giornata della scuola calcio: almeno un under 21 deve entrare dalla panchina.'),
+E('x',.8,'Il giovane {A} si sente pronto: titolare nelle prossime 3 partite.',{tg:{u21:1},fx:[eff(3,'{A} deve partire titolare')]}),
+E('x',.8,'Staffetta: {A} e {B} giocano un tempo a testa.',{tg:ANY,tg2:ANY}),
+E('n',1.2,'Il pullman si rompe in autostrada: niente riscaldamento e massimo 3 cambi.',{lg:['B']}),
+E('n',1,'Campo di periferia ghiacciato: vietate le scivolate per tutta la partita.',{lg:['B']}),
+E('n',1,'Il club non può pagare il fisioterapista extra: {A} gioca acciaccato, massimo 60 minuti.',{lg:['B'],tg:BIG}),
+E('n',1,'Stipendi in ritardo, lo spogliatoio protesta: difficoltà +1 livello per questa partita.',{lg:['B']}),
+E('n',1,'Spogliatoio allagato, ci si cambia in albergo: nessun cambio prima del 60\'.',{lg:['B']}),
+E('n',.8,'Il medico sociale è part-time: il prossimo infortunio sarà di una fascia più grave.',{lg:['B'],fx:[flag('medbad')]}),
+E('p',1,'Il paese è in festa per voi: difficoltà -1 livello per questa partita.',{lg:['B']}),
+E('p',1,'Un tifoso facoltoso paga un fisioterapista privato: {A} recupera 2 partite di stop.',{lg:['B'],tg:{src:'inj'},fx:[{k:'ext',n:-2}]}),
+E('x',1,'Amichevole infrasettimanale con il club di quartiere: oggi almeno 3 riserve partono titolari.',{lg:['B']}),
+E('n',1.2,'Calendario infernale, si gioca ogni 3 giorni: almeno 3 titolari diversi rispetto all\'ultima partita.',{lg:['C']}),
+E('n',1.2,'Diretta TV nazionale, pressione alle stelle: difficoltà +1 livello per questa partita.',{lg:['C']}),
+E('n',1,'Un osservatore di Premier è in tribuna per {A}: vuole strafare e gioca solo il primo tempo.',{lg:['C'],tg:TOP}),
+E('n',1,'Corsa ai playoff: il presidente pretende 4 punti nelle prossime 2 partite, altrimenti il prossimo prepartita ha un imprevisto garantito.',{lg:['C'],fx:[eff(2,'Obiettivo 4 punti in 2 partite, o imprevisto garantito')]}),
+E('n',.8,'Sogna la Premier: {A} rifiuta di allenarsi per forzare la cessione ed è fuori rosa per 2 partite.',{lg:['C'],tg:BIG,fx:[out(2,'Fuori rosa')]}),
+E('p',1,'L\'entusiasmo della piazza trascina tutti: il prossimo imprevisto negativo verrà annullato.',{lg:['C'],fx:[flag('shield')]}),
+E('p',1,'Stadio esaurito: difficoltà -1 livello per questa partita.',{lg:['C']}),
+E('x',1,'Il presidente vuole vedere l\'ultimo acquisto: il giocatore arrivato più di recente parte titolare.',{lg:['C']}),
+E('n',1.2,'Conferenza stampa infuocata: {A} critica il mister e parte dalla panchina.',{lg:['P'],tg:BIG}),
+E('n',1,'La stella {A} pretende il rinnovo: deve partire titolare nelle prossime 3 partite, altrimenti va in lista trasferimenti.',{lg:['P'],tg:{st:['cruciale']},fx:[eff(3,'{A} deve partire titolare, o va in lista trasferimenti')]}),
+E('n',1.2,'Coppa europea in settimana: almeno 4 titolari diversi rispetto alla formazione tipo.',{lg:['P']}),
+E('n',1,'Paparazzi e gossip: {A} è distratto e gioca al massimo 45 minuti.',{lg:['P'],tg:TOP}),
+E('n',1.2,'Big match, telecamere di tutto il mondo: difficoltà +1 livello per questa partita.',{lg:['P']}),
+E('p',1,'Lo sponsor porta un preparatore di fama mondiale: niente imprevisti nelle prossime 2 partite.',{lg:['P'],fx:[flag('imm',2)]}),
+E('x',1,'Tour di marketing: {A}, il volto del club, deve partire titolare.',{lg:['P'],tg:TOP}),
+E('x',1,'La TV chiede spettacolo: mentalità molto offensiva per i primi 20 minuti.',{lg:['P']})
+];
+
+const SES=[
+E('n',1,'Budget tagliato: in questa finestra puoi spendere al massimo il 70% del budget trasferimenti.'),
+E('n',1,'Blocco del mercato: niente acquisti a titolo definitivo in questa finestra (solo prestiti e svincolati).'),
+E('n',1,'Fair play finanziario: in questa finestra devi incassare almeno quanto spendi.'),
+E('n',1,'Offerta irrinunciabile: devi accettare la prima offerta pari o superiore al valore di mercato per {A}.',{tg:TOP}),
+E('n',1,'Mal di pancia: {A} chiede la cessione e va in lista trasferimenti. Se resta, 2 partite fuori rosa.',{tg:BIG}),
+E('n',1,'Monte ingaggi congelato: nessun rinnovo con aumento fino alla prossima sessione.'),
+E('n',1,'Il senatore non rinnova: {A} non può firmare rinnovi fino alla prossima sessione.',{tg:{pk:'old'}}),
+E('n',1,'Infortunio in ritiro: {A} si ferma per 1-3 mesi.',{when:'E',tg:ANY,fx:[inj(2)]}),
+E('n',1,'Doppio stop in ritiro: {A} e {B} fermi (≤1 mese).',{when:'E',tg:ANY,tg2:ANY,fx:[inj(1),inj(1,'B')]}),
+E('n',.7,'Brutte notizie dagli esami: {A} starà fuori 3-6 mesi.',{tg:ANY,fx:[inj(3)]}),
+E('n',1,'Prestiti bloccati: niente prestiti in entrata fino alla prossima sessione.',{mod:{pin:-99}}),
+E('n',1,'Forbice ridotta: fino alla prossima sessione compri solo giocatori con OVR non superiore al migliore della rosa.',{mod:{forb:-2}}),
+E('n',1,'Osservatori licenziati: nessuna nuova missione giovanile fino alla prossima sessione.'),
+E('n',.8,'Niente svincolati: quest\'anno non puoi tesserarne.',{sc:'sea',mod:{svi:-1}}),
+E('n',1,'Vendita forzata: devi cedere uno dei tuoi 11 giocatori migliori per OVR in questa finestra.'),
+E('n',1,'Spogliatoio diviso: {A} e {B} non possono stare in campo insieme fino alla prossima sessione.',{tg:ANY,tg2:ANY}),
+E('n',1,'Crisi societaria: devi cedere o svincolare un giocatore con stipendio sopra la media della rosa.'),
+E('n',.8,'Sanzione della lega: -1 slot importante fino alla prossima sessione.',{mod:{imp:-1}}),
+E('n',1,'Rosa troppo lunga: chiudi la finestra con almeno 2 giocatori in meno del tetto.'),
+E('n',1,'Il portiere {A} chiede di andare via: se resta, perde il posto per le prime 3 partite.',{tg:{r:'POR',pk:'best'}}),
+E('n',.8,'Fuori lista: {A} non può giocare fino alla prossima sessione, salvo emergenze in porta.',{tg:{st:['turnover','sporadico']}}),
+
+E('p',1,'Colpo di mercato: un acquisto in questa finestra può superare la forbice fino a +5 OVR.'),
+E('p',1,'Svincolato extra: +1 svincolato in questa stagione.',{sc:'sea',mod:{svi:1}}),
+E('p',1,'Rinnovo speciale: puoi rinnovare un non cruciale oltre il tetto ingaggi, una volta.'),
+E('p',1,'Slot extra: +1 importante fino alla prossima sessione.',{mod:{imp:1}}),
+E('p',1,'Agente amico: +1 prestito in entrata fino alla prossima sessione.',{mod:{pin:1}}),
+E('p',1,'Super osservatore: +1 stella agli osservatori fino alla prossima sessione.',{mod:{stel:1}}),
+E('p',1,'Il figliol prodigo: puoi riacquistare un tuo ex giocatore ignorando la forbice.'),
+E('p',1,'Vivaio d\'oro: puoi promuovere un giovane in più dalle giovanili.'),
+E('p',.8,'Mercato in fiducia: forbice +3 invece di +2 fino alla prossima sessione.',{mod:{forb:1}}),
+E('p',.8,'Preparazione perfetta: niente imprevisti prepartita nelle prossime 3 partite.',{when:'E',fx:[flag('imm',3)],ne:1}),
+
+E('x',1,'Rivoluzione: devi fare almeno 2 acquisti in questa finestra.',{when:'E'}),
+E('x',1,'Scambio: almeno una trattativa deve includere un giocatore come contropartita.'),
+E('x',1,'Mercato estero: almeno un acquisto da un campionato straniero.'),
+E('x',1,'Linea verde: almeno un acquisto deve essere under 21.'),
+E('x',1,'Usato sicuro: almeno un acquisto deve avere 30 anni o più.'),
+E('x',1,'Nuovo capitano: la fascia passa a {A} fino alla prossima sessione.',{tg:BIG}),
+E('x',1,'Il presidente vuole un nome: almeno metà del budget va su un solo giocatore.'),
+E('x',1,'Prestito obbligato: manda in prestito {A} per farlo crescere.',{tg:{u21:1}}),
+E('n',1,'Offerta dell\'ultimo giorno: se arriva un\'offerta per {A} entro la chiusura del mercato, devi accettarla.',{when:'G',tg:BIG}),
+E('n',1,'Coppa continentale: {A} parte con la nazionale e salta 4 partite.',{when:'G',tg:ANY,fx:[out(4,'Nazionale')]}),
+E('x',1,'Rinforzi per la seconda metà di stagione: almeno 1 acquisto in questa finestra.',{when:'G'}),
+E('n',1,'Tournée estiva estenuante: {A} e {B} saltano la prima partita.',{when:'E',tg:ANY,tg2:ANY,fx:[out(1,'Stanchezza'),out(1,'Stanchezza','B')]}),
+E('x',1,'Nuovo staff tecnico: cambia il modulo base fino alla prossima sessione.',{when:'E'}),
+E('p',1,'Ritiro impeccabile: il prossimo infortunio grave scende di una fascia.',{when:'E',fx:[flag('med')],ne:1}),
+E('n',1,'Tribuna chiusa per lavori, incassi ridotti: in questa finestra puoi spendere al massimo metà del budget.',{lg:['B']}),
+E('n',1,'Proprietà in difficoltà: se arriva un\'offerta congrua per il giocatore più pagato, devi accettarla.',{lg:['B']}),
+E('p',1,'Gemellaggio con un club di Premier: +1 prestito in entrata, purché sia un under 21 di un club di Premier.',{lg:['B'],mod:{pin:1}}),
+E('p',1,'Un imprenditore locale entra in società: un acquisto può superare la forbice fino a +4 OVR.',{lg:['B']}),
+E('x',1,'Identità locale: almeno un acquisto deve essere della stessa nazione del club.',{lg:['B']}),
+E('n',1,'Regole finanziarie di lega: nessun acquisto con stipendio sopra la media della rosa.',{lg:['C']}),
+E('n',1,'Sirene della Premier: se un club di Premier offre almeno il valore di mercato per {A}, devi accettare.',{lg:['C'],tg:TOP}),
+E('p',1,'Paracadute finanziario: +1 svincolato in questa stagione.',{lg:['C'],sc:'sea',mod:{svi:1}}),
+E('p',1,'Prestito con obbligo di riscatto: +1 prestito in entrata oltre il limite fino alla prossima sessione.',{lg:['C'],mod:{pin:1}}),
+E('x',1,'Esperienza di categoria superiore: almeno un acquisto deve arrivare dalla Premier League.',{lg:['C']}),
+E('n',1,'Un top club europeo vuole {A}: devi accettare un\'offerta pari o superiore al valore di mercato.',{lg:['P'],tg:TOP}),
+E('n',1,'Stella capricciosa: {A} pretende un aumento. Rinnovalo con aumento o mettilo in lista trasferimenti.',{lg:['P'],tg:{st:['cruciale']}}),
+E('n',1,'Liste ristrette: in questa finestra non puoi superare 23 giocatori over 21.',{lg:['P']}),
+E('p',1,'Diritti TV record: +1 slot cruciale fino alla prossima sessione.',{lg:['P'],mod:{cru:1}}),
+E('x',1,'Progetto globale: almeno un acquisto da un campionato fuori dall\'Europa.',{lg:['P']})
+];
+PRE.forEach((e,i)=>e.id='m'+i);SES.forEach((e,i)=>e.id='s'+i);
+
+const blank=()=>({at:0,club:'',lega:'League Two',prob:30,coppe:0,magg:0,svi:0,reg5:true,rosa:[],inf:[],eff:[],flags:{imm:0,shield:0,force:0,med:0,sshield:0,medbad:0},recent:[],srecent:[],last:null,sesLast:null});
+const LS='fc26-imprevisti-v1';
+let S=blank(),undo=null,editId=null,ref=null,saving=false,pend=false,tmr=null,flipNext=false;
+const load=j=>{const o=Object.assign(blank(),JSON.parse(j));o.flags=Object.assign(blank().flags,o.flags);o.rosa.forEach(p=>{if(OLDR[p.ruolo])p.ruolo=OLDR[p.ruolo]});return o};
+try{const r=localStorage.getItem(LS);if(r)S=load(r)}catch(e){}
+
+const setSync=t=>{$('#sync').textContent=t};
+function save(){S.at=Date.now();const j=JSON.stringify(S);try{localStorage.setItem(LS,j)}catch(e){}if(ref){pend=true;flush()}}
+function flush(){clearTimeout(tmr);tmr=setTimeout(async()=>{if(saving||!pend)return;saving=true;pend=false;try{await ref.set({json:JSON.stringify(S),at:S.at});setSync('Salvato sul tuo account Claude: lo ritrovi da qualsiasi dispositivo.')}catch(e){setSync('Salvataggio online non riuscito: i dati restano in questo browser.')}saving=false;if(pend)flush()},1200)}
+const unwrap=g=>!g?null:typeof g.data==='function'?g.data():(g.data&&typeof g.data==='object'&&!g.json)?g.data:g;
+(async()=>{try{let c=null;for(let i=0;i<50&&!c;i++){c=window.claude;if(!c)await new Promise(r=>setTimeout(r,100))}if(!c||!c.use)return;
+const db=await c.use('db'),user=await c.use('user');if(!db||!user)return;const id=await user.id();if(!id)return;
+const r=db.collection('data/users/'+id).doc('carriera');
+const got=await Promise.race([r.get(),new Promise((_,j)=>setTimeout(()=>j(new Error('t')),10000))]);
+const d=unwrap(got);ref=r;
+if(d&&d.json&&(d.at||0)>(S.at||0)){S=load(d.json);try{localStorage.setItem(LS,d.json)}catch(e){}render()}else if(S.at){pend=true;flush()}
+setSync('Salvato sul tuo account Claude: lo ritrovi da qualsiasi dispositivo.')}catch(e){}})();
+
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const uid=()=>Math.random().toString(36).slice(2,10);
+function wpick(L,w){const t=L.reduce((a,x)=>a+w(x),0);let r=Math.random()*t;for(const x of L){r-=w(x);if(r<=0)return x}return L[L.length-1]}
+const inRosa=()=>S.rosa.filter(p=>p.tipo!=='OUT');
+const avail=()=>{const off=new Set(S.inf.map(e=>e.pid).filter(Boolean));return inRosa().filter(p=>!off.has(p.id))};
+const modSum=k=>S.eff.reduce((a,e)=>a+((e.mod&&e.mod[k])||0),0);
+
+function generic(tg,second){const r=tg.r?REPL[tg.r]:'giocatore';let s;
+ if(tg.pk==='best')s=`il tuo miglior ${r}`;else if(tg.pk==='old')s=`il ${r} più anziano`;else if(tg.pk==='young')s=`il ${r} più giovane`;
+ else{s=(second?'un altro ':'un ')+r;if(tg.st)s+=' '+tg.st.map(x=>RL[x].toLowerCase()).join(' o ');if(tg.u21)s+=' under 21';s+=' a tua scelta'}
+ return s}
+function target(tg,ex,second){
+ if(tg.src){const L=S.inf.filter(x=>!ex.includes(x.id)&&(tg.src==='inj'?(x.k==='inj'&&x.ph==='out'&&(x.out!=null)):tg.src==='rec'?x.ph==='rec':(x.k==='ban'&&x.ph==='out')));
+  if(!L.length)return false;const e=L[rnd(0,L.length-1)];return{name:e.name,pid:e.pid,entry:e.id,id:e.id}}
+ if(!inRosa().length){if(tg.pk&&second)return false;return{name:generic(tg,second),pid:null,id:'g'+uid()}}
+ let L=avail();if(tg.r)L=L.filter(p=>p.rep===tg.r);if(tg.st)L=L.filter(p=>tg.st.includes(p.ruolo));if(tg.u21)L=L.filter(p=>+p.eta<21);
+ L=L.filter(p=>!ex.includes(p.id));if(!L.length)return false;
+ const by=(f)=>L.reduce((a,b)=>f(b,a)?b:a);
+ const p=tg.pk==='best'?by((b,a)=>+b.ovr>+a.ovr):tg.pk==='old'?by((b,a)=>+b.eta>+a.eta):tg.pk==='young'?by((b,a)=>+b.eta<+a.eta):L[rnd(0,L.length-1)];
+ return{name:p.nome,pid:p.id,id:p.id}}
+const fill=(s,A,B,plain)=>{const f=x=>x?(plain?x.name:'<b>'+esc(x.name)+'</b>'):'';return(plain?s:esc(s)).replace('{A}',f(A)).replace('{B}',f(B))};
+
+function pickEvent(list,recent,when){const tier=TIER[S.lega];
+ for(let i=0;i<60;i++){const tone=wpick(Object.keys(TONEW),k=>TONEW[k]);
+  const L=list.filter(e=>e.t===tone&&!recent.includes(e.id)&&(!e.lg||e.lg.includes(tier))&&(!e.when||e.when===when));if(!L.length)continue;
+  const ev=wpick(L,e=>e.w);
+  if(ev.fx.some(f=>f.k==='cure')&&!S.eff.some(x=>x.sc==='match'))continue;
+  let A=null,B=null;if(ev.tg){A=target(ev.tg,[],false);if(A===false)continue}
+  if(ev.tg2){B=target(ev.tg2,A?[A.id]:[],true);if(B===false)continue}
+  return{ev,A,B}}
+ return null}
+
+function apply(ev,A,B,scope){const o=[];
+ for(const f of ev.fx){const t=f.who==='B'?B:A;
+  if(f.k==='inj'){let c=f.c;if(S.flags.medbad&&c<4){c++;S.flags.medbad=0;o.push('Medico part-time: infortunio aggravato a '+CLS[c])}else if(S.flags.med&&c>1){c--;S.flags.med=0;o.push('Staff medico: infortunio ridotto a '+CLS[c])}
+   if(t.entry)S.inf=S.inf.filter(x=>x.id!==t.entry);const n=rnd(...INJR[c]);
+   S.inf.push({id:uid(),pid:t.pid,name:t.name,k:'inj',c,out:n,post:POST[c],ph:'out',why:'Imprevisto'});
+   o.push(`${t.name}: infortunio ${CLS[c]}, fuori ${n} partite + ${POST[c]} dopo il rientro`)}
+  else if(f.k==='out'||f.k==='ban'){S.inf.push({id:uid(),pid:t.pid,name:t.name,k:f.k,c:0,out:f.n,post:0,ph:'out',why:f.why||'Squalifica'});
+   o.push(`${t.name}: ${f.k==='ban'?'squalificato':'indisponibile'} per ${f.n} ${f.n>1?'partite':'partita'}`)}
+  else if(f.k==='eff'){S.eff.push({id:uid(),s:fill(f.s,A,B,true),n:f.n,sc:'match'});o.push(`Effetto attivo per ${f.n} partite, questa compresa`)}
+  else if(f.k==='ses'){S.eff.push({id:uid(),s:fill(f.s,A,B,true),n:null,sc:f.sc,mod:f.mod||null});o.push(f.sc==='sea'?'Valido fino a fine stagione':'Valido fino alla prossima sessione')}
+  else if(f.k==='flag'){if(f.f==='med')S.flags.medbad=0;if(f.f==='medbad')S.flags.med=0;if(f.f==='imm')S.flags.imm=Math.max(S.flags.imm,f.n);else S.flags[f.f]=1;o.push(FLAGL[f.f])}
+  else if(f.k==='heal'){S.inf=S.inf.filter(x=>x.id!==t.entry);o.push(`${t.name} torna subito disponibile`)}
+  else if(f.k==='ext'){const e=S.inf.find(x=>x.id===t.entry);if(e&&e.out!=null){e.out=Math.max(1,e.out+f.n);o.push(`${t.name}: ora fuori ancora ${e.out} partite`)}}
+  else if(f.k==='cure'){const L=S.eff.filter(x=>x.sc==='match');const e=L[rnd(0,L.length-1)];S.eff=S.eff.filter(x=>x!==e);o.push('Cancellato: '+e.s)}}
+ return o}
+
+function trial(fn,kind){if(!S.test){fn();return}const keep=JSON.stringify(S);fn();const last=S.last,ses=S.sesLast;S=load(keep);if(kind==='pre'){S.last=last;if(last)last.test=1}else{S.sesLast=ses;if(ses)ses.test=1}flipNext=true;save();render()}
+function snap(t){undo=JSON.stringify(S);$('#toastT').textContent=t;$('#toast').hidden=false;clearTimeout(snap.t);snap.t=setTimeout(()=>$('#toast').hidden=true,7000)}
+
+function drawPre(){snap('Nuova estrazione');advance();const r={};
+ if(S.flags.imm>0){r.kind='imm';S.flags.imm--;r.left=S.flags.imm}
+ else{const forced=!!S.flags.force,roll=rnd(1,100);r.roll=roll;
+  if(!forced&&roll>S.prob)r.kind='none';
+  else{S.flags.force=0;const pk=pickEvent(PRE,S.recent);
+   if(!pk)r.kind='none';else{const{ev,A,B}=pk;Object.assign(r,{kind:'ev',t:ev.t,html:fill(ev.s,A,B),forced,lg:ev.lg?S.lega:null});
+    if(ev.t==='n'&&S.flags.shield){S.flags.shield=0;r.shielded=1;r.applied=['Annullato dallo spogliatoio carico']}else r.applied=apply(ev,A,B,'pre');
+    S.recent=[ev.id,...S.recent].slice(0,20)}}}
+ S.inf.forEach(e=>e.seen=1);S.eff.forEach(e=>{if(e.sc==='match')e.seen=1});
+ S.last=r;flipNext=true;save();render()}
+
+function advance(){
+ S.inf.forEach(e=>{if(!e.seen)return;if(e.ph==='out'){if(e.out!=null){e.out--;if(e.out<=0){if(e.k==='inj'&&e.post>0)e.ph='rec';else e.done=1}}}else{e.post--;if(e.post<=0)e.done=1}});
+ S.inf=S.inf.filter(e=>!e.done);
+ S.eff.forEach(e=>{if(e.sc==='match'&&e.seen)e.n--});S.eff=S.eff.filter(e=>e.sc!=='match'||e.n>0)}
+
+function drawSes(kind){snap('Sessione estratta');
+ if(kind==='estate'){S.svi=0;S.eff=S.eff.filter(e=>e.sc==='match')}
+ else S.eff=S.eff.filter(e=>e.sc!=='ses');
+ const items=[],used=[];
+ for(let k=0;k<2;k++){const pk=pickEvent(SES,[...S.srecent,...used],kind==='estate'?'E':'G');if(!pk)break;const{ev,A,B}=pk;used.push(ev.id);
+  const it={t:ev.t,html:fill(ev.s,A,B),lg:ev.lg?S.lega:null};
+  if(ev.t==='n'&&S.flags.sshield){S.flags.sshield=0;it.shielded=1;it.applied=['Annullato: il presidente è contento']}
+  else{it.applied=apply(ev,A,B,'ses');if(!ev.ne&&!ev.fx.some(f=>['ses','inj','out','ban'].includes(f.k))){S.eff.push({id:uid(),s:fill(ev.s,A,B,true),n:null,sc:ev.sc,mod:ev.mod});it.applied.push(ev.sc==='sea'?'Valido fino a fine stagione':'Valido fino alla prossima sessione')}}
+  items.push(it)}
+ S.srecent=[...used,...S.srecent].slice(0,12);S.sesLast={kind,items};flipNext=true;save();render()}
+
+function checks(){const R=inRosa(),out=[];const ck=(ok,t,d)=>out.push({ok,t,d});
+ const bImp=(+S.coppe||0)+(+S.magg||0)+modSum('imp'),bCru=(+S.magg||0)+modSum('cru');
+ if(!R.length){ck(null,'Inserisci la rosa','I controlli partono appena aggiungi i giocatori.');}
+ const cnt=R.filter(p=>+p.eta>=21).length;ck(cnt<=25,`Rosa: ${cnt}/25`,`Under 21 esclusi, prestiti in entrata inclusi. ${R.length-cnt} under 21 fuori dal conteggio.`);
+ const per=REP.map(r=>[r,R.filter(p=>p.rep===r&&p.ruolo==='cruciale').length]);const exc=per.reduce((a,[,n])=>a+Math.max(0,n-1),0);
+ ck(exc<=bCru,`Cruciali: ${per.map(([r,n])=>r+' '+n).join(' · ')}`,`Uno per reparto${bCru?`, più ${bCru} extra da trofei`:''}. In eccesso: ${exc}.`);
+ const imp=R.filter(p=>p.ruolo==='importante').length,mImp=Math.max(0,7+bImp);ck(imp<=mImp,`Importanti: ${imp}/${mImp}`,bImp?`7 di base, ${bImp>0?'+':''}${bImp} da trofei ed effetti.`:'7 di base.');
+ const cr=R.filter(p=>p.ruolo==='cruciale');
+ if(!cr.length)ck(R.length?false:null,'Tetto ingaggi non definito','Serve almeno un cruciale: il suo stipendio fissa il tetto.');
+ else{const cap=Math.max(...cr.map(p=>+p.stip||0));const over=R.filter(p=>p.ruolo!=='cruciale'&&(+p.stip||0)>cap);
+  ck(!over.length,`Tetto ingaggi: ${eur(cap)}/sett.`,over.length?'Sopra il tetto: '+over.map(p=>p.nome).join(', '):'Nessuno guadagna più del cruciale più pagato.')}
+ const pin=S.rosa.filter(p=>p.tipo==='IN').length,mPin=Math.max(0,5+modSum('pin'));ck(pin<=mPin,`Prestiti in entrata: ${pin}/${mPin}`,'');
+ const pout=S.rosa.filter(p=>p.tipo==='OUT').length;ck(pout<=5,`Prestiti in uscita: ${pout}/5`,'');
+ if(R.length){const top=Math.max(...R.map(p=>+p.ovr||0));const f=2+modSum('forb');ck(null,`Acquisti fino a OVR ${top+f}`,`Migliore in rosa ${top}, forbice ${f>=0?'+':''}${f}.`)}
+ const mSvi=Math.max(0,(SVI[S.lega]||1)+modSum('svi'));ck((+S.svi||0)<=mSvi,`Svincolati: ${+S.svi||0}/${mSvi} quest'anno`,'');
+ const st=STARS[S.lega];ck(null,st==null?'Osservatori: nessun limite':`Osservatori: massimo ${st+modSum('stel')} stelle`,S.lega);
+ ck(null,S.reg5?'Obbligo offerte dai campioni: attivo':'Obbligo offerte dai campioni: disattivato','Champions, Europa League, Premier League, Conference League.');
+ return out}
+const eur=n=>'€'+(+n||0).toLocaleString('it-IT');
+
+function infLine(e){const pill=e.ph==='rec'?'<span class="pill p-rec">Rientro</span>':e.k==='inj'?'<span class="pill p-inj">Infortunio</span>':e.k==='ban'?'<span class="pill p-ban">Squalifica</span>':`<span class="pill p-out">${esc(e.why)}</span>`;
+ const st=e.ph==='rec'?`deve saltare ancora ${e.post} ${e.post>1?'partite':'partita'}`:e.out==null?`fuori fino al rientro nel gioco (${CLS[e.c]})`:`fuori ancora ${e.out} ${e.out>1?'partite':'partita'}${e.k==='inj'?` + ${e.post} dopo il rientro`:''}`;
+ return `<div>${pill} <b>${esc(e.name)}</b><div class="muted">${st}</div></div>`}
+
+function render(){
+ $('#club').textContent=S.club||'La mia carriera';$('#lega').textContent=S.lega;
+ // prepartita
+ const L=S.last;let h='';
+ if(!L)h=`<div class="card back"><div class="big">Prossima partita</div><div>Probabilità imprevisto: ${S.flags.imm>0?'immunità attiva':S.flags.force?'garantito':S.prob+'%'}</div></div><div class="acts"><button class="pri" data-a="draw">Estrai imprevisto</button></div>`;
+ else{let c;
+  if(L.kind==='imm')c=`<div class="card none"><div class="tag">Immunità</div><div class="big">Nessun imprevisto</div><div class="txt">Il gruppo è protetto: si gioca senza imprevisti.${L.left?` Ancora ${L.left} ${L.left>1?'partite':'partita'} di immunità.`:''}</div></div>`;
+  else if(L.kind==='none')c=`<div class="card none"><div class="tag">${L.test?'Prova · ':''}Prepartita</div><div class="big">Tutto tranquillo</div><div class="txt">Nessun imprevisto: si gioca normalmente.</div></div>`;
+  else c=`<div class="card t-${L.t}"><div class="tag">${L.test?'Prova · ':''}${TONEL[L.t]}${L.forced?' · garantito':''}${L.lg?' · '+esc(L.lg):''}</div><div class="txt">${L.shielded?'<s>'+L.html+'</s>':L.html}</div>${L.test&&L.applied&&L.applied.length?'<div class="tag">Succederebbe:</div>':''}${L.applied&&L.applied.length?'<ul>'+L.applied.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>':''}</div>`;
+  h=c+`<div class="roll">${L.roll!=null?`Dado: ${L.roll} su 100 (imprevisto fino a ${S.prob})`:''}</div><div class="acts"><button class="pri" data-a="draw">Estrai per la prossima partita</button></div><div class="roll">Ogni estrazione conta come una partita: infortuni, squalifiche ed effetti scendono da soli.</div>`}
+ $('#stage').innerHTML=h;if(flipNext){const c=$('#stage .card:not(.back)');if(c)c.classList.add('flip')}
+ const UN=S.inf.filter(e=>!(e.ph==='out'&&e.out===0));
+ $('#unav').innerHTML=UN.length?UN.map(e=>`<li>${infLine(e)}</li>`).join(''):'<li class="empty">Tutti disponibili.</li>';
+ const ME=S.eff.filter(e=>e.sc==='match'),SE=S.eff.filter(e=>e.sc!=='match');
+ const effLi=e=>`<li><div>${esc(e.s)}<div class="muted">${e.sc==='match'?`ancora ${e.n} ${e.n>1?'partite':'partita'}`:e.sc==='sea'?'fino a fine stagione':'fino alla prossima sessione'}</div></div><button class="sm dang" data-a="delEff" data-id="${e.id}" aria-label="Rimuovi effetto">Rimuovi</button></li>`;
+ $('#effs').innerHTML=S.eff.length?[...ME,...SE].map(effLi).join(''):'<li class="empty">Nessun effetto in corso.</li>';
+ $('#flags').innerHTML=Object.entries(S.flags).filter(([,v])=>v).map(([k,v])=>`<span class="chip">${FLAGL[k]}${k==='imm'?` (${v} ${v>1?'partite':'partita'})`:''}</span>`).join('');
+ // sessione
+ document.querySelectorAll('.tTog').forEach(t=>{t.checked=!!S.test;t.closest('.tbar').classList.toggle('on',!!S.test)});
+ $('#bEst').textContent='Estrai sessione estiva';
+ $('#bGen').textContent='Estrai sessione di gennaio';
+ const SL=S.sesLast;
+ $('#sesCards').innerHTML=SL?SL.items.map(it=>`<div class="card t-${it.t}"><div class="tag">${SL.test?'Prova · ':''}${SL.kind==='estate'?'Estate':'Gennaio'} · ${TONEL[it.t].replace('Imprevisto ','')}${it.lg?' · '+esc(it.lg):''}</div><div class="txt">${it.shielded?'<s>'+it.html+'</s>':it.html}</div>${it.applied.length?'<ul>'+it.applied.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>':''}</div>`).join(''):`<div class="card back"><div class="big">Sessione</div><div>Due carte in estate, due a gennaio.</div></div>`;
+ if(flipNext)document.querySelectorAll('#sesCards .card:not(.back)').forEach(c=>c.classList.add('flip'));
+ $('#sesEffs').innerHTML=SE.length?SE.map(effLi).join(''):'<li class="empty">Nessun effetto di sessione in corso.</li>';
+ flipNext=false;
+ // rosa
+ $('#checks').innerHTML=checks().map(c=>`<div class="ck ${c.ok==null?'in':c.ok?'ok':'ko'}"><i>${c.ok==null?'i':c.ok?'✓':'!'}</i><div><b>${esc(c.t)}</b>${c.d?`<span class="muted">${esc(c.d)}</span>`:''}</div></div>`).join('');
+ const ord={POR:0,DIF:1,CEN:2,ATT:3};const RS=[...S.rosa].sort((a,b)=>ord[a.rep]-ord[b.rep]||b.ovr-a.ovr);
+ const off=new Set(S.inf.map(e=>e.pid));
+ $('#rBody').innerHTML=RS.map(p=>`<tr><td class="nm" data-l="Nome">${esc(p.nome)}${off.has(p.id)?' <span class="pill p-inj">out</span>':''}</td><td data-l="Reparto">${p.rep}</td><td class="n" data-l="OVR">${p.ovr}</td><td class="n" data-l="Età">${p.eta}${+p.eta<21?' <span class="pill">U21</span>':''}</td><td data-l="Ruolo">${RL[p.ruolo]}</td><td class="n" data-l="Stipendio">${eur(p.stip)}</td><td data-l="Tipo">${p.tipo==='IN'?'Prestito in':p.tipo==='OUT'?'Prestito out':'Proprietà'}</td><td data-l=""><button class="sm" data-a="edit" data-id="${p.id}">Modifica</button> <button class="sm dang" data-a="delP" data-id="${p.id}">Elimina</button></td></tr>`).join('');
+ $('#rEmpty').hidden=!!S.rosa.length;$('#rCount').textContent=S.rosa.length?S.rosa.length+' giocatori':'';
+ // infermeria
+ $('#infList').innerHTML=S.inf.length?S.inf.map(e=>`<li>${infLine(e)}<div class="acts">${e.ph==='out'&&e.out!=null?`<button class="sm" data-a="dec" data-id="${e.id}" aria-label="Una partita in meno">−1</button><button class="sm" data-a="inc" data-id="${e.id}" aria-label="Una partita in più">+1</button>`:''}${e.ph==='out'?`<button class="sm pri" data-a="back" data-id="${e.id}">Rientrato</button>`:''}<button class="sm dang" data-a="delI" data-id="${e.id}">Rimuovi</button></div></li>`).join(''):'<li class="empty">Nessuno in infermeria.</li>';
+ const ip=$('#iPl'),cur=ip.value;ip.innerHTML='<option value="">— Non in rosa —</option>'+inRosa().map(p=>`<option value="${p.id}">${esc(p.nome)} (${p.rep})</option>`).join('');ip.value=cur;
+ $('#iFreeL').hidden=!!ip.value;
+ // impostazioni
+ const set=(id,v)=>{const el=$(id);if(document.activeElement!==el)el.value=v};
+ set('#sClub',S.club);set('#sLega',S.lega);set('#sProb',S.prob);$('#sProbV').textContent=S.prob+'%';set('#sCoppe',S.coppe);set('#sMagg',S.magg);set('#sSvi',S.svi);$('#sReg5').checked=!!S.reg5;
+}
+
+// form rosa
+$('#fRuolo').innerHTML=RUOLI.map(r=>`<option value="${r}">${RL[r]}</option>`).join('');$('#fRuolo').value='turnover';
+function resetForm(){editId=null;$('#pForm').reset();$('#fRuolo').value='turnover';$('#fRep').value='CEN';$('#fTitle').textContent='Aggiungi giocatore';$('#fSave').textContent='Aggiungi';$('#fCancel').hidden=true}
+$('#pForm').addEventListener('submit',e=>{e.preventDefault();const p={nome:$('#fNome').value.trim(),rep:$('#fRep').value,ovr:+$('#fOvr').value||0,eta:+$('#fEta').value||0,ruolo:$('#fRuolo').value,stip:+$('#fStip').value||0,tipo:$('#fTipo').value};if(!p.nome)return;
+ if(editId){Object.assign(S.rosa.find(x=>x.id===editId),p);S.inf.forEach(x=>{if(x.pid===editId)x.name=p.nome})}else S.rosa.push({id:uid(),...p});resetForm();save();render()});
+$('#fCancel').addEventListener('click',resetForm);
+$('#bImp').addEventListener('click',()=>{let n=0;$('#imp').value.split('\n').forEach(l=>{const c=l.split(/[;\t]/).map(x=>x.trim());if(!c[0])return;
+ const rep=(c[1]||'').toUpperCase().slice(0,3);const ru=RUOLI.find(r=>r.startsWith((c[4]||'').toLowerCase().slice(0,3)))||'turnover';const t=(c[6]||'P').toUpperCase();
+ S.rosa.push({id:uid(),nome:c[0],rep:REP.includes(rep)?rep:'CEN',ovr:+c[2]||60,eta:+c[3]||24,ruolo:ru,stip:+String(c[5]||'0').replace(/\D/g,'')||0,tipo:['IN','OUT'].includes(t)?t:'P'});n++});
+ if(n){$('#imp').value='';save();render()}});
+
+// form infermeria
+$('#iPl').addEventListener('change',()=>{$('#iFreeL').hidden=!!$('#iPl').value});
+$('#iForm').addEventListener('submit',e=>{e.preventDefault();const pid=$('#iPl').value||null;const p=pid&&S.rosa.find(x=>x.id===pid);const name=p?p.nome:$('#iFree').value.trim();if(!name)return;
+ const k=$('#iK').value,c=+$('#iC').value,n=$('#iN').value?+$('#iN').value:null;
+ if(k==='inj')S.inf.push({id:uid(),pid,name,k,c,out:n,post:POST[c],ph:'out',why:'Dal gioco'});
+ else S.inf.push({id:uid(),pid,name,k,c:0,out:n||1,post:0,ph:'out',why:k==='ban'?'Squalifica':'Indisponibile'});
+ $('#iFree').value='';$('#iN').value='';save();render()});
+
+// impostazioni
+const bind=(id,k,num)=>$(id).addEventListener('input',e=>{S[k]=num?Math.max(0,+e.target.value||0):e.target.value;save();render()});
+bind('#sClub','club');bind('#sLega','lega');bind('#sProb','prob',1);bind('#sCoppe','coppe',1);bind('#sMagg','magg',1);bind('#sSvi','svi',1);
+$('#sReg5').addEventListener('change',e=>{S.reg5=e.target.checked;save();render()});
+$('#bCopy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(JSON.stringify(S));$('#bMsg').textContent='Backup copiato: incollalo in una nota per sicurezza.'}catch(e){$('#bTxt').value=JSON.stringify(S);$('#bMsg').textContent='Copia non consentita: il backup è nel riquadro, selezionalo e copialo.'}});
+$('#bRest').addEventListener('click',()=>{try{const o=load($('#bTxt').value);snap('Backup ripristinato');S=o;$('#bTxt').value='';$('#bMsg').textContent='Ripristinato.';save();render()}catch(e){$('#bMsg').textContent='Testo non valido: incolla il backup completo.'}});
+let resetArm=false;$('#bReset').addEventListener('click',e=>{if(!resetArm){resetArm=true;e.target.textContent='Sicuro? Premi di nuovo';setTimeout(()=>{resetArm=false;e.target.textContent='Azzera tutto'},4000);return}snap('Carriera azzerata');S=blank();resetArm=false;e.target.textContent='Azzera tutto';save();render()});
+
+// azioni
+$('#bEst').addEventListener('click',()=>trial(()=>drawSes('estate'),'ses'));$('#bGen').addEventListener('click',()=>trial(()=>drawSes('gennaio'),'ses'));
+document.addEventListener('change',e=>{if(e.target.classList.contains('tTog')){S.test=e.target.checked;save();render()}});
+let keepArm=false;$('#bKeep').addEventListener('click',e=>{if(!keepArm){keepArm=true;e.target.textContent='Sicuro? Premi di nuovo';setTimeout(()=>{keepArm=false;e.target.textContent='Ricomincia tenendo la rosa'},4000);return}snap('Ripartito da zero');const n=blank();['club','lega','prob','coppe','magg','rosa'].forEach(k=>n[k]=S[k]);S=n;keepArm=false;e.target.textContent='Ricomincia tenendo la rosa';$('#bMsg').textContent='Infermeria, effetti, estrazioni e svincolati azzerati; rosa e impostazioni tenute.';save();render()});
+$('#bUndo').addEventListener('click',()=>{if(!undo)return;S=load(undo);undo=null;$('#toast').hidden=true;save();render()});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a,id=b.dataset.id;
+ if(a==='draw')trial(drawPre,'pre');
+ else if(a==='delEff'){snap('Effetto rimosso');S.eff=S.eff.filter(x=>x.id!==id);save();render()}
+ else if(a==='delP'){snap('Giocatore eliminato');S.rosa=S.rosa.filter(x=>x.id!==id);save();render()}
+ else if(a==='edit'){const p=S.rosa.find(x=>x.id===id);editId=id;$('#fNome').value=p.nome;$('#fRep').value=p.rep;$('#fOvr').value=p.ovr;$('#fEta').value=p.eta;$('#fRuolo').value=p.ruolo;$('#fStip').value=p.stip;$('#fTipo').value=p.tipo;$('#fTitle').textContent='Modifica '+p.nome;$('#fSave').textContent='Salva';$('#fCancel').hidden=false;$('#fNome').focus()}
+ else{const en=S.inf.find(x=>x.id===id);if(!en)return;
+  if(a==='dec'){en.out--;if(en.out<=0){if(en.k==='inj'&&en.post>0)en.ph='rec';else S.inf=S.inf.filter(x=>x!==en)}}
+  else if(a==='inc')en.out++;
+  else if(a==='back'){if(en.k==='inj'&&en.post>0){en.ph='rec';en.out=0;en.seen=0}else S.inf=S.inf.filter(x=>x!==en)}
+  else if(a==='delI'){snap('Rimosso dall\'infermeria');S.inf=S.inf.filter(x=>x!==en)}
+  save();render()}});
+
+// schede
+const TABS=['partita','sessione','rosa','infermeria','impostazioni'];
+function tab(){const t=TABS.includes(location.hash.slice(1))?location.hash.slice(1):'partita';TABS.forEach(x=>{document.getElementById(x).classList.toggle('on',x===t)});document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('on',a.dataset.t===t))}
+addEventListener('hashchange',tab);tab();render();
+}
+</script>
+</body>
+</html>
