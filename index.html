@@ -755,7 +755,7 @@ function render(){
   :`<div class="card t-${L.t}"><div class="tag">${L.test?'Prova · ':''}${L.extra?'In più · ':''}${TONEL[L.t]}${L.forced?' · garantito':''}${L.lg?' · '+esc(L.lg):''}</div><div class="txt">${L.shielded?'<s>'+L.html+'</s>':L.html}</div>${L.test&&L.applied&&L.applied.length?'<div class="tag">Succederebbe:</div>':''}${L.applied&&L.applied.length?'<ul>'+L.applied.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>':''}</div>`;
  if(!L)h=`<div class="card back"><div class="big">Prossima partita</div><div>Probabilità imprevisto: ${S.flags.imm>0?'immunità attiva':S.flags.force?'garantito':S.prob+'%'}</div></div><div class="acts"><button class="pri" data-a="draw">Estrai imprevisto</button></div>`;
  else{let c=[L,...(S.extra||[])].map(card).join('');
-  h=c+`<div class="roll">${L.roll!=null?`Dado: ${L.roll} su 100 (imprevisto fino a ${S.prob})`:''}</div><div class="acts"><button class="pri" data-a="draw">Estrai per la prossima partita</button><button data-a="extra">Estrai un altro imprevisto</button></div>`}
+  h=c+`<div class="roll">${L.roll!=null?`Tiro del dado: ${L.roll}. Probabilità di imprevisto ${S.prob}%: ${L.roll<=S.prob?'uscito':'serviva '+S.prob+' o meno'}.`:''}</div><div class="acts"><button class="pri" data-a="draw">Estrai per la prossima partita</button><button data-a="extra">Estrai un altro imprevisto</button></div>`}
  $('#stage').innerHTML=h;if(flipNext){const cs=$('#stage').querySelectorAll('.card:not(.back)');const c=cs[cs.length-1];if(c)c.classList.add('flip')}
  const UN=S.inf.filter(e=>!(e.ph==='out'&&e.out===0));
  $('#unav').innerHTML=UN.length?UN.map(e=>`<li>${infLine(e)}<button class="sm dang" data-a="delI" data-id="${e.id}">Rimuovi</button></li>`).join(''):'<li class="empty">Tutti disponibili.</li>';
