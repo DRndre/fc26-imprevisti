@@ -267,7 +267,7 @@ const POST=[0,1,3,5,7];
 const CLS=[null,'≤1 mese','1-3 mesi','3-6 mesi','oltre 6 mesi'];
 const TONEW={n:65,p:20,x:15};
 const TONEL={n:'Imprevisto negativo',p:'Imprevisto positivo',x:'Imprevisto neutro'};
-const FLAGL={imm:'Immunità dagli imprevisti',shield:'Scudo: annulla il prossimo imprevisto negativo',force:'Prossimo prepartita: imprevisto garantito',med:'Staff medico: prossimo infortunio più lieve',sshield:'Scudo sessione: annulla il prossimo negativo di sessione',medbad:'Medico part-time: prossimo infortunio più grave'};
+const FLAGL={imm:'Immunità dagli imprevisti',shield:'Scudo: annulla il prossimo imprevisto negativo',force:'Prossimo prepartita: imprevisto garantito',med:'Staff medico: prossimo infortunio da imprevisto più lieve',sshield:'Scudo sessione: annulla il prossimo negativo di sessione',medbad:'Medico part-time: prossimo infortunio da imprevisto più grave'};
 const SVI={'League Two':3,'League One':2,'Championship':1,'Premier League':1};
 const STARS={'League Two':2,'League One':2,'Championship':3,'Premier League':null};
 
@@ -315,7 +315,7 @@ E('n',1,'Ultimatum del presidente: vinci le prossime 2 partite o {A} va in lista
 E('n',1.2,'Niente numeri: vietate le skill moves in questa partita.'),
 E('n',1,'Cartellini pesanti: il primo ammonito di oggi salta la prossima partita.'),
 E('n',1,'Clima teso con gli arbitri: per 3 partite ogni espulsione vale 1 giornata di squalifica in più.',{fx:[eff(3,'Ogni espulsione vale +1 giornata di squalifica')]}),
-E('n',1,'Radar rotto: gioca con il radar disattivato.'),
+E('n',1.2,'Il preparatore sbaglia i carichi di lavoro: {A} e {B} giocano al massimo 60 minuti.',{tg:ANY,tg2:ANY}),
 E('n',1,'Il presidente taglia i premi partita: i tuoi 2 giocatori migliori partono dalla panchina.'),
 E('n',1,'Ricaduta: {A} torna in infermeria (≤1 mese).',{tg:{src:'rec'},fx:[inj(1)]}),
 E('n',1,'Complicazioni nel recupero: {A} resta fuori 3 partite in più.',{tg:{src:'inj'},fx:[{k:'ext',n:3}]}),
@@ -324,14 +324,14 @@ E('n',.8,'Sindrome da trasferta: per le prossime 4 partite, in trasferta giochi 
 E('n',1,'Stanchezza accumulata: i 3 giocatori con più presenze stagionali partono dalla panchina.'),
 E('n',.8,'Il mister è senza voce: niente comandi tattici rapidi durante la partita.'),
 
-E('p',1.5,'Recupero lampo: {A} è subito disponibile, senza partite di rientro.',{tg:{src:'inj'},fx:[{k:'heal'}]}),
+E('p',1.5,'Recupero lampo: {A}, infortunato per un imprevisto, è subito disponibile senza partite di rientro.',{tg:{src:'inj',app:1},fx:[{k:'heal'}]}),
 E('p',1.5,'Fisioterapia top: {A} non deve scontare le partite di rientro.',{tg:{src:'rec'},fx:[{k:'heal'}]}),
-E('p',1,'Ricorso accolto: la squalifica di {A} è annullata.',{tg:{src:'ban'},fx:[{k:'heal'}]}),
-E('p',1,'Tutti a disposizione: {A} recupera 2 partite di stop.',{tg:{src:'inj'},fx:[{k:'ext',n:-2}]}),
+E('p',1,'Ricorso accolto: la squalifica di {A}, presa per un imprevisto, è annullata.',{tg:{src:'ban',app:1},fx:[{k:'heal'}]}),
+E('p',1,'Tutti a disposizione: {A}, infortunato per un imprevisto, recupera 2 partite di stop.',{tg:{src:'inj',app:1},fx:[{k:'ext',n:-2}]}),
 E('p',1.5,'Spogliatoio carico: il prossimo imprevisto negativo verrà annullato.',{fx:[flag('shield')]}),
 E('p',1,'Il capitano trascina il gruppo: niente imprevisti nelle prossime 3 partite.',{fx:[flag('imm',3)]}),
 E('p',1,'Clima sereno: un effetto negativo attivo viene cancellato.',{fx:[{k:'cure'}]}),
-E('p',1.2,'Staff medico potenziato: il prossimo infortunio grave scende di una fascia.',{fx:[flag('med')]}),
+E('p',1.2,'Staff medico potenziato: il prossimo infortunio causato da un imprevisto scende di una fascia.',{fx:[flag('med')]}),
 E('p',1.2,'Tifo da brividi: difficoltà -1 livello per questa partita.'),
 E('p',1,'Allenamento perfetto: oggi ignori tutti gli effetti attivi su cambi e formazione.'),
 E('p',.8,'Il DS trova un affare: +1 svincolato in questa stagione.',{fx:[ses('+1 svincolato in questa stagione','sea',{svi:1})]}),
@@ -359,9 +359,9 @@ E('n',1,'Campo di periferia ghiacciato: vietate le scivolate per tutta la partit
 E('n',1,'Il club non può pagare il fisioterapista extra: {A} gioca acciaccato, massimo 60 minuti.',{lg:['B'],tg:BIG}),
 E('n',1,'Stipendi in ritardo, lo spogliatoio protesta: difficoltà +1 livello per questa partita.',{lg:['B']}),
 E('n',1,'Spogliatoio allagato, ci si cambia in albergo: nessun cambio prima del 60\'.',{lg:['B']}),
-E('n',.8,'Il medico sociale è part-time: il prossimo infortunio sarà di una fascia più grave.',{lg:['B'],fx:[flag('medbad')]}),
+E('n',.8,'Il medico sociale è part-time: il prossimo infortunio causato da un imprevisto sarà di una fascia più grave.',{lg:['B'],fx:[flag('medbad')]}),
 E('p',1,'Il paese è in festa per voi: difficoltà -1 livello per questa partita.',{lg:['B']}),
-E('p',1,'Un tifoso facoltoso paga un fisioterapista privato: {A} recupera 2 partite di stop.',{lg:['B'],tg:{src:'inj'},fx:[{k:'ext',n:-2}]}),
+E('p',1,'Un tifoso facoltoso paga un fisioterapista privato: {A}, infortunato per un imprevisto, recupera 2 partite di stop.',{lg:['B'],tg:{src:'inj',app:1},fx:[{k:'ext',n:-2}]}),
 E('x',1,'Amichevole infrasettimanale con il club di quartiere: oggi almeno 3 riserve partono titolari.',{lg:['B']}),
 E('n',1.2,'Calendario infernale, si gioca ogni 3 giorni: almeno 3 titolari diversi rispetto all\'ultima partita.',{lg:['C']}),
 E('n',1.2,'Diretta TV nazionale, pressione alle stelle: difficoltà +1 livello per questa partita.',{lg:['C']}),
@@ -428,7 +428,7 @@ E('n',1,'Coppa continentale: {A} parte con la nazionale e salta 4 partite.',{whe
 E('x',1,'Rinforzi per la seconda metà di stagione: almeno 1 acquisto in questa finestra.',{when:'G'}),
 E('n',1,'Tournée estiva estenuante: {A} e {B} saltano la prima partita.',{when:'E',tg:ANY,tg2:ANY,fx:[out(1,'Stanchezza'),out(1,'Stanchezza','B')]}),
 E('x',1,'Nuovo staff tecnico: cambia il modulo base fino alla prossima sessione.',{when:'E'}),
-E('p',1,'Ritiro impeccabile: il prossimo infortunio grave scende di una fascia.',{when:'E',fx:[flag('med')],ne:1}),
+E('p',1,'Ritiro impeccabile: il prossimo infortunio causato da un imprevisto scende di una fascia.',{when:'E',fx:[flag('med')],ne:1}),
 E('n',1,'Tribuna chiusa per lavori, incassi ridotti: in questa finestra puoi spendere al massimo metà del budget.',{lg:['B']}),
 E('n',1,'Proprietà in difficoltà: se arriva un\'offerta congrua per il giocatore più pagato, devi accettarla.',{lg:['B']}),
 E('p',1,'Gemellaggio con un club di Premier: +1 prestito in entrata, purché sia un under 21 di un club di Premier.',{lg:['B'],mod:{pin:1}}),
@@ -472,12 +472,13 @@ const inRosa=()=>S.rosa.filter(p=>p.tipo!=='OUT');
 const avail=()=>{const off=new Set(S.inf.map(e=>e.pid).filter(Boolean));return inRosa().filter(p=>!off.has(p.id))};
 const modSum=k=>S.eff.reduce((a,e)=>a+((e.mod&&e.mod[k])||0),0);
 
+const isApp=x=>x.o?x.o==='app':x.why!=='Dal gioco'&&x.why!=='Squalifica'&&x.why!=='Indisponibile';
 function generic(tg,second){const r=tg.r?REPL[tg.r]:'giocatore';let s;
  if(tg.pk==='best')s=`il tuo miglior ${r}`;else if(tg.pk==='old')s=`il ${r} più anziano`;else if(tg.pk==='young')s=`il ${r} più giovane`;
  else{s=(second?'un altro ':'un ')+r;if(tg.st)s+=' '+tg.st.map(x=>RL[x].toLowerCase()).join(' o ');if(tg.u21)s+=' under 21';s+=' a tua scelta'}
  return s}
 function target(tg,ex,second){
- if(tg.src){const L=S.inf.filter(x=>!ex.includes(x.id)&&(tg.src==='inj'?(x.k==='inj'&&x.ph==='out'&&(x.out!=null)):tg.src==='rec'?x.ph==='rec':(x.k==='ban'&&x.ph==='out')));
+ if(tg.src){const L=S.inf.filter(x=>!ex.includes(x.id)&&(!tg.app||isApp(x))&&(tg.src==='inj'?(x.k==='inj'&&x.ph==='out'&&(x.out!=null)):tg.src==='rec'?x.ph==='rec':(x.k==='ban'&&x.ph==='out')));
   if(!L.length)return false;const e=L[rnd(0,L.length-1)];return{name:e.name,pid:e.pid,entry:e.id,id:e.id}}
  if(!inRosa().length){if(tg.pk&&second)return false;return{name:generic(tg,second),pid:null,id:'g'+uid()}}
  let L=avail();if(tg.r)L=L.filter(p=>p.rep===tg.r);if(tg.st)L=L.filter(p=>tg.st.includes(p.ruolo));if(tg.u21)L=L.filter(p=>+p.eta<21);
@@ -501,9 +502,9 @@ function apply(ev,A,B,scope){const o=[];
  for(const f of ev.fx){const t=f.who==='B'?B:A;
   if(f.k==='inj'){let c=f.c;if(S.flags.medbad&&c<4){c++;S.flags.medbad=0;o.push('Medico part-time: infortunio aggravato a '+CLS[c])}else if(S.flags.med&&c>1){c--;S.flags.med=0;o.push('Staff medico: infortunio ridotto a '+CLS[c])}
    if(t.entry)S.inf=S.inf.filter(x=>x.id!==t.entry);const n=rnd(...INJR[c]);
-   S.inf.push({id:uid(),pid:t.pid,name:t.name,k:'inj',c,out:n,post:POST[c],ph:'out',why:'Imprevisto'});
+   S.inf.push({id:uid(),pid:t.pid,name:t.name,k:'inj',c,out:n,post:POST[c],ph:'out',why:'Imprevisto',o:'app'});
    o.push(`${t.name}: infortunio ${CLS[c]}, fuori ${n} partite + ${POST[c]} dopo il rientro`)}
-  else if(f.k==='out'||f.k==='ban'){S.inf.push({id:uid(),pid:t.pid,name:t.name,k:f.k,c:0,out:f.n,post:0,ph:'out',why:f.why||'Squalifica'});
+  else if(f.k==='out'||f.k==='ban'){S.inf.push({id:uid(),pid:t.pid,name:t.name,k:f.k,c:0,out:f.n,post:0,ph:'out',why:f.why||'Squalifica',o:'app'});
    o.push(`${t.name}: ${f.k==='ban'?'squalificato':'indisponibile'} per ${f.n} ${f.n>1?'partite':'partita'}`)}
   else if(f.k==='eff'){S.eff.push({id:uid(),s:fill(f.s,A,B,true),n:f.n,sc:'match'});o.push(`Effetto attivo per ${f.n} partite, questa compresa`)}
   else if(f.k==='ses'){S.eff.push({id:uid(),s:fill(f.s,A,B,true),n:null,sc:f.sc,mod:f.mod||null});o.push(f.sc==='sea'?'Valido fino a fine stagione':'Valido fino alla prossima sessione')}
@@ -623,8 +624,8 @@ $('#bImp').addEventListener('click',()=>{let n=0;$('#imp').value.split('\n').for
 $('#iPl').addEventListener('change',()=>{$('#iFreeL').hidden=!!$('#iPl').value});
 $('#iForm').addEventListener('submit',e=>{e.preventDefault();const pid=$('#iPl').value||null;const p=pid&&S.rosa.find(x=>x.id===pid);const name=p?p.nome:$('#iFree').value.trim();if(!name)return;
  const k=$('#iK').value,c=+$('#iC').value,n=$('#iN').value?+$('#iN').value:null;
- if(k==='inj')S.inf.push({id:uid(),pid,name,k,c,out:n,post:POST[c],ph:'out',why:'Dal gioco'});
- else S.inf.push({id:uid(),pid,name,k,c:0,out:n||1,post:0,ph:'out',why:k==='ban'?'Squalifica':'Indisponibile'});
+ if(k==='inj')S.inf.push({id:uid(),pid,name,k,c,out:n,post:POST[c],ph:'out',why:'Dal gioco',o:'game'});
+ else S.inf.push({id:uid(),pid,name,k,c:0,out:n||1,post:0,ph:'out',why:k==='ban'?'Squalifica':'Indisponibile',o:'game'});
  $('#iFree').value='';$('#iN').value='';save();render()});
 
 // impostazioni
@@ -658,7 +659,7 @@ function tab(){const t=TABS.includes(location.hash.slice(1))?location.hash.slice
 const LGN={B:'League One e Two',C:'Championship',P:'Premier League'};
 const MODL={imp:'importante',cru:'cruciale',pin:'prestito in entrata',svi:'svincolato',forb:'forbice OVR',stel:'stella osservatori'};
 const modTxt=m=>m?Object.entries(m).map(([k,v])=>v<=-99?'Nessun '+MODL[k]:(v>0?'+':'')+v+' '+MODL[k]).join(', '):'';
-function tgTxt(tg,second){if(!tg)return '';if(tg.src)return {inj:'un infortunato',rec:'un giocatore in rientro',ban:'uno squalificato'}[tg.src];return generic(tg,second).replace(' a tua scelta','')}
+function tgTxt(tg,second){if(!tg)return '';if(tg.src)return {inj:'un infortunato',rec:'un giocatore in rientro',ban:'uno squalificato'}[tg.src]+(tg.app?' da imprevisto':'');return generic(tg,second).replace(' a tua scelta','')}
 function fxTxt(e,isSes){const o=[];const pl=n=>n+' '+(n>1?'partite':'partita');
  e.fx.forEach(f=>{const w=f.who==='B'?'il secondo':'';
   if(f.k==='inj')o.push(`Infortunio ${CLS[f.c]}${w?' (anche '+w+')':''}`);
