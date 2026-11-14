@@ -90,6 +90,7 @@ td.nm{white-space:normal;font-weight:600}
 .seslist .card{transform:rotate(1.5deg)}.seslist .card:first-child{transform:rotate(-2deg)}
 .rules ol{padding-left:22px;margin:6px 0 14px}.rules h4{margin:14px 0 4px;font:700 19px "Barlow Condensed"}
 .tbar{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:18px;color:var(--ink);font-size:15px}.tbar input{width:22px;min-height:22px;margin-top:2px}.tbar.on{border-color:var(--yel);box-shadow:inset 4px 0 0 var(--yel)}
+td.wrap{white-space:normal;min-width:220px}.p-n{background:#e0322c;color:#fff}.p-p{background:#1d9e55;color:#fff}.p-x{background:#ffd21f;color:#231c00}
 .toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#06281a;color:#fff;padding:10px 16px;border-radius:12px;display:flex;gap:12px;align-items:center;z-index:9;max-width:92vw}
 .toast[hidden]{display:none}
 @media(max-width:600px){table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}.stack td{display:flex;justify-content:space-between;gap:12px;border:0;padding:3px 0;white-space:normal}.stack td::before{content:attr(data-l);color:var(--mut)}.led b{font-size:26px}nav a{font-size:17px;padding:10px 10px}}
@@ -108,6 +109,7 @@ td.nm{white-space:normal;font-weight:600}
     <a href="#sessione" data-t="sessione">Sessione</a>
     <a href="#rosa" data-t="rosa">Rosa e regole</a>
     <a href="#infermeria" data-t="infermeria">Infermeria</a>
+    <a href="#elenco" data-t="elenco">Elenco</a>
     <a href="#impostazioni" data-t="impostazioni">Impostazioni</a>
   </nav>
 </header>
@@ -189,6 +191,18 @@ td.nm{white-space:normal;font-weight:600}
       </form>
     </div>
   </div>
+</section>
+
+<section id="elenco">
+  <h2>Tutti gli imprevisti</h2>
+  <div class="row" style="margin:16px 0">
+    <label>Tipo<select id="eTipo"><option value="pre">Prepartita</option><option value="ses">Sessione</option></select></label>
+    <label>Tono<select id="eTono"><option value="">Tutti</option><option value="n">Negativi</option><option value="p">Positivi</option><option value="x">Neutri</option></select></label>
+    <label>Categoria<select id="eCat"><option value="">Tutte</option><option value="-">Validi ovunque</option><option value="B">League One e Two</option><option value="C">Championship</option><option value="P">Premier League</option></select></label>
+    <label>Cerca<input id="eQ" type="search" autocomplete="off" placeholder="es. infortunio, rigori"></label>
+  </div>
+  <p class="muted" id="eCount"></p>
+  <div class="box"><div class="scroll"><table class="stack"><thead><tr><th class="n">N.</th><th>Imprevisto</th><th>Tono</th><th>Dove e quando</th><th>Cosa fa nell'app</th></tr></thead><tbody id="eBody"></tbody></table></div></div>
 </section>
 
 <section id="impostazioni">
@@ -639,8 +653,32 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b
   save();render()}});
 
 // schede
-const TABS=['partita','sessione','rosa','infermeria','impostazioni'];
+const TABS=['partita','sessione','rosa','infermeria','elenco','impostazioni'];
 function tab(){const t=TABS.includes(location.hash.slice(1))?location.hash.slice(1):'partita';TABS.forEach(x=>{document.getElementById(x).classList.toggle('on',x===t)});document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('on',a.dataset.t===t))}
+const LGN={B:'League One e Two',C:'Championship',P:'Premier League'};
+const MODL={imp:'importante',cru:'cruciale',pin:'prestito in entrata',svi:'svincolato',forb:'forbice OVR',stel:'stella osservatori'};
+const modTxt=m=>m?Object.entries(m).map(([k,v])=>v<=-99?'Nessun '+MODL[k]:(v>0?'+':'')+v+' '+MODL[k]).join(', '):'';
+function tgTxt(tg,second){if(!tg)return '';if(tg.src)return {inj:'un infortunato',rec:'un giocatore in rientro',ban:'uno squalificato'}[tg.src];return generic(tg,second).replace(' a tua scelta','')}
+function fxTxt(e,isSes){const o=[];const pl=n=>n+' '+(n>1?'partite':'partita');
+ e.fx.forEach(f=>{const w=f.who==='B'?'il secondo':'';
+  if(f.k==='inj')o.push(`Infortunio ${CLS[f.c]}${w?' (anche '+w+')':''}`);
+  else if(f.k==='out')o.push(`Fuori ${pl(f.n)}${w?' (anche '+w+')':''}`);
+  else if(f.k==='ban')o.push(`Squalifica ${pl(f.n)}`);
+  else if(f.k==='eff')o.push(`Resta attivo ${pl(f.n)}`);
+  else if(f.k==='ses')o.push((f.sc==='sea'?'Fino a fine stagione':'Fino alla prossima sessione')+(f.mod?' · '+modTxt(f.mod):''));
+  else if(f.k==='flag')o.push(FLAGL[f.f]+(f.n?` (${pl(f.n)})`:''));
+  else if(f.k==='heal')o.push('Torna subito disponibile');
+  else if(f.k==='ext')o.push(f.n>0?`+${pl(f.n)} di stop`:`${pl(-f.n)} di stop in meno`);
+  else if(f.k==='cure')o.push('Cancella un effetto attivo')});
+ if(isSes&&!e.ne&&!e.fx.some(f=>['ses','inj','out','ban'].includes(f.k)))o.push((e.sc==='sea'?'Fino a fine stagione':'Fino alla prossima sessione')+(e.mod?' · '+modTxt(e.mod):''));
+ if(!o.length)o.push('Solo per questa partita');
+ return o.join('; ')}
+function lista(){const isSes=$('#eTipo').value==='ses',L=isSes?SES:PRE,t=$('#eTono').value,c=$('#eCat').value,q=$('#eQ').value.trim().toLowerCase();
+ const rows=L.map((e,i)=>({e,i,txt:e.s.replace('{A}','['+tgTxt(e.tg,false)+']').replace('{B}','['+tgTxt(e.tg2,true)+']')}))
+  .filter(r=>(!t||r.e.t===t)&&(!c||(c==='-'?!r.e.lg:(r.e.lg||[]).includes(c)))&&(!q||r.txt.toLowerCase().includes(q)));
+ $('#eCount').textContent=`${rows.length} su ${L.length} imprevisti ${isSes?'di sessione':'prepartita'}. Tra parentesi quadre: il giocatore che l'app sceglie dalla tua rosa.`;
+ $('#eBody').innerHTML=rows.map(r=>`<tr><td class="n" data-l="N.">${r.i+1}</td><td class="wrap" data-l="Imprevisto">${esc(r.txt)}</td><td data-l="Tono"><span class="pill p-${r.e.t}">${{n:'Negativo',p:'Positivo',x:'Neutro'}[r.e.t]}</span></td><td data-l="Dove e quando">${r.e.lg?LGN[r.e.lg[0]]:'Ovunque'}${r.e.when?' · '+(r.e.when==='E'?'solo estate':'solo gennaio'):''}</td><td class="wrap" data-l="Cosa fa">${esc(fxTxt(r.e,isSes))}</td></tr>`).join('')}
+['#eTipo','#eTono','#eCat','#eQ'].forEach(id=>$(id).addEventListener('input',lista));lista();
 addEventListener('hashchange',tab);tab();render();
 }
 </script>
