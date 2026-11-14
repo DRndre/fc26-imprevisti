@@ -617,10 +617,10 @@ E('x',1,"Mercato asiatico: almeno un acquisto deve venire da un campionato asiat
 ];
 PRE.forEach((e,i)=>e.id='m'+i);SES.forEach((e,i)=>e.id='s'+i);
 
-const blank=()=>({at:0,club:'',lega:'League Two',prob:50,coppe:0,magg:0,svi:0,reg5:true,rosa:[],inf:[],eff:[],flags:{imm:0,shield:0,force:0,med:0,sshield:0,medbad:0,noinj:0,nonneg:0},v3:1,extra:[],recent:[],srecent:[],last:null,sesLast:null});
+const blank=()=>({at:0,club:'',lega:'League Two',prob:50,coppe:0,magg:0,svi:0,reg5:true,rosa:[],inf:[],eff:[],flags:{imm:0,shield:0,force:0,med:0,sshield:0,medbad:0,noinj:0,nonneg:0},v4:1,extra:[],recent:[],srecent:[],last:null,sesLast:null});
 const LS='fc26-imprevisti-v1';
 let S=blank(),undo=null,editId=null,ref=null,saving=false,pend=false,tmr=null,flipNext=false;
-const load=j=>{const o=Object.assign(blank(),JSON.parse(j));o.flags=Object.assign(blank().flags,o.flags);o.rosa.forEach(p=>{if(OLDR[p.ruolo])p.ruolo=OLDR[p.ruolo]});if(!o.v3){if(o.prob===30)o.prob=50;o.v3=1}if(!o.extra)o.extra=[];return o};
+const load=j=>{const raw=JSON.parse(j),o=Object.assign(blank(),raw);if(!raw.v4){if(o.prob===30)o.prob=50;o.v4=1}o.flags=Object.assign(blank().flags,o.flags);o.rosa.forEach(p=>{if(OLDR[p.ruolo])p.ruolo=OLDR[p.ruolo]});if(!o.extra)o.extra=[];return o};
 try{const r=localStorage.getItem(LS);if(r)S=load(r)}catch(e){}
 
 const setSync=t=>{$('#sync').textContent=t};
