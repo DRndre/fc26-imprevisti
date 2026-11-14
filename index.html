@@ -95,6 +95,7 @@ td.wrap{white-space:normal;min-width:220px}.p-n{background:#e0322c;color:#fff}.p
 .rosa tr.dim td{color:var(--mut)}
 .arr{display:inline-block;width:18px;font-weight:700;color:var(--mut)}.arr.in{color:#2f6fde}
 @media(max-width:600px){.rosa tr.sep{display:block;padding:0}.rosa tr.sep td{display:block;border:0}.rosa tr.sep td::before{content:none}}
+.rulebox{background:var(--line);border-radius:10px;padding:10px 12px;font-size:15px}.rulebox b{font-family:"Barlow Condensed";font-size:20px}
 .toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#06281a;color:#fff;padding:10px 16px;border-radius:12px;display:flex;gap:12px;align-items:center;z-index:9;max-width:92vw}
 .toast[hidden]{display:none}
 @media(max-width:600px){table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}.stack td{display:flex;justify-content:space-between;gap:12px;border:0;padding:3px 0;white-space:normal}.stack td::before{content:attr(data-l);color:var(--mut)}.led b{font-size:26px}nav a{font-size:17px;padding:10px 10px}}
@@ -190,8 +191,9 @@ td.wrap{white-space:normal;min-width:220px}.p-n{background:#e0322c;color:#fff}.p
         <label style="grid-column:1/-1">Giocatore<select id="iPl"></select></label>
         <label style="grid-column:1/-1" id="iFreeL">Nome (se non è in rosa)<input id="iFree" autocomplete="off"></label>
         <label>Tipo<select id="iK"><option value="inj">Infortunio</option><option value="ban">Squalifica</option><option value="out">Indisponibile</option></select></label>
-        <label>Durata infortunio<select id="iC"><option value="1">≤1 mese</option><option value="2">1-3 mesi</option><option value="3">3-6 mesi</option><option value="4">&gt;6 mesi</option></select></label>
-        <label>Partite fuori<input id="iN" type="number" min="1" max="60" placeholder="vuoto = fino al rientro" inputmode="numeric"></label>
+        <label id="iCL">Durata infortunio<select id="iC"><option value="1">≤1 mese</option><option value="2">1-3 mesi</option><option value="3">3-6 mesi</option><option value="4">&gt;6 mesi</option></select></label>
+        <label id="iNL">Partite fuori (facoltativo)<input id="iN" type="number" min="1" max="60" placeholder="vuoto = fino al rientro nel gioco" inputmode="numeric"></label>
+        <div id="iRule" class="rulebox" style="grid-column:1/-1" aria-live="polite"></div>
         <div class="acts" style="grid-column:1/-1;justify-content:flex-start"><button class="pri" type="submit">Aggiungi</button></div>
       </form>
     </div>
@@ -798,6 +800,9 @@ $('#bImp').addEventListener('click',()=>{let n=0;$('#imp').value.split('\n').for
 
 // form infermeria
 $('#iPl').addEventListener('change',()=>{$('#iFreeL').hidden=!!$('#iPl').value});
+function iRule(){const k=$('#iK').value,c=+$('#iC').value,inj=k==='inj';$('#iCL').hidden=!inj;$('#iNL').firstChild.textContent=inj?'Partite fuori (facoltativo)':'Partite da saltare';$('#iN').placeholder=inj?'vuoto = fino al rientro nel gioco':'1';
+ $('#iRule').hidden=!inj;if(inj)$('#iRule').innerHTML=`Secondo le regole, dopo il rientro salta <b>${POST[c]} ${POST[c]>1?'partite':'partita'}</b> (infortunio ${CLS[c]}).`}
+['#iK','#iC'].forEach(id=>$(id).addEventListener('change',iRule));iRule();
 $('#iForm').addEventListener('submit',e=>{e.preventDefault();const pid=$('#iPl').value||null;const p=pid&&S.rosa.find(x=>x.id===pid);const name=p?p.nome:$('#iFree').value.trim();if(!name)return;
  const k=$('#iK').value,c=+$('#iC').value,n=$('#iN').value?+$('#iN').value:null;
  if(k==='inj')S.inf.push({id:uid(),pid,name,k,c,out:n,post:POST[c],ph:'out',why:'Dal gioco',o:'game'});
