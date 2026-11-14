@@ -91,18 +91,10 @@ td.nm{white-space:normal;font-weight:600}
 .rules ol{padding-left:22px;margin:6px 0 14px}.rules h4{margin:14px 0 4px;font:700 19px "Barlow Condensed"}
 .tbar{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:18px;color:var(--ink);font-size:15px}.tbar input{width:22px;min-height:22px;margin-top:2px}.tbar.on{border-color:var(--yel);box-shadow:inset 4px 0 0 var(--yel)}
 td.wrap{white-space:normal;min-width:220px}.p-n{background:#e0322c;color:#fff}.p-p{background:#1d9e55;color:#fff}.p-x{background:#ffd21f;color:#231c00}
-.grp{margin-top:20px}.grp:first-child{margin-top:4px}
-.grp h4{display:flex;align-items:center;flex-wrap:wrap;gap:10px;font:700 22px/1.1 "Barlow Condensed";margin:0 0 6px;padding-bottom:8px;border-bottom:2px solid var(--line)}
-.grp h4 small{font:500 14px Barlow;color:var(--mut)}
-.rc{color:#fff;font:800 14px/1 "Barlow Condensed";padding:6px 8px;border-radius:6px}
-.pl{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:14px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
-.pl:last-child{border-bottom:0}.pl.away{opacity:.62}
-.ovr{width:52px;height:52px;border-radius:10px;display:grid;place-items:center;font:800 24px/1 "Barlow Condensed";color:#fff;background:var(--rc)}
-.pl .nm{font-weight:600;font-size:17px;line-height:1.2}.pl .meta{font-size:14px;color:var(--mut)}
-.pl .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px}.pl .act{display:flex;gap:6px}
-.r-cruciale{background:var(--yel);color:#231c00}.r-importante{background:#0e4a2b;color:#fff}
-.p-loanin{background:#2f6fde;color:#fff}.p-loanout{background:#5c6f63;color:#fff}
-@media(max-width:600px){.pl{grid-template-columns:46px minmax(0,1fr)}.ovr{width:46px;height:46px;font-size:21px}.pl .act{grid-column:2}}
+.rosa tr.sep td{background:var(--line);font:700 15px/1.2 "Barlow Condensed",Barlow,sans-serif;padding:7px 8px;letter-spacing:.01em}
+.rosa tr.dim td{color:var(--mut)}
+.arr{display:inline-block;width:18px;font-weight:700;color:var(--mut)}.arr.in{color:#2f6fde}
+@media(max-width:600px){.rosa tr.sep{display:block;padding:0}.rosa tr.sep td{display:block;border:0}.rosa tr.sep td::before{content:none}}
 .toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#06281a;color:#fff;padding:10px 16px;border-radius:12px;display:flex;gap:12px;align-items:center;z-index:9;max-width:92vw}
 .toast[hidden]{display:none}
 @media(max-width:600px){table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}.stack td{display:flex;justify-content:space-between;gap:12px;border:0;padding:3px 0;white-space:normal}.stack td::before{content:attr(data-l);color:var(--mut)}.led b{font-size:26px}nav a{font-size:17px;padding:10px 10px}}
@@ -176,7 +168,8 @@ td.wrap{white-space:normal;min-width:220px}.p-n{background:#e0322c;color:#fff}.p
   </div>
   <div class="box">
     <h3>Rosa <small id="rCount"></small></h3>
-    <div id="rGroups"></div>
+    <p class="muted" style="margin:0 0 8px"><span class="arr in">←</span> arrivato in prestito da un altro club &nbsp;·&nbsp; <span class="arr">→</span> mandato via in prestito</p>
+    <div class="scroll"><table class="stack rosa"><thead><tr><th>Nome</th><th class="n">OVR</th><th class="n">Età</th><th>Ruolo</th><th class="n">Stipendio</th><th></th></tr></thead><tbody id="rBody"></tbody></table></div>
     <p class="empty" id="rEmpty">Rosa vuota: finché non la inserisci, gli imprevisti indicano "un giocatore a tua scelta" invece di un nome.</p>
   </div>
   <div class="box">
@@ -777,17 +770,11 @@ function render(){
  $('#checks').innerHTML=checks().map(c=>`<div class="ck ${c.ok==null?'in':c.ok?'ok':'ko'}"><i>${c.ok==null?'i':c.ok?'✓':'!'}</i><div><b>${esc(c.t)}</b>${c.d?`<span class="muted">${esc(c.d)}</span>`:''}</div></div>`).join('');
  const ord={POR:0,DIF:1,CEN:2,ATT:3};const RS=[...S.rosa].sort((a,b)=>ord[a.rep]-ord[b.rep]||b.ovr-a.ovr);
  const off=new Set(S.inf.map(e=>e.pid));
- const GR=[['POR','Portieri','#e8a317'],['DIF','Difensori','#2f6fde'],['CEN','Centrocampisti','#1d9e55'],['ATT','Attaccanti','#e0322c']];
- const row=p=>{const away=p.tipo==='OUT';const tags=[`<span class="pill r-${p.ruolo}">${RL[p.ruolo]}</span>`];
-  if(p.tipo==='IN')tags.push('<span class="pill p-loanin">In prestito da un altro club</span>');
-  if(away)tags.push('<span class="pill p-loanout">Via in prestito</span>');
-  if(+p.eta<21)tags.push('<span class="pill">Under 21</span>');
-  if(off.has(p.id))tags.push('<span class="pill p-inj">Non disponibile</span>');
-  return `<div class="pl${away?' away':''}" style="--rc:${GR.find(g=>g[0]===p.rep)[2]}"><div class="ovr" aria-label="OVR">${p.ovr}</div><div><div class="nm">${esc(p.nome)}</div><div class="meta">${p.eta} anni · ${eur(p.stip)}/sett.</div><div class="tags">${tags.join('')}</div></div><div class="act"><button class="sm" data-a="edit" data-id="${p.id}">Modifica</button><button class="sm dang" data-a="delP" data-id="${p.id}">Elimina</button></div></div>`};
- const avg=L=>L.length?Math.round(L.reduce((a,p)=>a+(+p.ovr||0),0)/L.length):0;
+ const GR=[['POR','Portieri'],['DIF','Difensori'],['CEN','Centrocampisti'],['ATT','Attaccanti']];
+ const row=p=>`<tr${p.tipo==='OUT'?' class="dim"':''}><td class="nm" data-l="Nome">${p.tipo==='IN'?'<span class="arr in" title="Arrivato in prestito">←</span>':p.tipo==='OUT'?'<span class="arr" title="Via in prestito">→</span>':''}${esc(p.nome)}${+p.eta<21?' <span class="pill">U21</span>':''}${off.has(p.id)?' <span class="pill p-inj">out</span>':''}</td><td class="n" data-l="OVR">${p.ovr}</td><td class="n" data-l="Età">${p.eta}</td><td data-l="Ruolo">${RL[p.ruolo]}</td><td class="n" data-l="Stipendio">${eur(p.stip)}</td><td data-l=""><button class="sm" data-a="edit" data-id="${p.id}">Modifica</button> <button class="sm dang" data-a="delP" data-id="${p.id}">Elimina</button></td></tr>`;
  const home=RS.filter(p=>p.tipo!=='OUT'),away=RS.filter(p=>p.tipo==='OUT');
- $('#rGroups').innerHTML=GR.map(([r,n,c])=>{const L=home.filter(p=>p.rep===r);return `<div class="grp"><h4><span class="rc" style="background:${c}">${r}</span>${n}<small>${L.length} · OVR medio ${avg(L)||'—'}</small></h4>${L.length?L.map(row).join(''):'<p class="empty">Nessuno.</p>'}</div>`}).join('')
-  +(away.length?`<div class="grp"><h4><span class="rc" style="background:#5c6f63">OUT</span>Via in prestito<small>${away.length} · non contano nella rosa</small></h4>${away.map(row).join('')}</div>`:'');
+ $('#rBody').innerHTML=S.rosa.length?GR.map(([r,n])=>{const L=home.filter(p=>p.rep===r);return `<tr class="sep"><td colspan="6">${n} · ${L.length}</td></tr>`+L.map(row).join('')}).join('')
+  +(away.length?`<tr class="sep"><td colspan="6">Via in prestito · ${away.length} (fuori dal conteggio)</td></tr>`+away.map(row).join(''):''):'';
  $('#rEmpty').hidden=!!S.rosa.length;$('#rCount').textContent=S.rosa.length?S.rosa.length+' giocatori':'';
  // infermeria
  $('#infList').innerHTML=S.inf.length?S.inf.map(e=>`<li>${infLine(e)}<div class="acts">${e.ph==='out'&&e.k==='inj'&&e.post>0?`<button class="sm pri" data-a="back" data-id="${e.id}">Rientrato</button>`:''}<button class="sm dang" data-a="delI" data-id="${e.id}">Rimuovi</button></div></li>`).join(''):'<li class="empty">Nessuno in infermeria.</li>';
