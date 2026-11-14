@@ -123,7 +123,7 @@ td.wrap{white-space:normal;min-width:220px}.p-n{background:#e0322c;color:#fff}.p
       <div class="stage" id="stage"></div>
     </div>
     <div>
-      <div class="box"><h3>Non disponibili oggi</h3><ul class="list" id="unav"></ul></div>
+      <div class="box"><h3>Non disponibili</h3><ul class="list" id="unav"></ul></div>
       <div class="box"><h3>Effetti attivi</h3><ul class="list" id="effs"></ul><div class="chips" id="flags" style="margin-top:12px"></div></div>
     </div>
   </div>
@@ -180,7 +180,7 @@ td.wrap{white-space:normal;min-width:220px}.p-n{background:#e0322c;color:#fff}.p
     <div class="box"><h3>Infermeria e squalifiche</h3><ul class="list" id="infList"></ul></div>
     <div class="box">
       <h3>Aggiungi dal gioco</h3>
-      <p class="muted">Per gli infortuni veri di FC26: lascia vuote le partite e premi "Rientrato" quando il gioco lo rimette a disposizione; da lì partono le partite di rientro. Se inserisci un numero di partite, scendono a ogni estrazione.</p>
+      <p class="muted">La lista la gestisci tu: l'app non conta le partite. Per gli infortuni veri di FC26 lascia vuote le partite e premi "Rientrato" quando il gioco lo rimette a disposizione: ti mostra quante partite deve ancora saltare. Premi "Rimuovi" quando un giocatore torna disponibile.</p>
       <form id="iForm" class="row">
         <label style="grid-column:1/-1">Giocatore<select id="iPl"></select></label>
         <label style="grid-column:1/-1" id="iFreeL">Nome (se non è in rosa)<input id="iFree" autocomplete="off"></label>
@@ -245,7 +245,7 @@ td.wrap{white-space:normal;min-width:220px}.p-n{background:#e0322c;color:#fff}.p
       <h4>Rientro dagli infortuni</h4>
       <ol><li>Fino a 1 mese: salta 1 partita dopo il rientro.</li><li>1-3 mesi: salta 3 partite.</li><li>3-6 mesi: salta 5 partite.</li><li>Oltre 6 mesi: salta 7 partite.</li></ol>
       <h4>Imprevisti</h4>
-      <p class="muted">Prepartita: estrazione prima di ogni partita con la probabilità scelta. Ogni estrazione conta come una partita: prima scendono di 1 infortuni, squalifiche ed effetti, poi esce il nuovo imprevisto. Chi aggiungi a mano in infermeria inizia a scalare dalla partita successiva; tono circa 65% negativi, 20% positivi, 15% neutri. 200 imprevisti prepartita e 120 di sessione; circa uno su quattro esce solo nella categoria a cui è legato, e alcuni di sessione solo in estate o solo a gennaio. Gli ultimi 20 prepartita e gli ultimi 12 di sessione non si ripetono. Infortuni da imprevisto: ≤1 mese = 2-4 partite, 1-3 mesi = 5-12, 3-6 mesi = 13-24, oltre 6 mesi = 25-38.</p>
+      <p class="muted">Prepartita: estrazione prima di ogni partita con la probabilità scelta. L'app non conta le partite: infortunati, squalificati ed effetti restano in lista finché non li togli tu. Con "Estrai un altro imprevisto" ne peschi uno in più per la stessa partita; tono circa 65% negativi, 20% positivi, 15% neutri. 200 imprevisti prepartita e 120 di sessione; circa uno su quattro esce solo nella categoria a cui è legato, e alcuni di sessione solo in estate o solo a gennaio. Gli ultimi 20 prepartita e gli ultimi 12 di sessione non si ripetono. Infortuni da imprevisto: ≤1 mese = 2-4 partite, 1-3 mesi = 5-12, 3-6 mesi = 13-24, oltre 6 mesi = 25-38.</p>
     </div>
   </div>
 </section>
@@ -607,10 +607,10 @@ E('x',1,"Mercato asiatico: almeno un acquisto deve venire da un campionato asiat
 ];
 PRE.forEach((e,i)=>e.id='m'+i);SES.forEach((e,i)=>e.id='s'+i);
 
-const blank=()=>({at:0,club:'',lega:'League Two',prob:30,coppe:0,magg:0,svi:0,reg5:true,rosa:[],inf:[],eff:[],flags:{imm:0,shield:0,force:0,med:0,sshield:0,medbad:0,noinj:0,nonneg:0},recent:[],srecent:[],last:null,sesLast:null});
+const blank=()=>({at:0,club:'',lega:'League Two',prob:50,coppe:0,magg:0,svi:0,reg5:true,rosa:[],inf:[],eff:[],flags:{imm:0,shield:0,force:0,med:0,sshield:0,medbad:0,noinj:0,nonneg:0},v3:1,extra:[],recent:[],srecent:[],last:null,sesLast:null});
 const LS='fc26-imprevisti-v1';
 let S=blank(),undo=null,editId=null,ref=null,saving=false,pend=false,tmr=null,flipNext=false;
-const load=j=>{const o=Object.assign(blank(),JSON.parse(j));o.flags=Object.assign(blank().flags,o.flags);o.rosa.forEach(p=>{if(OLDR[p.ruolo])p.ruolo=OLDR[p.ruolo]});return o};
+const load=j=>{const o=Object.assign(blank(),JSON.parse(j));o.flags=Object.assign(blank().flags,o.flags);o.rosa.forEach(p=>{if(OLDR[p.ruolo])p.ruolo=OLDR[p.ruolo]});if(!o.v3){if(o.prob===30)o.prob=50;o.v3=1}if(!o.extra)o.extra=[];return o};
 try{const r=localStorage.getItem(LS);if(r)S=load(r)}catch(e){}
 
 const setSync=t=>{$('#sync').textContent=t};
@@ -677,10 +677,10 @@ function apply(ev,A,B,scope){const o=[];
   else if(f.k==='cure'){const L=S.eff.filter(x=>x.sc==='match');const e=L[rnd(0,L.length-1)];S.eff=S.eff.filter(x=>x!==e);o.push('Cancellato: '+e.s)}}
  return o}
 
-function trial(fn,kind){if(!S.test){fn();return}const keep=JSON.stringify(S);fn();const last=S.last,ses=S.sesLast;S=load(keep);if(kind==='pre'){S.last=last;if(last)last.test=1}else{S.sesLast=ses;if(ses)ses.test=1}flipNext=true;save();render()}
+function trial(fn,kind){if(!S.test){fn();return}const keep=JSON.stringify(S);fn();const last=S.last,ses=S.sesLast,ex=S.extra;S=load(keep);if(kind==='pre'){S.last=last;S.extra=ex;if(last)last.test=1;(ex||[]).forEach(x=>x.test=1)}else{S.sesLast=ses;if(ses)ses.test=1}flipNext=true;save();render()}
 function snap(t){undo=JSON.stringify(S);$('#toastT').textContent=t;$('#toast').hidden=false;clearTimeout(snap.t);snap.t=setTimeout(()=>$('#toast').hidden=true,7000)}
 
-function drawPre(){snap('Nuova estrazione');advance();const r={};const noinj=S.flags.noinj>0;if(noinj)S.flags.noinj--;
+function drawPre(){snap('Nuova estrazione');S.extra=[];const r={};const noinj=S.flags.noinj>0;if(noinj)S.flags.noinj--;
  if(S.flags.imm>0){r.kind='imm';S.flags.imm--;r.left=S.flags.imm}
  else{const forced=!!S.flags.force,roll=rnd(1,100);r.roll=roll;
   if(!forced&&roll>S.prob)r.kind='none';
@@ -688,8 +688,11 @@ function drawPre(){snap('Nuova estrazione');advance();const r={};const noinj=S.f
    if(!pk)r.kind='none';else{const{ev,A,B}=pk;Object.assign(r,{kind:'ev',t:ev.t,html:fill(ev.s,A,B),forced,lg:ev.lg?S.lega:null});
     if(ev.t==='n'&&S.flags.shield){S.flags.shield=0;r.shielded=1;r.applied=['Annullato dallo spogliatoio carico']}else r.applied=apply(ev,A,B,'pre');
     S.recent=[ev.id,...S.recent].slice(0,20)}}}
- S.inf.forEach(e=>e.seen=1);S.eff.forEach(e=>{if(e.sc==='match')e.seen=1});
  S.last=r;flipNext=true;save();render()}
+function drawExtra(){snap('Imprevisto in più estratto');const pk=pickEvent(PRE,S.recent,null,{});if(!pk)return;const{ev,A,B}=pk;
+ const r={kind:'ev',t:ev.t,html:fill(ev.s,A,B),extra:1,lg:ev.lg?S.lega:null};
+ if(ev.t==='n'&&S.flags.shield){S.flags.shield=0;r.shielded=1;r.applied=['Annullato dallo spogliatoio carico']}else r.applied=apply(ev,A,B,'pre');
+ S.recent=[ev.id,...S.recent].slice(0,20);S.extra=[...(S.extra||[]),r];flipNext=true;save();render()}
 
 function advance(){
  S.inf.forEach(e=>{if(!e.seen)return;if(e.ph==='out'){if(e.out!=null){e.out--;if(e.out<=0){if(e.k==='inj'&&e.post>0)e.ph='rec';else e.done=1}}}else{e.post--;if(e.post<=0)e.done=1}});
@@ -728,24 +731,25 @@ function checks(){const R=inRosa(),out=[];const ck=(ok,t,d)=>out.push({ok,t,d});
 const eur=n=>'€'+(+n||0).toLocaleString('it-IT');
 
 function infLine(e){const pill=e.ph==='rec'?'<span class="pill p-rec">Rientro</span>':e.k==='inj'?'<span class="pill p-inj">Infortunio</span>':e.k==='ban'?'<span class="pill p-ban">Squalifica</span>':`<span class="pill p-out">${esc(e.why)}</span>`;
- const st=e.ph==='rec'?`deve saltare ancora ${e.post} ${e.post>1?'partite':'partita'}`:e.out==null?`fuori fino al rientro nel gioco (${CLS[e.c]})`:`fuori ancora ${e.out} ${e.out>1?'partite':'partita'}${e.k==='inj'?` + ${e.post} dopo il rientro`:''}`;
+ const pl=n=>n+' '+(n>1?'partite':'partita');
+ const st=e.ph==='rec'?`rientrato: deve saltare ${pl(e.post)}`:e.out==null?`fuori fino al rientro nel gioco (${CLS[e.c]}), poi ${pl(e.post)} di rientro`:`fuori ${pl(e.out)}${e.k==='inj'&&e.post?` + ${e.post} dopo il rientro`:''}`;
  return `<div>${pill} <b>${esc(e.name)}</b><div class="muted">${st}</div></div>`}
 
 function render(){
  $('#club').textContent=S.club||'La mia carriera';$('#lega').textContent=S.lega;
  // prepartita
  const L=S.last;let h='';
+ const card=L=>L.kind==='imm'?`<div class="card none"><div class="tag">Immunità</div><div class="big">Nessun imprevisto</div><div class="txt">Il gruppo è protetto: si gioca senza imprevisti.${L.left?` Ancora ${L.left} ${L.left>1?'partite':'partita'} di immunità.`:''}</div></div>`
+  :L.kind==='none'?`<div class="card none"><div class="tag">${L.test?'Prova · ':''}Prepartita</div><div class="big">Tutto tranquillo</div><div class="txt">Nessun imprevisto: si gioca normalmente.</div></div>`
+  :`<div class="card t-${L.t}"><div class="tag">${L.test?'Prova · ':''}${L.extra?'In più · ':''}${TONEL[L.t]}${L.forced?' · garantito':''}${L.lg?' · '+esc(L.lg):''}</div><div class="txt">${L.shielded?'<s>'+L.html+'</s>':L.html}</div>${L.test&&L.applied&&L.applied.length?'<div class="tag">Succederebbe:</div>':''}${L.applied&&L.applied.length?'<ul>'+L.applied.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>':''}</div>`;
  if(!L)h=`<div class="card back"><div class="big">Prossima partita</div><div>Probabilità imprevisto: ${S.flags.imm>0?'immunità attiva':S.flags.force?'garantito':S.prob+'%'}</div></div><div class="acts"><button class="pri" data-a="draw">Estrai imprevisto</button></div>`;
- else{let c;
-  if(L.kind==='imm')c=`<div class="card none"><div class="tag">Immunità</div><div class="big">Nessun imprevisto</div><div class="txt">Il gruppo è protetto: si gioca senza imprevisti.${L.left?` Ancora ${L.left} ${L.left>1?'partite':'partita'} di immunità.`:''}</div></div>`;
-  else if(L.kind==='none')c=`<div class="card none"><div class="tag">${L.test?'Prova · ':''}Prepartita</div><div class="big">Tutto tranquillo</div><div class="txt">Nessun imprevisto: si gioca normalmente.</div></div>`;
-  else c=`<div class="card t-${L.t}"><div class="tag">${L.test?'Prova · ':''}${TONEL[L.t]}${L.forced?' · garantito':''}${L.lg?' · '+esc(L.lg):''}</div><div class="txt">${L.shielded?'<s>'+L.html+'</s>':L.html}</div>${L.test&&L.applied&&L.applied.length?'<div class="tag">Succederebbe:</div>':''}${L.applied&&L.applied.length?'<ul>'+L.applied.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>':''}</div>`;
-  h=c+`<div class="roll">${L.roll!=null?`Dado: ${L.roll} su 100 (imprevisto fino a ${S.prob})`:''}</div><div class="acts"><button class="pri" data-a="draw">Estrai per la prossima partita</button></div><div class="roll">Ogni estrazione conta come una partita: infortuni, squalifiche ed effetti scendono da soli.</div>`}
- $('#stage').innerHTML=h;if(flipNext){const c=$('#stage .card:not(.back)');if(c)c.classList.add('flip')}
+ else{let c=[L,...(S.extra||[])].map(card).join('');
+  h=c+`<div class="roll">${L.roll!=null?`Dado: ${L.roll} su 100 (imprevisto fino a ${S.prob})`:''}</div><div class="acts"><button class="pri" data-a="draw">Estrai per la prossima partita</button><button data-a="extra">Estrai un altro imprevisto</button></div>`}
+ $('#stage').innerHTML=h;if(flipNext){const cs=$('#stage').querySelectorAll('.card:not(.back)');const c=cs[cs.length-1];if(c)c.classList.add('flip')}
  const UN=S.inf.filter(e=>!(e.ph==='out'&&e.out===0));
- $('#unav').innerHTML=UN.length?UN.map(e=>`<li>${infLine(e)}</li>`).join(''):'<li class="empty">Tutti disponibili.</li>';
+ $('#unav').innerHTML=UN.length?UN.map(e=>`<li>${infLine(e)}<button class="sm dang" data-a="delI" data-id="${e.id}">Rimuovi</button></li>`).join(''):'<li class="empty">Tutti disponibili.</li>';
  const ME=S.eff.filter(e=>e.sc==='match'),SE=S.eff.filter(e=>e.sc!=='match');
- const effLi=e=>`<li><div>${esc(e.s)}<div class="muted">${e.sc==='match'?`ancora ${e.n} ${e.n>1?'partite':'partita'}`:e.sc==='sea'?'fino a fine stagione':'fino alla prossima sessione'}</div></div><button class="sm dang" data-a="delEff" data-id="${e.id}" aria-label="Rimuovi effetto">Rimuovi</button></li>`;
+ const effLi=e=>`<li><div>${esc(e.s)}<div class="muted">${e.sc==='match'?`dura ${e.n} ${e.n>1?'partite':'partita'}, toglilo tu quando finisce`:e.sc==='sea'?'fino a fine stagione':'fino alla prossima sessione'}</div></div><button class="sm dang" data-a="delEff" data-id="${e.id}" aria-label="Rimuovi effetto">Rimuovi</button></li>`;
  $('#effs').innerHTML=S.eff.length?[...ME,...SE].map(effLi).join(''):'<li class="empty">Nessun effetto in corso.</li>';
  $('#flags').innerHTML=Object.entries(S.flags).filter(([,v])=>v).map(([k,v])=>`<span class="chip">${FLAGL[k]}${k==='imm'||k==='noinj'?` (${v} ${v>1?'partite':'partita'})`:''}</span>`).join('');
  // sessione
@@ -764,7 +768,7 @@ function render(){
  $('#rBody').innerHTML=RS.map(p=>`<tr><td class="nm" data-l="Nome">${esc(p.nome)}${off.has(p.id)?' <span class="pill p-inj">out</span>':''}</td><td data-l="Reparto">${p.rep}</td><td class="n" data-l="OVR">${p.ovr}</td><td class="n" data-l="Età">${p.eta}${+p.eta<21?' <span class="pill">U21</span>':''}</td><td data-l="Ruolo">${RL[p.ruolo]}</td><td class="n" data-l="Stipendio">${eur(p.stip)}</td><td data-l="Tipo">${p.tipo==='IN'?'Prestito in':p.tipo==='OUT'?'Prestito out':'Proprietà'}</td><td data-l=""><button class="sm" data-a="edit" data-id="${p.id}">Modifica</button> <button class="sm dang" data-a="delP" data-id="${p.id}">Elimina</button></td></tr>`).join('');
  $('#rEmpty').hidden=!!S.rosa.length;$('#rCount').textContent=S.rosa.length?S.rosa.length+' giocatori':'';
  // infermeria
- $('#infList').innerHTML=S.inf.length?S.inf.map(e=>`<li>${infLine(e)}<div class="acts">${e.ph==='out'&&e.out!=null?`<button class="sm" data-a="dec" data-id="${e.id}" aria-label="Una partita in meno">−1</button><button class="sm" data-a="inc" data-id="${e.id}" aria-label="Una partita in più">+1</button>`:''}${e.ph==='out'?`<button class="sm pri" data-a="back" data-id="${e.id}">Rientrato</button>`:''}<button class="sm dang" data-a="delI" data-id="${e.id}">Rimuovi</button></div></li>`).join(''):'<li class="empty">Nessuno in infermeria.</li>';
+ $('#infList').innerHTML=S.inf.length?S.inf.map(e=>`<li>${infLine(e)}<div class="acts">${e.ph==='out'&&e.k==='inj'&&e.post>0?`<button class="sm pri" data-a="back" data-id="${e.id}">Rientrato</button>`:''}<button class="sm dang" data-a="delI" data-id="${e.id}">Rimuovi</button></div></li>`).join(''):'<li class="empty">Nessuno in infermeria.</li>';
  const ip=$('#iPl'),cur=ip.value;ip.innerHTML='<option value="">— Non in rosa —</option>'+inRosa().map(p=>`<option value="${p.id}">${esc(p.nome)} (${p.rep})</option>`).join('');ip.value=cur;
  $('#iFreeL').hidden=!!ip.value;
  // impostazioni
@@ -805,7 +809,7 @@ document.addEventListener('change',e=>{if(e.target.classList.contains('tTog')){S
 let keepArm=false;$('#bKeep').addEventListener('click',e=>{if(!keepArm){keepArm=true;e.target.textContent='Sicuro? Premi di nuovo';setTimeout(()=>{keepArm=false;e.target.textContent='Ricomincia tenendo la rosa'},4000);return}snap('Ripartito da zero');const n=blank();['club','lega','prob','coppe','magg','rosa'].forEach(k=>n[k]=S[k]);S=n;keepArm=false;e.target.textContent='Ricomincia tenendo la rosa';$('#bMsg').textContent='Infermeria, effetti, estrazioni e svincolati azzerati; rosa e impostazioni tenute.';save();render()});
 $('#bUndo').addEventListener('click',()=>{if(!undo)return;S=load(undo);undo=null;$('#toast').hidden=true;save();render()});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a,id=b.dataset.id;
- if(a==='draw')trial(drawPre,'pre');
+ if(a==='draw')trial(drawPre,'pre');else if(a==='extra')trial(drawExtra,'pre');
  else if(a==='delEff'){snap('Effetto rimosso');S.eff=S.eff.filter(x=>x.id!==id);save();render()}
  else if(a==='delP'){snap('Giocatore eliminato');S.rosa=S.rosa.filter(x=>x.id!==id);save();render()}
  else if(a==='edit'){const p=S.rosa.find(x=>x.id===id);editId=id;$('#fNome').value=p.nome;$('#fRep').value=p.rep;$('#fOvr').value=p.ovr;$('#fEta').value=p.eta;$('#fRuolo').value=p.ruolo;$('#fStip').value=p.stip;$('#fTipo').value=p.tipo;$('#fTitle').textContent='Modifica '+p.nome;$('#fSave').textContent='Salva';$('#fCancel').hidden=false;$('#fNome').focus()}
