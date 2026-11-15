@@ -791,7 +791,7 @@ function render(){
  flipNext=false;
  // rosa
  $('#checks').innerHTML=checks().map(c=>`<div class="ck ${c.ok==null?'in':c.ok?'ok':'ko'}"><i>${c.ok==null?'i':c.ok?'✓':'!'}</i><div><b>${esc(c.t)}</b>${c.d?`<span class="muted">${esc(c.d)}</span>`:''}</div></div>`).join('');
- const ord={POR:0,DIF:1,CEN:2,ATT:3};const RS=[...S.rosa].sort((a,b)=>ord[a.rep]-ord[b.rep]||b.ovr-a.ovr);
+ const ord={POR:0,DIF:1,CEN:2,ATT:3};const RO=Object.keys(RL),RS=[...S.rosa].sort((a,b)=>ord[a.rep]-ord[b.rep]||RO.indexOf(a.ruolo)-RO.indexOf(b.ruolo)||(+b.stip||0)-(+a.stip||0)||b.ovr-a.ovr);
  const off=new Set(S.inf.map(e=>e.pid));
  const rc=$('#rCap');rc.innerHTML='<option value="">Nessuno</option>'+inRosa().map(p=>`<option value="${p.id}">${esc(p.nome)} (${p.rep})</option>`).join('');rc.value=inRosa().some(p=>p.id===S.cap)?S.cap:'';
  const GR=[['POR','Portieri'],['DIF','Difensori'],['CEN','Centrocampisti'],['ATT','Attaccanti']];
