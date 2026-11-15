@@ -235,6 +235,23 @@ td.wrap{white-space:normal;min-width:220px}.p-n{background:#e0322c;color:#fff}.p
         </div>
         <p class="muted">Ogni coppa vale +1 importante. Ogni campionato o trofeo internazionale vale +1 importante e +1 cruciale.</p>
       </div>
+      <div class="box" id="cloudBox" hidden>
+        <h3>Salvataggio online</h3>
+        <div id="cloudOut">
+          <p class="muted">Accedi con la tua email per ritrovare la stessa carriera su ogni browser e dispositivo. Ti arriva un link: lo apri e sei dentro, senza password. In ogni browser lo fai una volta sola.</p>
+          <form id="cloudForm" class="row"><label style="grid-column:1/-1">Email<input id="cloudEmail" type="email" autocomplete="email" required placeholder="nome@esempio.it"></label>
+          <div class="acts" style="grid-column:1/-1;justify-content:flex-start"><button class="pri" type="submit">Inviami il link di accesso</button></div></form>
+        </div>
+        <div id="cloudIn" hidden>
+          <p id="cloudWho" style="margin:0 0 10px"></p>
+          <div id="cloudChoice" hidden class="rulebox" style="margin-bottom:10px">
+            <p style="margin:0 0 8px">Ci sono dati sia online sia in questo browser. Quali vuoi tenere? Gli altri vengono sostituiti.</p>
+            <div class="acts" style="justify-content:flex-start"><button class="pri" id="cloudUseRemote">Usa i dati online</button><button id="cloudUseLocal">Usa i dati di questo browser</button></div>
+          </div>
+          <div class="acts" style="justify-content:flex-start"><button id="cloudSyncNow">Sincronizza ora</button><button class="dang" id="cloudLogout">Esci</button></div>
+        </div>
+        <p class="muted" id="cloudMsg" aria-live="polite"></p>
+      </div>
       <div class="box">
         <h3>Backup</h3>
         <p class="muted" id="sync">Salvataggio solo in questo browser</p>
@@ -624,7 +641,7 @@ const load=j=>{const raw=JSON.parse(j),o=Object.assign(blank(),raw);if(!raw.v4){
 try{const r=localStorage.getItem(LS);if(r)S=load(r)}catch(e){}
 
 const setSync=t=>{$('#sync').textContent=t};
-function save(){S.at=Date.now();const j=JSON.stringify(S);try{localStorage.setItem(LS,j)}catch(e){}if(ref){pend=true;flush()}}
+function save(){S.at=Date.now();const j=JSON.stringify(S);try{localStorage.setItem(LS,j)}catch(e){}if(ref){pend=true;flush()}if(window.cloudPush)cloudPush()}
 function flush(){clearTimeout(tmr);tmr=setTimeout(async()=>{if(saving||!pend)return;saving=true;pend=false;try{await ref.set({json:JSON.stringify(S),at:S.at});setSync('Salvato sul tuo account Claude: lo ritrovi da qualsiasi dispositivo.')}catch(e){setSync('Salvataggio online non riuscito: i dati restano in questo browser.')}saving=false;if(pend)flush()},1200)}
 const unwrap=g=>!g?null:typeof g.data==='function'?g.data():(g.data&&typeof g.data==='object'&&!g.json)?g.data:g;
 (async()=>{try{let c=null;for(let i=0;i<50&&!c;i++){c=window.claude;if(!c)await new Promise(r=>setTimeout(r,100))}if(!c||!c.use)return;
@@ -747,7 +764,7 @@ function infLine(e){const pill=e.ph==='rec'?'<span class="pill p-rec">Rientro</s
  return `<div>${pill} <b>${esc(e.name)}</b><div class="muted">${st}</div></div>`}
 
 function render(){
- $('#club').textContent=S.club||'La mia carriera';$('#lega').textContent=S.lega;
+ $('#club').textContent=S.club||'La mia carriera';$('#lega').textContent=S.lega+(window.cloudOn?' · salvato online':'');
  // prepartita
  const L=S.last;let h='';
  const card=L=>L.kind==='imm'?`<div class="card none"><div class="tag">Immunità</div><div class="big">Nessun imprevisto</div><div class="txt">Il gruppo è protetto: si gioca senza imprevisti.${L.left?` Ancora ${L.left} ${L.left>1?'partite':'partita'} di immunità.`:''}</div></div>`
@@ -870,6 +887,52 @@ function lista(){const isSes=$('#eTipo').value==='ses',L=isSes?SES:PRE,t=$('#eTo
  $('#eBody').innerHTML=rows.map(r=>`<tr><td class="n" data-l="N.">${r.i+1}</td><td class="wrap" data-l="Imprevisto">${esc(r.txt)}</td><td data-l="Tono"><span class="pill p-${r.e.t}">${{n:'Negativo',p:'Positivo',x:'Neutro'}[r.e.t]}</span></td><td data-l="Dove e quando">${r.e.lg?LGN[r.e.lg[0]]:'Ovunque'}${r.e.when?' · '+(r.e.when==='E'?'solo estate':'solo gennaio'):''}</td><td class="wrap" data-l="Cosa fa">${esc(fxTxt(r.e,isSes))}</td></tr>`).join('')}
 ['#eTipo','#eTono','#eCat','#eQ'].forEach(id=>$(id).addEventListener('input',lista));lista();
 addEventListener('hashchange',tab);tab();render();
+// salvataggio online (solo versione GitHub)
+if(/github\.io$/.test(location.hostname)){
+ const SB_URL='https://ihooyahtgvcdxklazuey.supabase.co',SB_KEY='sb_publishable_x8Uq8od_ZaNiBs4k3hmPgA_76wN2CM6',LINK='fc26-cloud-linked';
+ $('#cloudBox').hidden=false;
+ const msg=t=>{$('#cloudMsg').textContent=t};
+ const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js';
+ sc.onerror=()=>msg('Non riesco a raggiungere il salvataggio online: i dati restano in questo browser.');
+ sc.onload=()=>{
+  const sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+  let user=null,busy=false,again=false,t=null,ready=false;
+  const linked=()=>{try{return localStorage.getItem(LINK)===user.id}catch(e){return false}};
+  const setLinked=()=>{try{localStorage.setItem(LINK,user.id)}catch(e){}};
+  const ora=()=>new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+  const ui=()=>{$('#cloudOut').hidden=!!user;$('#cloudIn').hidden=!user;if(user)$('#cloudWho').innerHTML=`Collegato come <b>${esc(user.email)}</b>.`;
+   setSync(user&&ready?'Salvato online sul tuo account: lo ritrovi su ogni browser in cui accedi.':'Salvataggio solo in questo browser');
+   window.cloudOn=!!(user&&ready);$('#lega').textContent=S.lega+(window.cloudOn?' · salvato online':'')};
+  async function push(){if(!user||!ready)return;if(busy){again=true;return}busy=true;
+   const {error}=await sb.from('carriere').upsert({user_id:user.id,data:S,updated_at:new Date().toISOString()});
+   busy=false;msg(error?'Salvataggio online non riuscito: riprovo alla prossima modifica.':'Ultimo salvataggio online alle '+ora()+'.');if(again){again=false;push()}}
+  window.cloudPush=()=>{if(!user||!ready)return;clearTimeout(t);t=setTimeout(push,1200)};
+  async function pull(first){if(!user)return;
+   const {data,error}=await sb.from('carriere').select('data').eq('user_id',user.id).maybeSingle();
+   if(error){msg('Non riesco a leggere i dati online: riprova tra poco.');return}
+   const remote=data&&data.data;
+   if(!linked()){
+    if(!remote){ready=true;setLinked();await push();ui();return}
+    if(!(S.at>0)||JSON.stringify(remote)===JSON.stringify(S)){S=load(JSON.stringify(remote));try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}ready=true;setLinked();render();ui();msg('Carriera caricata dal salvataggio online.');return}
+    $('#cloudChoice').hidden=false;ui();return}
+   ready=true;
+   if(remote&&(remote.at||0)>(S.at||0)){S=load(JSON.stringify(remote));try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}render();msg('Aggiornato con i dati online delle '+ora()+'.')}
+   else if(!remote||(S.at||0)>(remote.at||0))await push();
+   ui()}
+  $('#cloudUseRemote').addEventListener('click',async()=>{const {data}=await sb.from('carriere').select('data').eq('user_id',user.id).maybeSingle();if(data&&data.data){snap('Caricati i dati online');S=load(JSON.stringify(data.data));try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}}
+   $('#cloudChoice').hidden=true;ready=true;setLinked();render();ui();msg('Ora usi i dati online.')});
+  $('#cloudUseLocal').addEventListener('click',async()=>{$('#cloudChoice').hidden=true;ready=true;setLinked();await push();ui();msg('Dati di questo browser salvati online.')});
+  $('#cloudSyncNow').addEventListener('click',()=>pull());
+  $('#cloudLogout').addEventListener('click',async()=>{await sb.auth.signOut();user=null;ready=false;ui();msg('Sei uscito: i dati restano in questo browser.')});
+  $('#cloudForm').addEventListener('submit',async e=>{e.preventDefault();const email=$('#cloudEmail').value.trim();if(!email)return;msg('Invio in corso…');
+   const {error}=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:location.origin+location.pathname}});
+   msg(error?(/rate|limit/i.test(error.message)?'Troppe richieste ravvicinate: riprova tra qualche minuto.':'Invio non riuscito: controlla l\'indirizzo e riprova.'):'Controlla la posta: ti è arrivato il link di accesso. Aprilo in questo browser.')});
+  sb.auth.onAuthStateChange((ev,session)=>{const u=session&&session.user;const changed=(u&&u.id)!==(user&&user.id);user=u||null;
+   if(location.hash.includes('access_token')){history.replaceState(null,'',location.pathname+'#impostazioni');tab()}
+   if(changed){ready=false;ui();if(user)setTimeout(()=>pull(true),0)}});
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&user&&ready)pull()});
+  ui()};
+ document.head.appendChild(sc)}
 }
 </script>
 </body>
