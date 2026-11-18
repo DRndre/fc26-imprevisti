@@ -271,7 +271,7 @@ td.wrap{white-space:normal;min-width:220px}.p-n{background:#e0322c;color:#fff}.p
       <h4>Rientro dagli infortuni</h4>
       <ol><li>Fino a 1 mese: salta 1 partita dopo il rientro.</li><li>1-3 mesi: salta 3 partite.</li><li>3-6 mesi: salta 5 partite.</li><li>Oltre 6 mesi: salta 7 partite.</li></ol>
       <h4>Imprevisti</h4>
-      <p class="muted">Prepartita: estrazione prima di ogni partita con la probabilità scelta. L'app non conta le partite: infortunati, squalificati ed effetti restano in lista finché non li togli tu. Con "Estrai un altro imprevisto" ne peschi uno in più per la stessa partita; tono circa 65% negativi, 20% positivi, 15% neutri. 192 imprevisti prepartita e 129 di sessione; circa uno su quattro esce solo nella categoria a cui è legato, e alcuni di sessione solo in estate o solo a gennaio. Gli ultimi 20 prepartita e gli ultimi 12 di sessione non si ripetono. Infortuni da imprevisto: ≤1 mese = 2-4 partite, 1-3 mesi = 5-12, 3-6 mesi = 13-24, oltre 6 mesi = 25-38.</p>
+      <p class="muted">Prepartita: estrazione prima di ogni partita con la probabilità scelta. L'app non conta le partite: infortunati, squalificati ed effetti restano in lista finché non li togli tu. Con "Estrai un altro imprevisto" (e "Cambia questa carta" in sessione) sostituisci l'imprevisto uscito con un altro, annullando gli effetti del primo, quante volte vuoi; tono circa 65% negativi, 20% positivi, 15% neutri. 192 imprevisti prepartita e 129 di sessione; circa uno su quattro esce solo nella categoria a cui è legato, e alcuni di sessione solo in estate o solo a gennaio. Gli ultimi 20 prepartita e gli ultimi 12 di sessione non si ripetono. Infortuni da imprevisto: ≤1 mese = 2-4 partite, 1-3 mesi = 5-12, 3-6 mesi = 13-24, oltre 6 mesi = 25-38.</p>
     </div>
   </div>
 </section>
@@ -660,7 +660,9 @@ const avail=()=>{const off=new Set(S.inf.map(e=>e.pid).filter(Boolean));return i
 const modSum=k=>S.eff.reduce((a,e)=>a+((e.mod&&e.mod[k])||0),0);
 
 const isApp=x=>x.o?x.o==='app':x.why!=='Dal gioco'&&x.why!=='Squalifica'&&x.why!=='Indisponibile';
-let CUR_C=null,CUR_D=null,CUR_E=null;
+let CUR_C=null,CUR_D=null,CUR_E=null,FIXN=null,USEDN=[];
+const ief=()=>JSON.stringify({inf:S.inf,eff:S.eff,flags:S.flags});
+const unief=j=>{const b=JSON.parse(j);S.inf=b.inf;S.eff=b.eff;S.flags=Object.assign(blank().flags,b.flags)};
 function generic(tg,second){const r=tg.r?REPL[tg.r]:tg.st&&tg.st.length===1?RL[tg.st[0]].toLowerCase():'giocatore';let s;
  if(tg.same)s='un altro giocatore dello stesso reparto';else if(tg.nogk&&!tg.pk)s=(second?'un altro ':'un ')+'giocatore di movimento';else if(tg.loan)s='un giocatore in prestito da un altro club';else if(tg.wage)s='un giocatore con lo stipendio sopra la media';else if(tg.pk==='paid')s='il giocatore più pagato';else if(tg.pk==='youngweak')s='il giovane con l\'OVR più basso';else if(tg.pk==='best')s=second?`un altro dei tuoi migliori`:`il tuo miglior ${r}`;else if(tg.pk==='old')s=second?`un altro dei più anziani`:`il ${r} più anziano`;else if(tg.pk==='young')s=`il ${r} più giovane`;
  else{s=(second?'un altro ':'un ')+r;if(tg.st)s+=' '+tg.st.map(x=>RL[x].toLowerCase()).join(' o ');if(tg.u21)s+=' under 21';s+=' a tua scelta'}
@@ -694,7 +696,7 @@ function pickEvent(list,recent,when,opt={}){const tier=TIER[S.lega];
 function apply(ev,A,B,scope){const o=[];
  for(const f of ev.fx){const t=f.who==='B'?B:f.who==='C'?CUR_C:f.who==='D'?CUR_D:f.who==='E'?CUR_E:A;
   if(f.k==='inj'){let c=f.c;if(S.flags.medbad&&c<4){c++;S.flags.medbad=0;o.push('Medico part-time: infortunio aggravato a '+CLS[c])}else if(S.flags.med&&c>1){c--;S.flags.med=0;o.push('Staff medico: infortunio ridotto a '+CLS[c])}
-   if(t.entry)S.inf=S.inf.filter(x=>x.id!==t.entry);const n=f.n||rnd(...INJR[c]);
+   if(t.entry)S.inf=S.inf.filter(x=>x.id!==t.entry);const n=(FIXN&&FIXN.length)?FIXN.shift():(f.n||rnd(...INJR[c]));USEDN.push(n);
    S.inf.push({id:uid(),pid:t.pid,name:t.name,k:'inj',c,out:n,post:POST[c],ph:'out',why:'Imprevisto',o:'app'});
    o.push(`${t.name}: infortunio ${CLS[c]}, fuori ${n} partite + ${POST[c]} dopo il rientro`)}
   else if(f.k==='out'||f.k==='ban'){S.inf.push({id:uid(),pid:t.pid,name:t.name,k:f.k,c:0,out:f.n,post:0,ph:'out',why:f.why||'Squalifica',o:'app'});
@@ -709,38 +711,46 @@ function apply(ev,A,B,scope){const o=[];
   else if(f.k==='cure'){const L=S.eff.filter(x=>x.sc==='match');const e=L[rnd(0,L.length-1)];S.eff=S.eff.filter(x=>x!==e);o.push('Cancellato: '+e.s)}}
  return o}
 
-function trial(fn,kind){if(!S.test){fn();return}const keep=JSON.stringify(S);fn();const last=S.last,ses=S.sesLast,ex=S.extra;S=load(keep);if(kind==='pre'){S.last=last;S.extra=ex;if(last)last.test=1;(ex||[]).forEach(x=>x.test=1)}else{S.sesLast=ses;if(ses)ses.test=1}flipNext=true;save();render()}
+function trial(fn,kind){if(!S.test){fn();return}const keep=JSON.stringify(S);fn();const last=S.last,ses=S.sesLast,ps=S.preSnap,ss=S.sesSnap;S=load(keep);if(kind==='pre'){S.last=last;S.preSnap=ps;if(last)last.test=1}else{S.sesLast=ses;S.sesSnap=ss;if(ses)ses.test=1}flipNext=true;save();render()}
 function snap(t){undo=JSON.stringify(S);$('#toastT').textContent=t;$('#toast').hidden=false;clearTimeout(snap.t);snap.t=setTimeout(()=>$('#toast').hidden=true,7000)}
 
-function drawPre(){snap('Nuova estrazione');S.extra=[];const r={};const noinj=S.flags.noinj>0;if(noinj)S.flags.noinj--;
- if(S.flags.imm>0){r.kind='imm';S.flags.imm--;r.left=S.flags.imm}
- else{const forced=!!S.flags.force,roll=rnd(1,100);r.roll=roll;
+function drawPre(){snap('Nuova estrazione');const r={};const noinj=S.flags.noinj>0;if(noinj)S.flags.noinj--;r.noinj=noinj;
+ if(S.flags.imm>0){r.kind='imm';S.flags.imm--;r.left=S.flags.imm;S.preSnap=ief()}
+ else{S.preSnap=ief();const forced=!!S.flags.force,roll=rnd(1,100);r.roll=roll;
   if(!forced&&roll>S.prob)r.kind='none';
   else{S.flags.force=0;const nn=!!S.flags.nonneg;const pk=pickEvent(PRE,S.recent,null,{noinj:noinj,nonneg:nn});if(pk&&nn)S.flags.nonneg=0;
    if(!pk)r.kind='none';else{const{ev,A,B}=pk;Object.assign(r,{kind:'ev',t:ev.t,html:fill(ev.s,A,B),forced,lg:ev.lg?S.lega:null});
     if(ev.t==='n'&&S.flags.shield){S.flags.shield=0;r.shielded=1;r.applied=['Annullato dallo spogliatoio carico']}else r.applied=apply(ev,A,B,'pre');
     S.recent=[ev.id,...S.recent].slice(0,20)}}}
  S.last=r;flipNext=true;save();render()}
-function drawExtra(){snap('Imprevisto in più estratto');const pk=pickEvent(PRE,S.recent,null,{});if(!pk)return;const{ev,A,B}=pk;
- const r={kind:'ev',t:ev.t,html:fill(ev.s,A,B),extra:1,lg:ev.lg?S.lega:null};
+function rerollPre(){const prev=S.last;if(!prev||!S.preSnap)return;snap('Imprevisto cambiato');unief(S.preSnap);S.flags.force=0;
+ const nn=!!S.flags.nonneg;const pk=pickEvent(PRE,S.recent,null,{noinj:!!prev.noinj,nonneg:nn});if(!pk)return;if(nn)S.flags.nonneg=0;const{ev,A,B}=pk;
+ const r={kind:'ev',t:ev.t,html:fill(ev.s,A,B),lg:ev.lg?S.lega:null,noinj:prev.noinj,changed:(prev.changed||0)+1};
  if(ev.t==='n'&&S.flags.shield){S.flags.shield=0;r.shielded=1;r.applied=['Annullato dallo spogliatoio carico']}else r.applied=apply(ev,A,B,'pre');
- S.recent=[ev.id,...S.recent].slice(0,20);S.extra=[...(S.extra||[]),r];flipNext=true;save();render()}
+ S.recent=[ev.id,...S.recent].slice(0,20);S.last=r;flipNext=true;save();render()}
 
 function advance(){
  S.inf.forEach(e=>{if(!e.seen)return;if(e.ph==='out'){if(e.out!=null){e.out--;if(e.out<=0){if(e.k==='inj'&&e.post>0)e.ph='rec';else e.done=1}}}else{e.post--;if(e.post<=0)e.done=1}});
  S.inf=S.inf.filter(e=>!e.done);
  S.eff.forEach(e=>{if(e.sc==='match'&&e.seen)e.n--});S.eff=S.eff.filter(e=>e.sc!=='match'||e.n>0)}
 
+function sesCard(ev,T,fix){CUR_C=T.C||null;CUR_D=T.D||null;CUR_E=T.E||null;FIXN=fix?[...fix]:null;USEDN=[];const A=T.A,B=T.B;
+ const it={t:ev.t,html:fill(ev.s,A,B),lg:ev.lg?S.lega:null,ev:ev.id,T};
+ if(ev.t==='n'&&S.flags.sshield){S.flags.sshield=0;it.shielded=1;it.applied=['Annullato: il presidente è contento']}
+ else{it.applied=apply(ev,A,B,'ses');if(!ev.ne&&!ev.fx.some(f=>['ses','inj','out','ban'].includes(f.k))){S.eff.push({id:uid(),s:fill(ev.s,A,B,true),n:null,sc:ev.sc,mod:ev.mod});it.applied.push(ev.sc==='sea'?'Valido fino a fine stagione':'Valido fino alla prossima sessione')}}
+ it.ns=[...USEDN];FIXN=null;return it}
 function drawSes(kind){snap('Sessione estratta');
  if(kind==='estate'){S.svi=0;S.eff=S.eff.filter(e=>e.sc==='match')}
  else S.eff=S.eff.filter(e=>e.sc!=='ses');
- const items=[],used=[];
+ S.sesSnap=ief();const items=[],used=[];
  for(let k=0;k<2;k++){const pk=pickEvent(SES,[...S.srecent,...used],kind==='estate'?'E':'G');if(!pk)break;const{ev,A,B}=pk;used.push(ev.id);
-  const it={t:ev.t,html:fill(ev.s,A,B),lg:ev.lg?S.lega:null};
-  if(ev.t==='n'&&S.flags.sshield){S.flags.sshield=0;it.shielded=1;it.applied=['Annullato: il presidente è contento']}
-  else{it.applied=apply(ev,A,B,'ses');if(!ev.ne&&!ev.fx.some(f=>['ses','inj','out','ban'].includes(f.k))){S.eff.push({id:uid(),s:fill(ev.s,A,B,true),n:null,sc:ev.sc,mod:ev.mod});it.applied.push(ev.sc==='sea'?'Valido fino a fine stagione':'Valido fino alla prossima sessione')}}
-  items.push(it)}
+  items.push(sesCard(ev,{A,B,C:CUR_C,D:CUR_D,E:CUR_E}))}
  S.srecent=[...used,...S.srecent].slice(0,12);S.sesLast={kind,items};flipNext=true;save();render()}
+function rerollSes(k){const SL=S.sesLast;if(!SL||!S.sesSnap||!SL.items[k])return;snap('Carta di sessione cambiata');unief(S.sesSnap);
+ const excl=[...S.srecent,...SL.items.map(x=>x.ev)];const pk=pickEvent(SES,excl,SL.kind==='estate'?'E':'G');if(!pk){render();return}
+ const items=SL.items.map((it,i)=>{if(i===k){const{ev,A,B}=pk;const n=sesCard(ev,{A,B,C:CUR_C,D:CUR_D,E:CUR_E});n.changed=(it.changed||0)+1;return n}
+  const ev=SES.find(e=>e.id===it.ev);if(!ev)return it;const n=sesCard(ev,it.T||{},it.ns);n.changed=it.changed;return n});
+ S.srecent=[pk.ev.id,...S.srecent].slice(0,12);S.sesLast={kind:SL.kind,items,test:SL.test,flip:k};flipNext=true;save();render()}
 
 function checks(){const R=inRosa(),out=[];const ck=(ok,t,d)=>out.push({ok,t,d});
  const bImp=(+S.coppe||0)+(+S.magg||0)+modSum('imp'),bCru=(+S.magg||0)+modSum('cru');
@@ -773,10 +783,10 @@ function render(){
  const L=S.last;let h='';
  const card=L=>L.kind==='imm'?`<div class="card none"><div class="tag">Immunità</div><div class="big">Nessun imprevisto</div><div class="txt">Il gruppo è protetto: si gioca senza imprevisti.${L.left?` Ancora ${L.left} ${L.left>1?'partite':'partita'} di immunità.`:''}</div></div>`
   :L.kind==='none'?`<div class="card none"><div class="tag">${L.test?'Prova · ':''}Prepartita</div><div class="big">Tutto tranquillo</div><div class="txt">Nessun imprevisto: si gioca normalmente.</div></div>`
-  :`<div class="card t-${L.t}"><div class="tag">${L.test?'Prova · ':''}${L.extra?'In più · ':''}${TONEL[L.t]}${L.forced?' · garantito':''}${L.lg?' · '+esc(L.lg):''}</div><div class="txt">${L.shielded?'<s>'+L.html+'</s>':L.html}</div>${L.test&&L.applied&&L.applied.length?'<div class="tag">Succederebbe:</div>':''}${L.applied&&L.applied.length?'<ul>'+L.applied.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>':''}</div>`;
+  :`<div class="card t-${L.t}"><div class="tag">${L.test?'Prova · ':''}${TONEL[L.t]}${L.changed?' · cambiato '+(L.changed>1?L.changed+' volte':'1 volta'):''}${L.forced?' · garantito':''}${L.lg?' · '+esc(L.lg):''}</div><div class="txt">${L.shielded?'<s>'+L.html+'</s>':L.html}</div>${L.test&&L.applied&&L.applied.length?'<div class="tag">Succederebbe:</div>':''}${L.applied&&L.applied.length?'<ul>'+L.applied.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>':''}</div>`;
  if(!L)h=`<div class="card back"><div class="big">Prossima partita</div><div>Probabilità imprevisto: ${S.flags.imm>0?'immunità attiva':S.flags.force?'garantito':S.prob+'%'}</div></div><div class="acts"><button class="pri" data-a="draw">Estrai imprevisto</button></div>`;
- else{let c=[L,...(S.extra||[])].map(card).join('');
-  h=c+`<div class="roll">${L.roll!=null?`Tiro del dado: ${L.roll}. Probabilità di imprevisto ${S.prob}%: ${L.roll<=S.prob?'uscito':'serviva '+S.prob+' o meno'}.`:''}</div><div class="acts"><button class="pri" data-a="draw">Estrai per la prossima partita</button><button data-a="extra">Estrai un altro imprevisto</button></div>`}
+ else{let c=card(L);
+  h=c+`<div class="roll">${L.roll!=null?`Tiro del dado: ${L.roll}. Probabilità di imprevisto ${S.prob}%: ${L.roll<=S.prob?'uscito':'serviva '+S.prob+' o meno'}.`:''}</div><div class="acts"><button class="pri" data-a="draw">Estrai per la prossima partita</button><button data-a="reroll">Estrai un altro imprevisto</button></div><div class="roll">"Estrai un altro imprevisto" sostituisce quello sopra e ne annulla gli effetti.</div>`}
  $('#stage').innerHTML=h;if(flipNext){const cs=$('#stage').querySelectorAll('.card:not(.back)');const c=cs[cs.length-1];if(c)c.classList.add('flip')}
  const UN=S.inf.filter(e=>!(e.ph==='out'&&e.out===0));
  $('#unav').innerHTML=UN.length?UN.map(e=>`<li>${infLine(e)}<button class="sm dang" data-a="delI" data-id="${e.id}">Rimuovi</button></li>`).join(''):'<li class="empty">Tutti disponibili.</li>';
@@ -789,8 +799,8 @@ function render(){
  $('#bEst').textContent='Estrai sessione estiva';
  $('#bGen').textContent='Estrai sessione di gennaio';
  const SL=S.sesLast;
- $('#sesCards').innerHTML=SL?SL.items.map(it=>`<div class="card t-${it.t}"><div class="tag">${SL.test?'Prova · ':''}${SL.kind==='estate'?'Estate':'Gennaio'} · ${TONEL[it.t].replace('Imprevisto ','')}${it.lg?' · '+esc(it.lg):''}</div><div class="txt">${it.shielded?'<s>'+it.html+'</s>':it.html}</div>${it.applied.length?'<ul>'+it.applied.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>':''}</div>`).join(''):`<div class="card back"><div class="big">Sessione</div><div>Due carte in estate, due a gennaio.</div></div>`;
- if(flipNext)document.querySelectorAll('#sesCards .card:not(.back)').forEach(c=>c.classList.add('flip'));
+ $('#sesCards').innerHTML=SL?SL.items.map((it,i)=>`<div class="card t-${it.t}"><div class="tag">${SL.test?'Prova · ':''}${SL.kind==='estate'?'Estate':'Gennaio'} · ${TONEL[it.t].replace('Imprevisto ','')}${it.lg?' · '+esc(it.lg):''}${it.changed?' · cambiata':''}</div><div class="txt">${it.shielded?'<s>'+it.html+'</s>':it.html}</div>${it.applied.length?'<ul>'+it.applied.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>':''}<button class="sm" data-a="sesre" data-k="${i}" style="margin-top:auto;background:rgba(255,255,255,.85);color:#1a1a1a">Cambia questa carta</button></div>`).join(''):`<div class="card back"><div class="big">Sessione</div><div>Due carte in estate, due a gennaio.</div></div>`;
+ if(flipNext){const cs=document.querySelectorAll('#sesCards .card:not(.back)');cs.forEach((c,i)=>{if(SL&&SL.flip!=null&&i!==SL.flip)return;c.classList.add('flip')});if(SL)delete SL.flip}
  $('#sesEffs').innerHTML=SE.length?SE.map(effLi).join(''):'<li class="empty">Nessun effetto di sessione in corso.</li>';
  flipNext=false;
  // rosa
@@ -849,7 +859,7 @@ document.addEventListener('change',e=>{if(e.target.classList.contains('tTog')){S
 let keepArm=false;$('#bKeep').addEventListener('click',e=>{if(!keepArm){keepArm=true;e.target.textContent='Sicuro? Premi di nuovo';setTimeout(()=>{keepArm=false;e.target.textContent='Ricomincia tenendo la rosa'},4000);return}snap('Ripartito da zero');const n=blank();['club','lega','prob','coppe','magg','rosa'].forEach(k=>n[k]=S[k]);S=n;keepArm=false;e.target.textContent='Ricomincia tenendo la rosa';$('#bMsg').textContent='Infermeria, effetti, estrazioni e svincolati azzerati; rosa e impostazioni tenute.';save();render()});
 $('#bUndo').addEventListener('click',()=>{if(!undo)return;S=load(undo);undo=null;$('#toast').hidden=true;save();render()});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a,id=b.dataset.id;
- if(a==='draw')trial(drawPre,'pre');else if(a==='extra')trial(drawExtra,'pre');
+ if(a==='draw')trial(drawPre,'pre');else if(a==='reroll')trial(rerollPre,'pre');else if(a==='sesre'){const k=+b.dataset.k;trial(()=>rerollSes(k),'ses')}
  else if(a==='delEff'){snap('Effetto rimosso');S.eff=S.eff.filter(x=>x.id!==id);save();render()}
  else if(a==='delP'){snap('Giocatore eliminato');S.rosa=S.rosa.filter(x=>x.id!==id);save();render()}
  else if(a==='edit'){const p=S.rosa.find(x=>x.id===id);editId=id;$('#fNome').value=p.nome;$('#fRep').value=p.rep;$('#fOvr').value=p.ovr;$('#fEta').value=p.eta;$('#fRuolo').value=p.ruolo;$('#fStip').value=p.stip;$('#fTipo').value=p.tipo;$('#fTitle').textContent='Modifica '+p.nome;$('#fSave').textContent='Salva';$('#fCancel').hidden=false;$('#fNome').focus()}
