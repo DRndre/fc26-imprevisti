@@ -9,6 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#0e4a2b">
 <meta name="apple-mobile-web-app-title" content="Imprevisti">
+<meta name="build" content="2026-11-18-2205">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
@@ -102,6 +103,7 @@ td.wrap{white-space:normal;min-width:220px}.p-n{background:#e0322c;color:#fff}.p
 @media(max-width:600px){.rosa tr.sep{display:block;padding:0}.rosa tr.sep td{display:block;border:0}.rosa tr.sep td::before{content:none}}
 .rulebox{background:var(--line);border-radius:10px;padding:10px 12px;font-size:15px}.rulebox b{font-family:"Barlow Condensed";font-size:20px}
 .pill.cap{background:var(--yel);color:#231c00}
+.updbar{position:fixed;left:50%;top:12px;transform:translateX(-50%);background:var(--yel);color:#231c00;padding:8px 10px 8px 16px;border-radius:12px;display:flex;gap:12px;align-items:center;z-index:10;max-width:92vw;font-weight:600;box-shadow:0 6px 20px rgba(0,0,0,.3)}.updbar[hidden]{display:none}.updbar .pri{background:#0e4a2b;color:#fff}
 .toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#06281a;color:#fff;padding:10px 16px;border-radius:12px;display:flex;gap:12px;align-items:center;z-index:9;max-width:92vw}
 .toast[hidden]{display:none}
 @media(max-width:600px){table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}.stack td{display:flex;justify-content:space-between;gap:12px;border:0;padding:3px 0;white-space:normal}.stack td::before{content:attr(data-l);color:var(--mut)}.led b{font-size:26px}nav a{font-size:17px;padding:10px 10px}}
@@ -246,6 +248,8 @@ td.wrap{white-space:normal;min-width:220px}.p-n{background:#e0322c;color:#fff}.p
           <p class="muted">Accedi con la tua email per ritrovare la stessa carriera su ogni browser e dispositivo. Ti arriva un link: lo apri e sei dentro, senza password. In ogni browser lo fai una volta sola.</p>
           <form id="cloudForm" class="row"><label style="grid-column:1/-1">Email<input id="cloudEmail" type="email" autocomplete="email" required placeholder="nome@esempio.it"></label>
           <div class="acts" style="grid-column:1/-1;justify-content:flex-start"><button class="pri" type="submit">Inviami il link di accesso</button></div></form>
+          <form id="codeForm" class="row" hidden style="margin-top:12px"><label style="grid-column:1/-1">Codice dall'email (se apri l'app dall'icona in home)<input id="cloudCode" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="123456"></label>
+          <div class="acts" style="grid-column:1/-1;justify-content:flex-start"><button class="pri" type="submit">Accedi con il codice</button></div></form>
         </div>
         <div id="cloudIn" hidden>
           <p id="cloudWho" style="margin:0 0 10px"></p>
@@ -259,6 +263,7 @@ td.wrap{white-space:normal;min-width:220px}.p-n{background:#e0322c;color:#fff}.p
       </div>
       <div class="box">
         <h3>Backup</h3>
+        <div class="acts" style="justify-content:flex-start;margin-bottom:10px"><button id="bReload">Ricarica l'app</button></div>
         <p class="muted" id="sync">Salvataggio solo in questo browser</p>
         <div class="acts" style="justify-content:flex-start"><button id="bCopy">Copia backup</button><button id="bRest">Ripristina da testo</button><button id="bKeep">Ricomincia tenendo la rosa</button><button class="dang" id="bReset">Azzera tutto</button></div>
         <textarea id="bTxt" placeholder="Incolla qui un backup e premi Ripristina" style="margin-top:10px"></textarea>
@@ -282,6 +287,7 @@ td.wrap{white-space:normal;min-width:220px}.p-n{background:#e0322c;color:#fff}.p
 </section>
 </main>
 
+<div class="updbar" id="updBar" hidden><span>È disponibile una versione nuova dell'app.</span><button class="sm pri" id="bUpd">Aggiorna</button></div>
 <div class="toast" id="toast" hidden><span id="toastT"></span><button class="sm pri" id="bUndo">Annulla</button></div>
 
 <script>
@@ -906,6 +912,14 @@ function lista(){const isSes=$('#eTipo').value==='ses',L=isSes?SES:PRE,t=$('#eTo
 ['#eTipo','#eTono','#eCat','#eQ'].forEach(id=>$(id).addEventListener('input',lista));lista();
 addEventListener('hashchange',tab);tab();render();
 // salvataggio online (solo versione GitHub)
+const reloadApp=v=>{location.replace(location.pathname+'?v='+encodeURIComponent(v||Date.now())+(location.hash&&!location.hash.includes('access_token')?location.hash:''))};
+$('#bReload').addEventListener('click',()=>reloadApp());
+if(/github\.io$/.test(location.hostname)){
+ const myBuild=(document.querySelector('meta[name=build]')||{}).content||'';let newBuild=null;
+ const checkUpd=async()=>{try{const t=await (await fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'})).text();const m=t.match(/<meta name="build" content="([^"]+)"/);if(m&&m[1]!==myBuild){newBuild=m[1];$('#updBar').hidden=false}}catch(e){}};
+ $('#bUpd').addEventListener('click',()=>reloadApp(newBuild));
+ checkUpd();document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkUpd()});
+}
 if(/github\.io$/.test(location.hostname)){
  const SB_URL='https://ihooyahtgvcdxklazuey.supabase.co',SB_KEY='sb_publishable_x8Uq8od_ZaNiBs4k3hmPgA_76wN2CM6',LINK='fc26-cloud-linked';
  $('#cloudBox').hidden=false;
@@ -944,7 +958,9 @@ if(/github\.io$/.test(location.hostname)){
   $('#cloudLogout').addEventListener('click',async()=>{await sb.auth.signOut();user=null;ready=false;ui();msg('Sei uscito: i dati restano in questo browser.')});
   $('#cloudForm').addEventListener('submit',async e=>{e.preventDefault();const email=$('#cloudEmail').value.trim();if(!email)return;msg('Invio in corso…');
    const {error}=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:location.origin+location.pathname}});
-   msg(error?(/rate|limit/i.test(error.message)?'Troppe richieste ravvicinate: riprova tra qualche minuto.':'Invio non riuscito: controlla l\'indirizzo e riprova.'):'Controlla la posta: ti è arrivato il link di accesso. Aprilo in questo browser.')});
+   msg(error?(/rate|limit/i.test(error.message)?'Troppe richieste ravvicinate: riprova tra qualche minuto.':'Invio non riuscito: controlla l\'indirizzo e riprova.'):'Controlla la posta: apri il link in questo browser, oppure scrivi qui sotto il codice dell\'email.');if(!error)$('#codeForm').hidden=false});
+  $('#codeForm').addEventListener('submit',async e=>{e.preventDefault();const email=$('#cloudEmail').value.trim(),token=$('#cloudCode').value.replace(/\s/g,'');if(!email||!token)return;msg('Verifica in corso…');
+   const {error}=await sb.auth.verifyOtp({email,token,type:'email'});msg(error?'Codice non valido o scaduto: richiedi un nuovo link.':'Accesso fatto.');if(!error)$('#codeForm').hidden=true});
   sb.auth.onAuthStateChange((ev,session)=>{const u=session&&session.user;const changed=(u&&u.id)!==(user&&user.id);user=u||null;
    if(location.hash.includes('access_token')){history.replaceState(null,'',location.pathname+'#impostazioni');tab()}
    if(changed){ready=false;ui();if(user)setTimeout(()=>pull(true),0)}});
