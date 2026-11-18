@@ -516,7 +516,7 @@ E('n',1,'Osservatori licenziati: nessuna nuova missione giovanile fino alla pros
 E('n',.8,'Niente svincolati: quest\'anno non puoi tesserarne.',{sc:'sea',mod:{svi:-1}}),
 E('n',1,'Prezzi gonfiati: tutti sanno che hai soldi da spendere. In questa finestra ogni acquisto va pagato almeno il valore di mercato, niente sconti in trattativa.'),
 E('n',1,'Spogliatoio diviso: {A} e {B} non possono stare in campo insieme fino alla prossima sessione.',{tg:ANY,tg2:ANY}),
-E('n',1,'Crisi societaria: devi cedere o svincolare un giocatore con stipendio sopra la media della rosa.'),
+E('n',1,'Crisi societaria: devi cedere o svincolare {A}, che guadagna più della media della rosa.',{tg:{wage:1}}),
 E('n',.8,'Sanzione della lega: -1 slot importante fino alla prossima sessione.',{mod:{imp:-1}}),
 E('n',1,'Rosa troppo lunga: chiudi la finestra con almeno 2 giocatori in meno del tetto.'),
 E('n',1,'Il portiere {A} chiede di andare via: se resta, perde il posto per le prime 3 partite.',{tg:{r:'POR',pk:'best'}}),
@@ -549,7 +549,7 @@ E('n',1,'Tournée estiva estenuante: {A} e {B} saltano la prima partita.',{when:
 E('x',1,'Nuovo staff tecnico: cambia il modulo base fino alla prossima sessione.',{when:'E'}),
 E('p',1,'Ritiro impeccabile: il prossimo infortunio causato da un imprevisto scende di una fascia.',{when:'E',fx:[flag('med')],ne:1}),
 E('n',1,'Tribuna chiusa per lavori, incassi ridotti: in questa finestra puoi spendere al massimo metà del budget.',{lg:['B']}),
-E('n',1,'Proprietà in difficoltà: se arriva un\'offerta congrua per il giocatore più pagato, devi accettarla.',{lg:['B']}),
+E('n',1,'Proprietà in difficoltà: se arriva un\'offerta congrua per {A}, il più pagato della rosa, devi accettarla.',{lg:['B'],tg:{pk:'paid'}}),
 E('p',1,'Gemellaggio con un club di Premier: +1 prestito in entrata, purché sia un under 21 di un club di Premier.',{lg:['B'],mod:{pin:1}}),
 E('p',1,'Un imprenditore locale entra in società: un acquisto può superare la forbice fino a +4 OVR.',{lg:['B']}),
 E('x',1,'Identità locale: almeno un acquisto deve essere della stessa nazione del club.',{lg:['B']}),
@@ -569,13 +569,13 @@ E('n',1,"Tetto alle spese: nessun acquisto può costare più di metà del budget
 E('n',1,"Rissa al ritiro: {A} e {B} sono squalificati dal club per le prime 2 partite.",{when:'E',tg:ANY,tg2:ANY,fx:[ban(2),ban(2,'B')]}),
 E('n',1,"Infortunio nell'amichevole di metà stagione: {A} si ferma per 1-3 mesi.",{when:'G',tg:ANY,fx:[inj(2)]}),
 E('n',1,"Virus durante la tournée: {A} e {B} saltano le prime 2 partite.",{when:'E',tg:ANY,tg2:ANY,fx:[out(2,'Virus'),out(2,'Virus','B')]}),
-E('n',1,"La banca chiede un rientro: devi vendere un giocatore in questa finestra."),
+E('n',1,"La banca chiede un rientro: devi vendere {A} in questa finestra.",{tg:{st:['importante','turnover','sporadico']}}),
 E('n',1,"Niente estero: tutti gli acquisti di questa finestra devono arrivare da club dello stesso Paese."),
 E('n',1,"Il presidente vuole gioventù: nessun acquisto sopra i 28 anni in questa finestra."),
 E('n',1,"Il DS è in ferie: al massimo 1 acquisto in questa finestra."),
 E('n',1,"Il presidente mette in vendita {A}: se arriva un'offerta congrua devi accettarla.",{tg:{st:['turnover','sporadico']}}),
 E('n',1,"Ritiro in montagna durissimo: {A} si stira (≤1 mese).",{when:'E',tg:ANY,fx:[inj(1)]}),
-E('n',1,"Prestito richiamato: se hai giocatori in prestito in entrata, uno a tua scelta torna al suo club."),
+E('n',1,"Prestito richiamato: il club proprietario rivuole subito {A}, che torna da loro.",{tg:{loan:1}}),
 E('n',1,"Stipendi sotto controllo: nessun acquisto può avere uno stipendio sopra il tetto ingaggi attuale, neanche un nuovo cruciale."),
 E('n',1,"Mercato di riparazione povero: niente svincolati in questa finestra.",{when:'G'}),
 E('n',1,"Lo sponsor di maglia se ne va: nessun rinnovo può alzare lo stipendio del giocatore."),
@@ -600,7 +600,7 @@ E('p',1,"Ritiro perfetto: chi è in fase di rientro torna subito disponibile.",{
 E('p',1,"Accordo con un club satellite: i prestiti in uscita non contano nel limite fino alla prossima sessione."),
 E('p',1,"Spirito natalizio, spogliatoio unito: cancellati tutti gli effetti che durano più partite.",{when:'G',fx:[{k:'cureall'}],ne:1}),
 E('x',1,"Svolta tattica: scegli un nuovo modulo base e usalo nelle prossime 5 partite.",{fx:[eff(5,'Usa il nuovo modulo base')],ne:1}),
-E('x',1,"Ricambio generazionale: cedi o non rinnovare il giocatore più anziano e prendi almeno un under 21."),
+E('x',1,"Ricambio generazionale: cedi o non rinnovare {A}, il più anziano della rosa, e prendi almeno un under 21.",{tg:{pk:'old'}}),
 E('x',1,"Jolly cercasi: almeno un acquisto deve saper giocare in due reparti diversi."),
 E('x',1,"Scambio di prestiti: per ogni giocatore che mandi in prestito, devi prenderne uno in prestito."),
 E('x',1,"Mercato silenzioso: al massimo 1 acquisto e 1 cessione in questa finestra.",{when:'G'}),
@@ -610,7 +610,7 @@ E('x',1,"Rosa corta per scelta: chiudi la finestra con al massimo 23 giocatori (
 E('x',1,"Conoscenza del campionato: almeno un acquisto deve aver già giocato nel tuo campionato."),
 E('n',1,"Stipendi pagati in ritardo: {A} vuole andarsene, se arriva un'offerta congrua devi accettarla.",{lg:['B'],tg:BIG}),
 E('n',1,"Centro sportivo in affitto: nessuna promessa può essere promossa dalle giovanili fino alla prossima sessione.",{lg:['B']}),
-E('n',1,"Il club di Premier richiama un prestito: perdi l'ultimo giocatore arrivato in prestito, se ne hai.",{lg:['B']}),
+E('n',1,"Il club di Premier richiama {A}, che hai in prestito: torna subito al suo club.",{lg:['B'],tg:{loan:1}}),
 E('p',1,"Un imprenditore rimette a nuovo lo stadio: +1 svincolato in questa stagione.",{lg:['B'],sc:'sea',mod:{svi:1}}),
 E('x',1,"Talenti del territorio: almeno un acquisto deve arrivare da League One o League Two.",{lg:['B']}),
 E('n',1,"Ispezione finanziaria della lega: chiudi la finestra con un saldo positivo tra entrate e uscite.",{lg:['C']}),
@@ -662,7 +662,7 @@ const modSum=k=>S.eff.reduce((a,e)=>a+((e.mod&&e.mod[k])||0),0);
 const isApp=x=>x.o?x.o==='app':x.why!=='Dal gioco'&&x.why!=='Squalifica'&&x.why!=='Indisponibile';
 let CUR_C=null;
 function generic(tg,second){const r=tg.r?REPL[tg.r]:tg.st&&tg.st.length===1?RL[tg.st[0]].toLowerCase():'giocatore';let s;
- if(tg.same)s='un altro giocatore dello stesso reparto';else if(tg.pk==='youngweak')s='il giovane con l\'OVR più basso';else if(tg.pk==='best')s=`il tuo miglior ${r}`;else if(tg.pk==='old')s=`il ${r} più anziano`;else if(tg.pk==='young')s=`il ${r} più giovane`;
+ if(tg.same)s='un altro giocatore dello stesso reparto';else if(tg.loan)s='un giocatore in prestito da un altro club';else if(tg.wage)s='un giocatore con lo stipendio sopra la media';else if(tg.pk==='paid')s='il giocatore più pagato';else if(tg.pk==='youngweak')s='il giovane con l\'OVR più basso';else if(tg.pk==='best')s=`il tuo miglior ${r}`;else if(tg.pk==='old')s=`il ${r} più anziano`;else if(tg.pk==='young')s=`il ${r} più giovane`;
  else{s=(second?'un altro ':'un ')+r;if(tg.st)s+=' '+tg.st.map(x=>RL[x].toLowerCase()).join(' o ');if(tg.u21)s+=' under 21';s+=' a tua scelta'}
  return s}
 function target(tg,ex,second,ref){
@@ -670,10 +670,10 @@ function target(tg,ex,second,ref){
  if(tg.src){const L=S.inf.filter(x=>!ex.includes(x.id)&&(!tg.app||isApp(x))&&(tg.src==='inj'?(x.k==='inj'&&x.ph==='out'&&(x.out!=null)):tg.src==='rec'?x.ph==='rec':(x.k==='ban'&&x.ph==='out')));
   if(!L.length)return false;const e=L[rnd(0,L.length-1)];return{name:e.name,pid:e.pid,entry:e.id,id:e.id}}
  if(!inRosa().length){if(tg.pk&&second)return false;return{name:generic(tg,second),pid:null,id:'g'+uid()}}
- let L=avail();if(tg.r)L=L.filter(p=>p.rep===tg.r);if(tg.same&&ref&&ref.rep)L=L.filter(p=>p.rep===ref.rep);if(tg.st)L=L.filter(p=>tg.st.includes(p.ruolo));if(tg.u21)L=L.filter(p=>+p.eta<21);
+ let L=avail();if(tg.r)L=L.filter(p=>p.rep===tg.r);if(tg.same&&ref&&ref.rep)L=L.filter(p=>p.rep===ref.rep);if(tg.loan)L=L.filter(p=>p.tipo==='IN');if(tg.wage){const R=inRosa();const m=R.reduce((a,p)=>a+(+p.stip||0),0)/(R.length||1);L=L.filter(p=>(+p.stip||0)>m)}if(tg.st)L=L.filter(p=>tg.st.includes(p.ruolo));if(tg.u21)L=L.filter(p=>+p.eta<21);
  L=L.filter(p=>!ex.includes(p.id));if(!L.length)return false;
  const by=(f)=>L.reduce((a,b)=>f(b,a)?b:a);
- const p=tg.pk==='best'?by((b,a)=>+b.ovr>+a.ovr):tg.pk==='old'?by((b,a)=>+b.eta>+a.eta):tg.pk==='young'?by((b,a)=>+b.eta<+a.eta):tg.pk==='youngweak'?(()=>{const Y=L.filter(p=>+p.eta<21);const Z=Y.length?Y:L;return Z.reduce((a,b)=>(+b.ovr<+a.ovr||(+b.ovr===+a.ovr&&+b.eta<+a.eta))?b:a)})():L[rnd(0,L.length-1)];
+ const p=tg.pk==='best'?by((b,a)=>+b.ovr>+a.ovr):tg.pk==='old'?by((b,a)=>+b.eta>+a.eta):tg.pk==='young'?by((b,a)=>+b.eta<+a.eta):tg.pk==='paid'?by((b,a)=>(+b.stip||0)>(+a.stip||0)):tg.pk==='youngweak'?(()=>{const Y=L.filter(p=>+p.eta<21);const Z=Y.length?Y:L;return Z.reduce((a,b)=>(+b.ovr<+a.ovr||(+b.ovr===+a.ovr&&+b.eta<+a.eta))?b:a)})():L[rnd(0,L.length-1)];
  return{name:p.nome,pid:p.id,id:p.id,rep:p.rep}}
 const fill=(s,A,B,plain)=>{const f=x=>x?(plain?x.name:'<b>'+esc(x.name)+'</b>'):'';return(plain?s:esc(s)).replace('{A}',f(A)).replace('{B}',f(B)).replace('{C}',f(CUR_C))};
 
