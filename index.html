@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#0e4a2b">
 <meta name="apple-mobile-web-app-title" content="Imprevisti">
-<meta name="build" content="2026-11-19-1710">
+<meta name="build" content="2026-11-19-1715">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
@@ -939,7 +939,7 @@ function lista(){const k=$('#eTipo').value,isSes=k==='ses',t=$('#eTono').value,c
  const all=evAll(k);const rows=all.map(x=>({...x,txt:txtOf(x.e)})).filter(r=>(showOff||r.st!=='off')&&(!t||r.e.t===t)&&(!c||(c==='-'?!r.e.lg:(r.e.lg||[]).includes(c)))&&(!q||r.txt.toLowerCase().includes(q)));
  const act=all.filter(x=>x.st!=='off').length,off=all.length-act;
  $('#eCount').textContent=`${rows.length} mostrati · ${act} attivi${off?`, ${off} disattivati`:''} ${isSes?'di sessione':'prepartita'}. Tra parentesi quadre: il giocatore che l'app sceglie dalla tua rosa.`;
- const STL={off:'Disattivato',new:'Tuo'};
+ const STL={off:'Disattivato'};
  $('#eBody').innerHTML=rows.map(r=>`<tr${r.st==='off'?' class="offrow"':''}><td class="n" data-l="N.">${r.n}</td><td class="wrap" data-l="Imprevisto">${splitTi(r.e).ti?`<div class="eti">${esc(splitTi(r.e).ti)}</div>`:''}${esc(bodyOf(r.e).replace(/^(\[?)(\S)/,(m,b,c)=>b+c.toUpperCase()))}${STL[r.st]?` <span class="pill st">${STL[r.st]}</span>`:''}</td><td data-l="Tono"><span class="pill p-${r.e.t}">${{n:'Negativo',p:'Positivo',x:'Neutro'}[r.e.t]}</span></td><td data-l="Dove e quando">${r.e.lg?LGN[r.e.lg[0]]:'Ovunque'}${r.e.when?' · '+(r.e.when==='E'?'solo estate':'solo gennaio'):''}</td><td class="wrap" data-l="Cosa fa">${esc(fxTxt(r.e,isSes))}</td><td data-l=""><button class="sm" data-a="edEv" data-id="${r.e.id}">Modifica</button></td></tr>`).join('')}
 // editor
 const TGO=[['none','Nessuno',null],['any','Un giocatore a caso',{}],['big','Un cruciale o importante',{st:['cruciale','importante']}],['cru','Un cruciale',{st:['cruciale']}],['imp','Un importante',{st:['importante']}],['low','Un turnover, sporadico o promessa',{st:['turnover','sporadico','promessa']}],['cap','Il capitano',{cap:1}],['POR','Un portiere',{r:'POR'}],['DIF','Un difensore',{r:'DIF'}],['CEN','Un centrocampista',{r:'CEN'}],['ATT','Un attaccante',{r:'ATT'}],['nogk','Un giocatore di movimento',{nogk:1}],['loan','Un giocatore arrivato in prestito',{loan:1}],['best','Il tuo miglior giocatore (controlli tu in game)',{pk:'best'}],['bestATT','Il tuo miglior attaccante (controlli tu)',{r:'ATT',pk:'best'}],['bestPOR','Il tuo miglior portiere (controlli tu)',{r:'POR',pk:'best'}],['old','Il più anziano (controlli tu)',{pk:'old'}],['young','Il più giovane (controlli tu)',{pk:'young'}],['u21','Un under 21 (controlli tu)',{u21:1}],['same','Uno dello stesso reparto del giocatore 1',{same:1}]];
