@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#0e4a2b">
 <meta name="apple-mobile-web-app-title" content="Imprevisti">
-<meta name="build" content="2026-11-19-1315">
+<meta name="build" content="2026-11-19-1645">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
@@ -104,6 +104,7 @@ td.wrap{white-space:normal;min-width:220px}.p-n{background:#e0322c;color:#fff}.p
 .rulebox{background:var(--line);border-radius:10px;padding:10px 12px;font-size:15px}.rulebox b{font-family:"Barlow Condensed";font-size:20px}
 .pill.cap{background:var(--yel);color:#231c00}
 .updbar{position:fixed;left:50%;top:12px;transform:translateX(-50%);background:var(--yel);color:#231c00;padding:8px 10px 8px 16px;border-radius:12px;display:flex;gap:12px;align-items:center;z-index:10;max-width:92vw;font-weight:600;box-shadow:0 6px 20px rgba(0,0,0,.3)}.updbar[hidden]{display:none}.updbar .pri{background:#0e4a2b;color:#fff}
+tr.offrow td{opacity:.5}.pill.st{background:var(--line)}
 .toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#06281a;color:#fff;padding:10px 16px;border-radius:12px;display:flex;gap:12px;align-items:center;z-index:9;max-width:92vw}
 .toast[hidden]{display:none}
 @media(max-width:600px){table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}.stack td{display:flex;justify-content:space-between;gap:12px;border:0;padding:3px 0;white-space:normal}.stack td::before{content:attr(data-l);color:var(--mut)}.led b{font-size:26px}nav a{font-size:17px;padding:10px 10px}}
@@ -214,8 +215,32 @@ td.wrap{white-space:normal;min-width:220px}.p-n{background:#e0322c;color:#fff}.p
     <label>Categoria<select id="eCat"><option value="">Tutte</option><option value="-">Validi ovunque</option><option value="B">League One e Two</option><option value="C">Championship</option><option value="P">Premier League</option></select></label>
     <label>Cerca<input id="eQ" type="search" autocomplete="off" placeholder="es. infortunio, rigori"></label>
   </div>
+  <div class="acts" style="justify-content:flex-start;margin:-4px 0 12px"><button class="pri" id="eNew">Nuovo imprevisto</button><label style="grid-template-columns:auto 1fr;display:grid;align-items:center;gap:8px;color:var(--ink)"><input id="eOff" type="checkbox" style="width:20px;min-height:20px"> Mostra anche i disattivati</label></div>
+  <div class="box" id="edBox" hidden>
+    <h3 id="edTitle">Modifica imprevisto</h3>
+    <form id="edForm" class="row">
+      <label id="edListL">Tipo<select id="edList"><option value="pre">Prepartita</option><option value="ses">Sessione</option></select></label>
+      <label>Tono<select id="edT"><option value="n">Negativo</option><option value="p">Positivo</option><option value="x">Neutro</option></select></label>
+      <label>Categoria<select id="edLg"><option value="">Tutte</option><option value="B">League One e Two</option><option value="C">Championship</option><option value="P">Premier League</option></select></label>
+      <label id="edWhenL">Quando<select id="edWhen"><option value="">Estate e gennaio</option><option value="E">Solo estate</option><option value="G">Solo gennaio</option></select></label>
+      <label>Frequenza<select id="edW"><option value="0.3">Rara</option><option value="0.6">Poco frequente</option><option value="1">Normale</option><option value="1.5">Frequente</option><option value="2.5">Molto frequente</option></select></label>
+      <label style="grid-column:1/-1">Giocatore 1<select id="edTg"></select></label>
+      <label style="grid-column:1/-1">Giocatore 2 (facoltativo)<select id="edTg2"></select></label>
+      <label style="grid-column:1/-1">Testo della carta<textarea id="edS" style="font-family:inherit;font-size:16px;min-height:90px" placeholder="Infortunio in allenamento: {A} si ferma."></textarea></label>
+      <div class="acts" style="grid-column:1/-1;justify-content:flex-start;margin-top:-4px"><button type="button" class="sm" data-ins="{A}">Inserisci giocatore 1</button><button type="button" class="sm" data-ins="{B}">Inserisci giocatore 2</button></div>
+      <label style="grid-column:1/-1">Cosa fa nell'app<select id="edFx"><option value="none">Niente in automatico (solo testo)</option><option value="inj">Infortunio</option><option value="out">Fuori per alcune partite</option><option value="ban">Squalifica</option><option value="eff">Effetto che dura alcune partite</option><option value="orig">Come l'originale</option></select></label>
+      <label id="edCL">Durata infortunio<select id="edC"><option value="1">≤1 mese</option><option value="2">1-3 mesi</option><option value="3">3-6 mesi</option><option value="4">Oltre 6 mesi</option></select></label>
+      <label id="edNL">Partite<input id="edN" type="number" min="1" max="40" value="1" inputmode="numeric"></label>
+      <label id="edWhyL">Motivo<input id="edWhy" placeholder="Febbre" autocomplete="off"></label>
+      <label id="edBothL" style="grid-template-columns:auto 1fr;align-items:center;gap:8px;color:var(--ink)"><input id="edBoth" type="checkbox" style="width:20px;min-height:20px"> Vale anche per il giocatore 2</label>
+      <label id="edEffL" style="grid-column:1/-1">Testo dell'effetto in lista<input id="edEff" placeholder="{A} non può calciare i rigori" autocomplete="off"></label>
+      <div class="rulebox" style="grid-column:1/-1" id="edPrev" aria-live="polite"></div>
+      <p id="edErr" style="grid-column:1/-1;margin:0;color:var(--red);font-size:14px" aria-live="polite"></p>
+      <div class="acts" style="grid-column:1/-1;justify-content:flex-start"><button class="pri" type="submit">Salva</button><button type="button" id="edCancel">Annulla</button><button type="button" id="edToggle"></button><button type="button" class="dang" id="edReset">Ripristina originale</button><button type="button" class="dang" id="edDel">Elimina</button></div>
+    </form>
+  </div>
   <p class="muted" id="eCount"></p>
-  <div class="box"><div class="scroll"><table class="stack"><thead><tr><th class="n">N.</th><th>Imprevisto</th><th>Tono</th><th>Dove e quando</th><th>Cosa fa nell'app</th></tr></thead><tbody id="eBody"></tbody></table></div></div>
+  <div class="box"><div class="scroll"><table class="stack"><thead><tr><th class="n">N.</th><th>Imprevisto</th><th>Tono</th><th>Dove e quando</th><th>Cosa fa nell'app</th><th></th></tr></thead><tbody id="eBody"></tbody></table></div></div>
 </section>
 
 <section id="impostazioni">
@@ -277,7 +302,7 @@ td.wrap{white-space:normal;min-width:220px}.p-n{background:#e0322c;color:#fff}.p
       <h4>Rientro dagli infortuni</h4>
       <ol><li>Fino a 1 mese: salta 1 partita dopo il rientro.</li><li>1-3 mesi: salta 3 partite.</li><li>3-6 mesi: salta 5 partite.</li><li>Oltre 6 mesi: salta 7 partite.</li></ol>
       <h4>Imprevisti</h4>
-      <p class="muted">Prepartita: estrazione prima di ogni partita con la probabilità scelta. L'app non conta le partite: infortunati, squalificati ed effetti restano in lista finché non li togli tu. Con "Estrai un altro imprevisto" (e "Cambia questa carta" in sessione) sostituisci l'imprevisto uscito con un altro, annullando gli effetti del primo, quante volte vuoi; tono circa 65% negativi, 20% positivi, 15% neutri. 192 imprevisti prepartita e 129 di sessione; circa uno su quattro esce solo nella categoria a cui è legato, e alcuni di sessione solo in estate o solo a gennaio. Gli ultimi 20 prepartita e gli ultimi 12 di sessione non si ripetono. Infortuni da imprevisto: ≤1 mese = 2-4 partite, 1-3 mesi = 5-12, 3-6 mesi = 13-24, oltre 6 mesi = 25-38.</p>
+      <p class="muted">Prepartita: estrazione prima di ogni partita con la probabilità scelta. L'app non conta le partite: infortunati, squalificati ed effetti restano in lista finché non li togli tu. Con "Estrai un altro imprevisto" (e "Cambia questa carta" in sessione) sostituisci l'imprevisto uscito con un altro, annullando gli effetti del primo, quante volte vuoi; tono circa 65% negativi, 20% positivi, 15% neutri. 192 imprevisti prepartita e 129 di sessione; circa uno su quattro esce solo nella categoria a cui è legato, e alcuni di sessione solo in estate o solo a gennaio. Gli ultimi 20 prepartita e gli ultimi 12 di sessione non si ripetono. Nella scheda Elenco puoi modificare, disattivare o aggiungere imprevisti: le modifiche si salvano con la carriera. Infortuni da imprevisto: ≤1 mese = 2-4 partite, 1-3 mesi = 5-12, 3-6 mesi = 13-24, oltre 6 mesi = 25-38.</p>
     </div>
   </div>
 </section>
@@ -640,11 +665,16 @@ E('p',.7,"Vittoria di prestigio, il presidente apre il portafoglio: forbice +3 f
 E('p',1,"Diritti TV incassati: +1 prestito in entrata fino alla prossima sessione.",{lg:['P'],fx:[ses('+1 prestito in entrata','ses',{pin:1})]})
 ];
 PRE.forEach((e,i)=>e.id='m'+i);SES.forEach((e,i)=>e.id='s'+i);
+function evAll(k){const base=k==='pre'?PRE:SES,C=S.custom||{edits:{},added:[]},out=[];
+ base.forEach((e,i)=>{const m=C.edits[e.id];out.push({e:m&&m.v?Object.assign({},e,m.v):e,n:i+1,st:m?(m.off?'off':(m.v?'mod':'base')):'base',base:true})});
+ (C.added||[]).filter(a=>a.list===k).forEach((a,i)=>out.push({e:a,n:base.length+i+1,st:a.off?'off':'new',base:false}));return out}
+const evs=k=>evAll(k).filter(x=>x.st!=='off').map(x=>x.e);
+const evById=id=>{const x=[...evAll('pre'),...evAll('ses')].find(x=>x.e.id===id);return x?x.e:null};
 
-const blank=()=>({at:0,club:'',lega:'League Two',prob:70,coppe:0,magg:0,svi:0,reg5:true,rosa:[],inf:[],eff:[],flags:{imm:0,shield:0,force:0,med:0,sshield:0,medbad:0,noinj:0,nonneg:0},v4:1,v5:1,extra:[],recent:[],srecent:[],last:null,sesLast:null});
+const blank=()=>({at:0,club:'',lega:'League Two',prob:70,coppe:0,magg:0,svi:0,reg5:true,rosa:[],inf:[],eff:[],flags:{imm:0,shield:0,force:0,med:0,sshield:0,medbad:0,noinj:0,nonneg:0},v4:1,v5:1,custom:{edits:{},added:[]},extra:[],recent:[],srecent:[],last:null,sesLast:null});
 const LS='fc26-imprevisti-v1';
 let S=blank(),undo=null,editId=null,ref=null,saving=false,pend=false,tmr=null,flipNext=false;
-const load=j=>{const raw=JSON.parse(j),o=Object.assign(blank(),raw);if(!raw.v4){if(o.prob===30)o.prob=50;o.v4=1}if(!raw.v5){if(o.prob===50)o.prob=70;o.v5=1}o.flags=Object.assign(blank().flags,o.flags);o.rosa.forEach(p=>{if(OLDR[p.ruolo])p.ruolo=OLDR[p.ruolo]});if(!o.extra)o.extra=[];return o};
+const load=j=>{const raw=JSON.parse(j),o=Object.assign(blank(),raw);if(!raw.v4){if(o.prob===30)o.prob=50;o.v4=1}if(!raw.v5){if(o.prob===50)o.prob=70;o.v5=1}o.flags=Object.assign(blank().flags,o.flags);o.rosa.forEach(p=>{if(OLDR[p.ruolo])p.ruolo=OLDR[p.ruolo]});if(!o.extra)o.extra=[];if(!o.custom||typeof o.custom!=='object')o.custom={edits:{},added:[]};o.custom.edits=o.custom.edits||{};o.custom.added=o.custom.added||[];return o};
 try{const r=localStorage.getItem(LS);if(r)S=load(r)}catch(e){}
 
 const setSync=t=>{$('#sync').textContent=t};
@@ -726,13 +756,13 @@ function drawPre(){snap('Nuova estrazione');const r={};const noinj=S.flags.noinj
  if(S.flags.imm>0){r.kind='imm';S.flags.imm--;r.left=S.flags.imm;S.preSnap=ief()}
  else{S.preSnap=ief();const forced=!!S.flags.force,roll=rnd(1,100);r.roll=roll;
   if(!forced&&roll>S.prob)r.kind='none';
-  else{S.flags.force=0;const nn=!!S.flags.nonneg;const pk=pickEvent(PRE,S.recent,null,{noinj:noinj,nonneg:nn});if(pk&&nn)S.flags.nonneg=0;
+  else{S.flags.force=0;const nn=!!S.flags.nonneg;const pk=pickEvent(evs('pre'),S.recent,null,{noinj:noinj,nonneg:nn});if(pk&&nn)S.flags.nonneg=0;
    if(!pk)r.kind='none';else{const{ev,A,B}=pk;Object.assign(r,{kind:'ev',t:ev.t,html:fill(ev.s,A,B),forced,lg:ev.lg?S.lega:null});
     if(ev.t==='n'&&S.flags.shield){S.flags.shield=0;r.shielded=1;r.applied=['Annullato dallo spogliatoio carico']}else r.applied=apply(ev,A,B,'pre');
     S.recent=[ev.id,...S.recent].slice(0,20)}}}
  S.last=r;flipNext=true;save();render()}
 function rerollPre(){const prev=S.last;if(!prev||!S.preSnap)return;snap('Imprevisto cambiato');unief(S.preSnap);S.flags.force=0;
- const nn=!!S.flags.nonneg;const pk=pickEvent(PRE,S.recent,null,{noinj:!!prev.noinj,nonneg:nn});if(!pk)return;if(nn)S.flags.nonneg=0;const{ev,A,B}=pk;
+ const nn=!!S.flags.nonneg;const pk=pickEvent(evs('pre'),S.recent,null,{noinj:!!prev.noinj,nonneg:nn});if(!pk)return;if(nn)S.flags.nonneg=0;const{ev,A,B}=pk;
  const r={kind:'ev',t:ev.t,html:fill(ev.s,A,B),lg:ev.lg?S.lega:null,noinj:prev.noinj,changed:(prev.changed||0)+1};
  if(ev.t==='n'&&S.flags.shield){S.flags.shield=0;r.shielded=1;r.applied=['Annullato dallo spogliatoio carico']}else r.applied=apply(ev,A,B,'pre');
  S.recent=[ev.id,...S.recent].slice(0,20);S.last=r;flipNext=true;save();render()}
@@ -751,13 +781,13 @@ function drawSes(kind){snap('Sessione estratta');
  if(kind==='estate'){S.svi=0;S.eff=S.eff.filter(e=>e.sc==='match')}
  else S.eff=S.eff.filter(e=>e.sc!=='ses');
  S.sesSnap=ief();const items=[],used=[];
- for(let k=0;k<2;k++){const pk=pickEvent(SES,[...S.srecent,...used],kind==='estate'?'E':'G');if(!pk)break;const{ev,A,B}=pk;used.push(ev.id);
+ for(let k=0;k<2;k++){const pk=pickEvent(evs('ses'),[...S.srecent,...used],kind==='estate'?'E':'G');if(!pk)break;const{ev,A,B}=pk;used.push(ev.id);
   items.push(sesCard(ev,{A,B,C:CUR_C,D:CUR_D,E:CUR_E}))}
  S.srecent=[...used,...S.srecent].slice(0,12);S.sesLast={kind,items};flipNext=true;save();render()}
 function rerollSes(k){const SL=S.sesLast;if(!SL||!S.sesSnap||!SL.items[k])return;snap('Carta di sessione cambiata');unief(S.sesSnap);
- const excl=[...S.srecent,...SL.items.map(x=>x.ev)];const pk=pickEvent(SES,excl,SL.kind==='estate'?'E':'G');if(!pk){render();return}
+ const excl=[...S.srecent,...SL.items.map(x=>x.ev)];const pk=pickEvent(evs('ses'),excl,SL.kind==='estate'?'E':'G');if(!pk){render();return}
  const items=SL.items.map((it,i)=>{if(i===k){const{ev,A,B}=pk;const n=sesCard(ev,{A,B,C:CUR_C,D:CUR_D,E:CUR_E});n.changed=(it.changed||0)+1;return n}
-  const ev=SES.find(e=>e.id===it.ev);if(!ev)return it;const n=sesCard(ev,it.T||{},it.ns);n.changed=it.changed;return n});
+  const ev=evById(it.ev);if(!ev)return it;const n=sesCard(ev,it.T||{},it.ns);n.changed=it.changed;return n});
  S.srecent=[pk.ev.id,...S.srecent].slice(0,12);S.sesLast={kind:SL.kind,items,test:SL.test,flip:k};flipNext=true;save();render()}
 
 function checks(){const R=inRosa(),out=[];const ck=(ok,t,d)=>out.push({ok,t,d});
@@ -783,7 +813,7 @@ function infLine(e){const pill=e.ph==='rec'?'<span class="pill p-rec">Rientro</s
  const st=e.ph==='rec'?`rientrato: deve saltare ${pl(e.post)}`:e.out==null?`fuori fino al rientro nel gioco (${CLS[e.c]}), poi ${pl(e.post)} di rientro`:`fuori ${pl(e.out)}${e.k==='inj'&&e.post?` + ${e.post} dopo il rientro`:''}`;
  return `<div>${pill} <b>${esc(e.name)}</b><div class="muted">${st}</div>${asg(e)}</div>`}
 
-function render(){
+function render(){try{lista()}catch(e){}
  $('#club').textContent=S.club||'La mia carriera';$('#lega').textContent=S.lega+(window.cloudOn?' · salvato online':'');
  // prepartita
  const L=S.last;let h='';
@@ -865,7 +895,7 @@ document.addEventListener('change',e=>{if(e.target.classList.contains('asg')){co
 let keepArm=false;$('#bKeep').addEventListener('click',e=>{if(!keepArm){keepArm=true;e.target.textContent='Sicuro? Premi di nuovo';setTimeout(()=>{keepArm=false;e.target.textContent='Ricomincia tenendo la rosa'},4000);return}snap('Ripartito da zero');const n=blank();['club','lega','prob','coppe','magg','rosa'].forEach(k=>n[k]=S[k]);S=n;keepArm=false;e.target.textContent='Ricomincia tenendo la rosa';$('#bMsg').textContent='Infermeria, effetti, estrazioni e svincolati azzerati; rosa e impostazioni tenute.';save();render()});
 $('#bUndo').addEventListener('click',()=>{if(!undo)return;S=load(undo);undo=null;$('#toast').hidden=true;save();render()});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a,id=b.dataset.id;
- if(a==='draw')trial(drawPre,'pre');else if(a==='reroll')trial(rerollPre,'pre');else if(a==='sesre'){const k=+b.dataset.k;trial(()=>rerollSes(k),'ses')}
+ if(a==='edEv'){edOpen(id);return}if(a==='draw')trial(drawPre,'pre');else if(a==='reroll')trial(rerollPre,'pre');else if(a==='sesre'){const k=+b.dataset.k;trial(()=>rerollSes(k),'ses')}
  else if(a==='delEff'){snap('Effetto rimosso');S.eff=S.eff.filter(x=>x.id!==id);save();render()}
  else if(a==='delP'){snap('Giocatore eliminato');S.rosa=S.rosa.filter(x=>x.id!==id);save();render()}
  else if(a==='edit'){const p=S.rosa.find(x=>x.id===id);editId=id;$('#fNome').value=p.nome;$('#fRep').value=p.rep;$('#fRuolo').value=p.ruolo;$('#fTipo').value=p.tipo;$('#fTitle').textContent='Modifica '+p.nome;$('#fSave').textContent='Salva';$('#fCancel').hidden=false;$('#fNome').focus()}
@@ -899,11 +929,65 @@ function fxTxt(e,isSes){const o=[];const pl=n=>n+' '+(n>1?'partite':'partita');
  if(isSes&&!e.ne&&!e.fx.some(f=>['ses','inj','out','ban'].includes(f.k)))o.push((e.sc==='sea'?'Fino a fine stagione':'Fino alla prossima sessione')+(e.mod?' · '+modTxt(e.mod):''));
  if(!o.length)o.push('Solo per questa partita');
  return o.join('; ')}
-function lista(){const isSes=$('#eTipo').value==='ses',L=isSes?SES:PRE,t=$('#eTono').value,c=$('#eCat').value,q=$('#eQ').value.trim().toLowerCase();
- const rows=L.map((e,i)=>({e,i,txt:e.s.replace('{A}','['+tgTxt(e.tg,false)+']').replace('{B}','['+tgTxt(e.tg2,1)+']').replace('{C}','['+tgTxt(e.tg3,2)+']').replace('{D}','['+tgTxt(e.tg4,3)+']').replace('{E}','['+tgTxt(e.tg5,4)+']')}))
-  .filter(r=>(!t||r.e.t===t)&&(!c||(c==='-'?!r.e.lg:(r.e.lg||[]).includes(c)))&&(!q||r.txt.toLowerCase().includes(q)));
- $('#eCount').textContent=`${rows.length} su ${L.length} imprevisti ${isSes?'di sessione':'prepartita'}. Tra parentesi quadre: il giocatore che l'app sceglie dalla tua rosa.`;
- $('#eBody').innerHTML=rows.map(r=>`<tr><td class="n" data-l="N.">${r.i+1}</td><td class="wrap" data-l="Imprevisto">${esc(r.txt)}</td><td data-l="Tono"><span class="pill p-${r.e.t}">${{n:'Negativo',p:'Positivo',x:'Neutro'}[r.e.t]}</span></td><td data-l="Dove e quando">${r.e.lg?LGN[r.e.lg[0]]:'Ovunque'}${r.e.when?' · '+(r.e.when==='E'?'solo estate':'solo gennaio'):''}</td><td class="wrap" data-l="Cosa fa">${esc(fxTxt(r.e,isSes))}</td></tr>`).join('')}
+const txtOf=e=>e.s.replace('{A}','['+tgTxt(e.tg,false)+']').replace('{B}','['+tgTxt(e.tg2,1)+']').replace('{C}','['+tgTxt(e.tg3,2)+']').replace('{D}','['+tgTxt(e.tg4,3)+']').replace('{E}','['+tgTxt(e.tg5,4)+']');
+function lista(){const k=$('#eTipo').value,isSes=k==='ses',t=$('#eTono').value,c=$('#eCat').value,q=$('#eQ').value.trim().toLowerCase(),showOff=$('#eOff').checked;
+ const all=evAll(k);const rows=all.map(x=>({...x,txt:txtOf(x.e)})).filter(r=>(showOff||r.st!=='off')&&(!t||r.e.t===t)&&(!c||(c==='-'?!r.e.lg:(r.e.lg||[]).includes(c)))&&(!q||r.txt.toLowerCase().includes(q)));
+ const act=all.filter(x=>x.st!=='off').length,off=all.length-act;
+ $('#eCount').textContent=`${rows.length} mostrati · ${act} attivi${off?`, ${off} disattivati`:''} ${isSes?'di sessione':'prepartita'}. Tra parentesi quadre: il giocatore che l'app sceglie dalla tua rosa.`;
+ const STL={mod:'Modificato',off:'Disattivato',new:'Tuo'};
+ $('#eBody').innerHTML=rows.map(r=>`<tr${r.st==='off'?' class="offrow"':''}><td class="n" data-l="N.">${r.n}</td><td class="wrap" data-l="Imprevisto">${esc(r.txt)}${STL[r.st]?` <span class="pill st">${STL[r.st]}</span>`:''}</td><td data-l="Tono"><span class="pill p-${r.e.t}">${{n:'Negativo',p:'Positivo',x:'Neutro'}[r.e.t]}</span></td><td data-l="Dove e quando">${r.e.lg?LGN[r.e.lg[0]]:'Ovunque'}${r.e.when?' · '+(r.e.when==='E'?'solo estate':'solo gennaio'):''}</td><td class="wrap" data-l="Cosa fa">${esc(fxTxt(r.e,isSes))}</td><td data-l=""><button class="sm" data-a="edEv" data-id="${r.e.id}">Modifica</button></td></tr>`).join('')}
+// editor
+const TGO=[['none','Nessuno',null],['any','Un giocatore a caso',{}],['big','Un cruciale o importante',{st:['cruciale','importante']}],['cru','Un cruciale',{st:['cruciale']}],['imp','Un importante',{st:['importante']}],['low','Un turnover, sporadico o promessa',{st:['turnover','sporadico','promessa']}],['cap','Il capitano',{cap:1}],['POR','Un portiere',{r:'POR'}],['DIF','Un difensore',{r:'DIF'}],['CEN','Un centrocampista',{r:'CEN'}],['ATT','Un attaccante',{r:'ATT'}],['nogk','Un giocatore di movimento',{nogk:1}],['loan','Un giocatore arrivato in prestito',{loan:1}],['best','Il tuo miglior giocatore (controlli tu in game)',{pk:'best'}],['bestATT','Il tuo miglior attaccante (controlli tu)',{r:'ATT',pk:'best'}],['bestPOR','Il tuo miglior portiere (controlli tu)',{r:'POR',pk:'best'}],['old','Il più anziano (controlli tu)',{pk:'old'}],['young','Il più giovane (controlli tu)',{pk:'young'}],['u21','Un under 21 (controlli tu)',{u21:1}],['same','Uno dello stesso reparto del giocatore 1',{same:1}]];
+const tgKey=tg=>{if(!tg)return 'none';const j=JSON.stringify(tg);const f=TGO.find(o=>o[2]&&JSON.stringify(o[2])===j);return f?f[0]:'orig'};
+let edId=null,edNew=false,edOrig=null;
+function fxKind(e){const f=e.fx||[];if(!f.length)return['none'];const k=f[0].k;if(!['inj','out','ban','eff'].includes(k))return['orig'];
+ if(f.length===1&&!f[0].who)return[k,f[0],false];if(f.length===2&&f[1].k===k&&f[1].who==='B'&&k!=='eff')return[k,f[0],true];return['orig']}
+function edFill(e){const opt=(cur)=>TGO.map(o=>`<option value="${o[0]}">${o[1]}</option>`).join('')+(cur==='orig'?'<option value="orig">Come l\'originale</option>':'');
+ const k1=tgKey(e.tg),k2=tgKey(e.tg2);$('#edTg').innerHTML=opt(k1);$('#edTg2').innerHTML=opt(k2);$('#edTg').value=k1;$('#edTg2').value=k2;
+ $('#edT').value=e.t;$('#edLg').value=e.lg?e.lg[0]:'';$('#edWhen').value=e.when||'';
+ const ws=[...$('#edW').options].map(o=>+o.value);const w=ws.reduce((a,b)=>Math.abs(b-e.w)<Math.abs(a-e.w)?b:a);$('#edW').value=String(w);
+ $('#edS').value=e.s;const[fk,f,both]=fxKind(e);$('#edFx').value=fk;$('#edFx').querySelector('[value=orig]').hidden=fk!=='orig';
+ if(f){if(f.c)$('#edC').value=f.c;if(f.n)$('#edN').value=f.n;$('#edWhy').value=f.why||'';$('#edEff').value=f.s||''}else{$('#edN').value=1;$('#edWhy').value='';$('#edEff').value=''}
+ $('#edBoth').checked=!!both;edUi()}
+function edUi(){const fx=$('#edFx').value,ses=edNew?$('#edList').value==='ses':evAll('ses').some(x=>x.e.id===edId);
+ $('#edWhenL').hidden=!ses;$('#edListL').hidden=!edNew;$('#edCL').hidden=fx!=='inj';$('#edNL').hidden=!['out','ban','eff'].includes(fx);$('#edWhyL').hidden=fx!=='out';$('#edBothL').hidden=!['inj','out','ban'].includes(fx)||$('#edTg2').value==='none';$('#edEffL').hidden=fx!=='eff';
+ const e=edBuild(true);$('#edPrev').innerHTML=e?'<b>Anteprima:</b> '+esc(txtOf(e))+'<br><span class="muted">'+esc(fxTxt(e,ses))+'</span>':'';}
+function edBuild(quiet){const base=edNew?{}:(evById(edId)||{});const k1=$('#edTg').value,k2=$('#edTg2').value;const tgOf=(k,old)=>k==='orig'?old:(TGO.find(o=>o[0]===k)||[])[2]||null;
+ const e=Object.assign({},base,{t:$('#edT').value,w:+$('#edW').value,s:$('#edS').value.trim(),lg:$('#edLg').value?[$('#edLg').value]:null,when:$('#edWhen').value||null,tg:tgOf(k1,base.tg),tg2:tgOf(k2,base.tg2)});
+ if(!edNew&&!evAll('ses').some(x=>x.e.id===edId))e.when=null;if(edNew&&$('#edList').value==='pre')e.when=null;
+ const fx=$('#edFx').value,n=Math.max(1,+$('#edN').value||1),both=$('#edBoth').checked&&e.tg2;
+ if(fx==='none')e.fx=[];else if(fx==='inj')e.fx=[{k:'inj',c:+$('#edC').value},...(both?[{k:'inj',c:+$('#edC').value,who:'B'}]:[])];
+ else if(fx==='out'){const why=$('#edWhy').value.trim()||'Imprevisto';e.fx=[{k:'out',n,why},...(both?[{k:'out',n,why,who:'B'}]:[])]}
+ else if(fx==='ban')e.fx=[{k:'ban',n},...(both?[{k:'ban',n,who:'B'}]:[])];
+ else if(fx==='eff')e.fx=[{k:'eff',n,s:$('#edEff').value.trim()||e.s}];
+ else e.fx=base.fx||[];
+ if(fx!=='orig'){e.ne=0}
+ if(!e.tg){e.tg2=null}
+ return e}
+function edOpen(id){edNew=!id;edId=id;const e=id?evById(id):{t:'n',w:1,s:'',lg:null,when:null,tg:null,tg2:null,fx:[]};const isBase=id&&!String(id).startsWith('u');
+ const C=S.custom;$('#edTitle').textContent=id?'Modifica imprevisto':'Nuovo imprevisto';$('#edList').value=$('#eTipo').value;$('#edErr').textContent='';
+ const st=id?(isBase?(C.edits[id]&&C.edits[id].off):(C.added.find(a=>a.id===id)||{}).off):false;
+ $('#edToggle').hidden=!id;$('#edToggle').textContent=st?'Riattiva':'Disattiva';$('#edReset').hidden=!(isBase&&C.edits[id]&&C.edits[id].v);$('#edDel').hidden=!(id&&!isBase);
+ edFill(e);$('#edBox').hidden=false;try{$('#edBox').scrollIntoView({behavior:'smooth',block:'start'})}catch(e){}$('#edS').focus()}
+function edClose(){$('#edBox').hidden=true;edId=null;edNew=false}
+$('#eNew').addEventListener('click',()=>edOpen(null));$('#edCancel').addEventListener('click',edClose);
+['#edT','#edLg','#edWhen','#edW','#edTg','#edTg2','#edS','#edFx','#edC','#edN','#edWhy','#edBoth','#edEff','#edList'].forEach(id=>$(id).addEventListener('input',()=>{$('#edErr').textContent='';edUi()}));
+document.querySelectorAll('[data-ins]').forEach(b=>b.addEventListener('click',()=>{const t=$('#edS'),p=t.selectionStart??t.value.length;t.value=t.value.slice(0,p)+b.dataset.ins+t.value.slice(t.selectionEnd??p);t.focus();t.selectionStart=t.selectionEnd=p+3;edUi()}));
+$('#edForm').addEventListener('submit',ev=>{ev.preventDefault();const e=edBuild();
+ if(!e.s){$('#edErr').textContent='Scrivi il testo della carta.';return}
+ if(e.tg&&!e.s.includes('{A}')&&!(e.fx||[]).length){$('#edErr').textContent='Inserisci il giocatore 1 nel testo, oppure scegli "Nessuno".';return}
+ if(e.tg2&&!e.s.includes('{B}')&&!$('#edBoth').checked){$('#edErr').textContent='Inserisci il giocatore 2 nel testo, oppure scegli "Nessuno".';return}
+ if(!e.tg&&/\{[AB]\}/.test(e.s)){$('#edErr').textContent='Nel testo c\'è un giocatore, ma non hai scelto chi: imposta "Giocatore 1".';return}
+ if(['inj','out','ban'].includes($('#edFx').value)&&!e.tg){$('#edErr').textContent='Per infortunio, fuori o squalifica scegli il giocatore 1.';return}
+ snap(edNew?'Imprevisto aggiunto':'Imprevisto modificato');const C=S.custom;
+ if(edNew){e.id='u'+uid();e.list=$('#edList').value;e.sc=e.sc||'ses';e.mod=null;e.ne=0;e.off=false;C.added.push(e)}
+ else if(String(edId).startsWith('u')){const i=C.added.findIndex(a=>a.id===edId);C.added[i]=Object.assign(C.added[i],e)}
+ else{const v={t:e.t,w:e.w,s:e.s,lg:e.lg,when:e.when,tg:e.tg,tg2:e.tg2,fx:e.fx,ne:e.ne};C.edits[edId]=Object.assign(C.edits[edId]||{},{v})}
+ edClose();save();render()});
+$('#edToggle').addEventListener('click',()=>{const C=S.custom;if(String(edId).startsWith('u')){const a=C.added.find(x=>x.id===edId);a.off=!a.off}else{const m=C.edits[edId]||{};m.off=!m.off;C.edits[edId]=m}snap('Imprevisto '+($('#edToggle').textContent==='Disattiva'?'disattivato':'riattivato'));edClose();save();render()});
+$('#edReset').addEventListener('click',()=>{const m=S.custom.edits[edId];if(!m)return;snap('Imprevisto ripristinato');delete m.v;if(!m.off)delete S.custom.edits[edId];edClose();save();render()});
+let delArm=false;$('#edDel').addEventListener('click',e=>{if(!delArm){delArm=true;e.target.textContent='Sicuro? Premi di nuovo';setTimeout(()=>{delArm=false;e.target.textContent='Elimina'},4000);return}delArm=false;e.target.textContent='Elimina';snap('Imprevisto eliminato');S.custom.added=S.custom.added.filter(a=>a.id!==edId);edClose();save();render()});
+$('#eOff').addEventListener('input',lista);
 ['#eTipo','#eTono','#eCat','#eQ'].forEach(id=>$(id).addEventListener('input',lista));lista();
 addEventListener('hashchange',tab);tab();render();
 // salvataggio online (solo versione GitHub)
