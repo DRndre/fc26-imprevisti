@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#0e4a2b">
 <meta name="apple-mobile-web-app-title" content="Imprevisti">
-<meta name="build" content="2026-11-18-2205">
+<meta name="build" content="2026-11-19-1315">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
@@ -165,10 +165,7 @@ td.wrap{white-space:normal;min-width:220px}.p-n{background:#e0322c;color:#fff}.p
         <form id="pForm" class="row">
           <label style="grid-column:1/-1">Nome<input id="fNome" required autocomplete="off"></label>
           <label>Reparto<select id="fRep"><option>POR</option><option>DIF</option><option selected>CEN</option><option>ATT</option></select></label>
-          <label>OVR<input id="fOvr" type="number" min="30" max="99" value="60" inputmode="numeric"></label>
-          <label>Età<input id="fEta" type="number" min="15" max="45" value="24" inputmode="numeric"></label>
           <label>Ruolo<select id="fRuolo"></select></label>
-          <label>Stipendio (€/sett.)<input id="fStip" type="number" min="0" step="50" value="1000" inputmode="numeric"></label>
           <label>Tipo<select id="fTipo"><option value="P">Di proprietà</option><option value="IN">In prestito da un altro club</option><option value="OUT">Mandato via in prestito</option></select></label>
           <div class="acts" style="grid-column:1/-1;justify-content:flex-start"><button class="pri" type="submit" id="fSave">Aggiungi</button><button type="button" id="fCancel" hidden>Annulla modifica</button></div>
         </form>
@@ -179,12 +176,12 @@ td.wrap{white-space:normal;min-width:220px}.p-n{background:#e0322c;color:#fff}.p
     <h3>Rosa <small id="rCount"></small></h3>
     <label style="max-width:360px;margin-bottom:12px">Capitano<select id="rCap"></select></label>
     <p class="muted" style="margin:0 0 8px"><span class="arr in">←</span> arrivato in prestito da un altro club &nbsp;·&nbsp; <span class="arr">→</span> mandato via in prestito</p>
-    <div class="scroll"><table class="stack rosa"><thead><tr><th>Nome</th><th class="n">OVR</th><th class="n">Età</th><th>Ruolo</th><th class="n">Stipendio</th><th></th></tr></thead><tbody id="rBody"></tbody></table></div>
+    <div class="scroll"><table class="stack rosa"><thead><tr><th>Nome</th><th>Ruolo in squadra</th><th></th></tr></thead><tbody id="rBody"></tbody></table></div>
     <p class="empty" id="rEmpty">Rosa vuota: finché non la inserisci, gli imprevisti indicano "un giocatore a tua scelta" invece di un nome.</p>
   </div>
   <div class="box">
     <h3>Importa rosa da testo</h3>
-    <p class="muted">Una riga per giocatore: Nome; Reparto; OVR; Età; Ruolo; Stipendio; Tipo (P, IN, OUT — facoltativo). Esempio: <code>Mario Rossi; ATT; 64; 22; importante; 1500</code></p>
+    <p class="muted">Una riga per giocatore: Nome; Reparto; Ruolo in squadra; Tipo (P, IN, OUT — facoltativo). Esempio: <code>Mario Rossi; ATT; importante</code></p>
     <textarea id="imp"></textarea>
     <div class="acts" style="justify-content:flex-start;margin-top:10px"><button id="bImp">Aggiungi alla rosa</button></div>
   </div>
@@ -237,7 +234,6 @@ td.wrap{white-space:normal;min-width:220px}.p-n{background:#e0322c;color:#fff}.p
         <div class="row">
           <label>Coppe nazionali vinte<input id="sCoppe" type="number" min="0" inputmode="numeric"></label>
           <label>Campionati e trofei internazionali<input id="sMagg" type="number" min="0" inputmode="numeric"></label>
-          <label>Svincolati presi quest'anno<input id="sSvi" type="number" min="0" inputmode="numeric"></label>
           <label style="grid-template-columns:auto 1fr;align-items:center;gap:10px;color:var(--ink)"><input id="sReg5" type="checkbox" style="width:22px;min-height:22px">Obbligo offerte dai campioni (regola 5) attivo</label>
         </div>
         <p class="muted">Ogni coppa vale +1 importante. Ogni campionato o trofeo internazionale vale +1 importante e +1 cruciale.</p>
@@ -322,11 +318,11 @@ E('n',1,'Contrasto duro in allenamento con il tuo uomo chiave: {A} si fa male (�
 E('n',1.2,'Infortunio nel riscaldamento: {A} parte titolare ma va sostituito al 1\' (cambio sprecato). Poi stop ≤1 mese.',{tg:TOP,fx:[inj(1)]}),
 E('n',2.5,'Febbre: {A} salta la partita di oggi.',{tg:ANY,fx:[out(1,'Febbre')]}),
 E('n',1.2,'Virus nello spogliatoio: {A}, {B} e {C} saltano la partita.',{tg:ANY,tg2:ANY,tg3:ANY,fx:[out(1,'Virus'),out(1,'Virus','B'),out(1,'Virus','C')]}),
-E('n',1.5,'Mal di schiena per il portiere titolare: {A} non gioca, tocca al secondo.',{tg:{r:'POR',pk:'best'},fx:[out(1,'Mal di schiena')]}),
+E('n',1.5,'Mal di schiena: {A} non gioca, tocca al secondo portiere.',{tg:{r:'POR',pk:'best'},fx:[out(1,'Mal di schiena')]}),
 E('n',2,'Ritardo all\'allenamento: {A} parte dalla panchina.',{tg:BIG}),
 E('n',1.5,'Lite con l\'allenatore: {A} è fuori rosa per 2 partite.',{tg:TOP,fx:[out(2,'Fuori rosa')]}),
 E('n',1.5,'Notte in discoteca: {A} multato e in tribuna per 2 partite.',{tg:ANY,fx:[out(2,'Punizione')]}),
-E('n',1,'Senatori contro il mister: i tre cruciali più anziani, {A}, {B} e {C}, sono fuori rosa per 1 partita.',{tg:{st:['cruciale'],pk:'old'},tg2:{st:['cruciale'],pk:'old'},tg3:{st:['cruciale'],pk:'old'},fx:[out(1,'Fuori rosa'),out(1,'Fuori rosa','B'),out(1,'Fuori rosa','C')]}),
+E('n',1,'Senatori contro il mister: i tuoi 3 cruciali più anziani sono fuori rosa per 1 partita.',{tg:{st:['cruciale'],pk:'old'},tg2:{st:['cruciale'],pk:'old'},tg3:{st:['cruciale'],pk:'old'},fx:[out(1,'Fuori rosa'),out(1,'Fuori rosa','B'),out(1,'Fuori rosa','C')]}),
 E('n',1,'Motivi familiari: {A} ottiene un permesso e salta 2 partite.',{tg:ANY,fx:[out(2,'Permesso')]}),
 E('n',1,'Problemi con i documenti: {A} non è convocabile oggi.',{tg:ANY,fx:[out(1,'Documenti')]}),
 E('n',1.5,'Proteste social contro l\'arbitro: {A} squalificato per 1 giornata.',{tg:ANY,fx:[ban(1)]}),
@@ -336,8 +332,8 @@ E('n',2,'Squadra tesa: nessun cambio prima del 70\'.'),
 E('n',1.5,'Allenatore squalificato: i cambi si possono fare solo all\'intervallo.'),
 E('n',1,'Derby sentitissimo: difficoltà +1 livello. Partono titolari tutti i cruciali e i posti restanti vanno agli importanti più anziani.'),
 E('n',1.5,'Il presidente vuole spettacolo: schiera almeno 3 attaccanti o ali di ruolo.'),
-E('n',1.5,'Il presidente vuole vedere i giovani: {A}, {B} e {C} partono titolari.',{tg:{u21:1},tg2:{u21:1},tg3:{u21:1}}),
-E('n',1.5,'Lo staff medico impone il riposo: {A}, {B}, {C}, {D} e {E} partono dalla panchina.',{tg:TOP,tg2:TOP,tg3:TOP,tg4:TOP,tg5:TOP}),
+E('n',1.5,'Il presidente vuole vedere i giovani: 3 under 21 partono titolari.'),
+E('n',1.5,'Lo staff medico impone il riposo: i tuoi 5 migliori giocatori partono dalla panchina.'),
 E('n',1.5,'Il direttore sportivo impone la difesa a 3 per questa partita.'),
 E('n',1.2,'Tattica bloccata: non puoi cambiare modulo né mentalità durante la partita.'),
 E('n',1,'Allenatore testardo: il mister non si fida delle riserve. Gioca tutta la partita con gli stessi 11 dell\'ultima, salvo indisponibili, senza fare cambi per 90 minuti.'),
@@ -353,7 +349,7 @@ E('n',1.2,'Mister prudente: ogni giocatore ammonito viene sostituito subito, fin
 E('n',1,'Cartellini pesanti: il primo ammonito di oggi salta la prossima partita.'),
 E('n',1,'Clima teso con gli arbitri: per 3 partite ogni espulsione vale 1 giornata di squalifica in più.',{fx:[eff(3,'Ogni espulsione vale +1 giornata di squalifica')]}),
 E('n',1.2,'Il preparatore sbaglia i carichi di lavoro: {A} e {B} giocano al massimo 60 minuti.',{tg:ANY,tg2:ANY}),
-E('n',1,'Il presidente taglia i premi partita: i tuoi due migliori, {A} e {B}, partono dalla panchina.',{tg:TOP,tg2:TOP}),
+E('n',1,'Il presidente taglia i premi partita: i tuoi 2 migliori giocatori partono dalla panchina.'),
 E('n',1,'Ricaduta: {A} torna in infermeria (≤1 mese).',{tg:{src:'rec'},fx:[inj(1)]}),
 E('n',1,'Complicazioni nel recupero: {A} resta fuori 3 partite in più.',{tg:{src:'inj'},fx:[{k:'ext',n:3}]}),
 E('n',1.2,'Panchina corta: puoi fare al massimo 3 cambi.'),
@@ -380,10 +376,10 @@ E('x',1,'Occasione per {A}: deve partire titolare.',{tg:{st:['turnover','sporadi
 E('x',1,'Il mister prova un modulo mai usato in questa carriera.'),
 E('x',1,'All\'arrembaggio: mentalità offensiva o molto offensiva per tutti i 90 minuti.'),
 E('x',1,'Catenaccio: mentalità difensiva finché non subisci un gol.'),
-E('x',1,'Il predestinato: il giovane con l\'OVR più basso della rosa, {A}, parte titolare.',{tg:{pk:'youngweak'}}),
-E('x',1,'Esperienza prima di tutto: il più anziano, {A}, parte titolare.',{tg:{pk:'old'}}),
-E('x',1,'Giornata della scuola calcio: il giovane {A} deve entrare dalla panchina.',{tg:{u21:1}}),
-E('x',.8,'Il giovane {A} si sente pronto: titolare nelle prossime 3 partite.',{tg:{u21:1},fx:[eff(3,'{A} deve partire titolare')]}),
+E('x',1,'Il predestinato: il giovane con l\'OVR più basso della rosa parte titolare.'),
+E('x',1,'Esperienza prima di tutto: il giocatore più anziano della rosa parte titolare.'),
+E('x',1,'Giornata della scuola calcio: un under 21 deve entrare dalla panchina.'),
+E('x',.8,'Un under 21 si sente pronto: lo stesso giovane parte titolare nelle prossime 3 partite.',{fx:[eff(3,'Lo stesso under 21 parte titolare')]}),
 E('x',.8,'Staffetta: {A} e {B}, dello stesso reparto, giocano un tempo a testa.',{tg:ANY,tg2:{same:1}}),
 E('n',1.2,'Il pullman si rompe in autostrada: niente riscaldamento e massimo 3 cambi.',{lg:['B']}),
 E('n',1,'Campo di periferia ghiacciato: imposta il meteo con la neve.',{lg:['B']}),
@@ -425,7 +421,7 @@ E('n',1,"Intervista polemica contro i compagni: il mister lascia {A} in tribuna.
 E('n',1,"Rissa nella partitella del giovedì: {A} e {B} sono esclusi dai convocati.",{tg:ANY,tg2:ANY,fx:[out(1,'Rissa'),out(1,'Rissa','B')]}),
 E('n',1,"Lesione al polpaccio nello sprint finale dell'allenamento: {A} si ferma per 1-3 mesi.",{tg:{r:'CEN'},fx:[inj(2)]}),
 E('n',1,"Pubalgia: {A} si ferma per circa 3 mesi.",{tg:ANY,fx:[{k:'inj',c:2,n:12}]}),
-E('n',1,"Mal di schiena cronico: per 4 partite il veterano {A} può giocare solo una partita sì e una no.",{tg:{pk:'old'},fx:[eff(4,'{A} gioca solo una partita sì e una no')]}),
+E('n',1,"Mal di schiena cronico: per 4 partite {A} può giocare solo una partita sì e una no.",{tg:{pk:'old'},fx:[eff(4,'{A} gioca solo una partita sì e una no')]}),
 E('n',1,"Vento fortissimo: vietati i tiri da fuori area e i lanci lunghi.",{}),
 E('n',.8,"Certificato di idoneità medica scaduto: {A} non può essere tesserato per 2 partite.",{tg:ANY,fx:[out(2,'Idoneità medica')]}),
 E('n',.4,"Salta un controllo antidoping per un disguido: {A} è sospeso in via cautelare per 4 giornate.",{tg:ANY,fx:[ban(4)]}),
@@ -435,19 +431,19 @@ E('n',1,"Sciopero dei trasporti, alcuni titolari arrivano all'ultimo: {A} e {B} 
 E('n',1,"Caldo torrido: tutti i titolari con 30 anni o più devono uscire entro il 70'.",{}),
 E('n',1,"Contrattura al flessore: {A} salta 2 partite.",{tg:ANY,fx:[out(2,'Contrattura')]}),
 E('n',1,"Sette ore di pullman per arrivare allo stadio: vietato il pressing costante per tutta la partita.",{}),
-E('n',1,"Papera in allenamento davanti ai giornalisti: il portiere {A} perde il posto per 2 partite.",{tg:{r:'POR',pk:'best'},fx:[eff(2,'{A} parte dalla panchina')]}),
+E('n',1,"Papera in allenamento davanti ai giornalisti: {A} perde il posto per 2 partite.",{tg:{r:'POR',pk:'best'},fx:[eff(2,'{A} parte dalla panchina')]}),
 E('n',1,"Polemiche arbitrali della scorsa giornata: per 3 partite vietate le scivolate.",{fx:[eff(3,'Vietate le scivolate')]}),
 E('n',1,"Attacco spuntato dalle assenze in allenamento: gioca con una sola punta centrale.",{}),
 E('n',1,"Ritiro punitivo dopo le ultime sconfitte: per 2 partite i giocatori con 30 anni o più partono dalla panchina.",{fx:[eff(2,'I giocatori con 30 anni o più partono dalla panchina')]}),
 E('n',1,"Infezione a un piede: {A} salta 3 partite.",{tg:ANY,fx:[out(3,'Infezione')]}),
-E('n',1,"Stiramento all'adduttore per il miglior difensore, {A}: stop di 1-3 mesi.",{tg:{r:'DIF',pk:'best'},fx:[inj(2)]}),
+E('n',1,"Stiramento all'adduttore per {A}: stop di 1-3 mesi.",{tg:{r:'DIF',pk:'best'},fx:[inj(2)]}),
 E('n',.3,"Frattura del metatarso: {A} starà fuori 3-6 mesi.",{tg:{r:'ATT'},fx:[inj(3)]}),
 E('n',1,"Fermato per eccesso di velocità, {A} arriva tardi al ritiro e parte dalla panchina.",{tg:ANY}),
 E('n',1,"I senatori snobbano l'ultimo arrivato: il giocatore arrivato più di recente parte dalla panchina.",{}),
 E('n',1,"Rigori disastrosi in allenamento: oggi gli eventuali rigori li calcia il giocatore in campo con l'OVR più basso.",{}),
 E('n',.6,"Il mister rivoluziona tutto: {A}, {B} e {C} giocano fuori dal loro ruolo naturale.",{tg:{nogk:1},tg2:{nogk:1},tg3:{nogk:1}}),
 E('n',1,"Nervi tesi: i primi 2 giocatori ammoniti oggi vanno sostituiti entro 10 minuti dal cartellino.",{}),
-E('n',1,"Il più giovane, {A}, arriva tardi alla riunione tecnica ed è escluso dai convocati.",{tg:{pk:'young'},fx:[out(1,'Punizione')]}),
+E('n',1,"{A} arriva tardi alla riunione tecnica ed è escluso dai convocati.",{tg:{pk:'young'},fx:[out(1,'Punizione')]}),
 E('n',1,"Spogliatoio diviso tra giovani e senatori: per 3 partite massimo 2 giocatori con 30 anni o più in campo insieme.",{fx:[eff(3,'Massimo 2 giocatori con 30 anni o più in campo insieme')]}),
 E('n',1,"Gli avversari hanno studiato il tuo gioco: vietato usare lo stesso modulo dell'ultima partita.",{}),
 E('n',1,"Il presidente sogna il tiki-taka: costruzione corta obbligatoria, niente palla lunga.",{}),
@@ -464,7 +460,7 @@ E('p',1,"Manto erboso nuovo al centro sportivo: nessun infortunio da imprevisto 
 E('p',1,"La stampa vi esalta: il prossimo imprevisto prepartita non sarà negativo.",{fx:[flag('nonneg')]}),
 E('p',1,"Il nuovo preparatore è un mago: {A}, infortunato per un imprevisto, recupera 1 partita di stop.",{tg:{src:'inj',app:1},fx:[{k:'ext',n:-1}]}),
 E('p',1,"Coreografia da brividi: oggi puoi ignorare un vincolo di formazione o di tattica imposto da un effetto attivo.",{}),
-E('p',.8,"Doppietta con l'Under 21 in settimana: {A} può diventare importante senza contare nel limite fino alla prossima sessione.",{tg:{u21:1},fx:[ses('{A} importante fuori limite','ses',{imp:1})]}),
+E('p',.8,"Doppietta con l'Under 21 in settimana: un under 21 può diventare importante senza contare nel limite fino alla prossima sessione.",{fx:[ses('Un under 21 importante fuori limite','ses',{imp:1})]}),
 E('p',1,"Preparazione atletica al top: per 2 partite ignori gli imprevisti che limitano i minuti dei giocatori.",{fx:[eff(2,'Ignora i limiti di minuti imposti dagli imprevisti')]}),
 E('p',1,"Gli avversari arrivano decimati da un virus: difficoltà -1 livello per questa partita.",{}),
 E('x',1,"Ritorno alle origini: gioca tutta la partita con il 4-4-2.",{}),
@@ -493,7 +489,7 @@ E('n',1,"Campo di casa rovinato dopo un concerto: per 3 partite niente scivolate
 E('p',1,"Il pub del paese offre la cena alla squadra: il prossimo imprevisto negativo è annullato.",{lg:['B'],fx:[flag('shield')]}),
 E('p',1,"Raccolta fondi dei tifosi per un fisioterapista: chi è in fase di rientro salta 1 partita in meno.",{lg:['B'],fx:[{k:'recall',n:1}]}),
 E('x',1,"Contro la squadra del cuore del capitano: il capitano gioca tutti i 90 minuti.",{lg:['B']}),
-E('n',1,"Trasferta del martedì dopo quella del sabato: i tre più anziani, {A}, {B} e {C}, partono dalla panchina.",{lg:['C'],tg:{pk:'old'},tg2:{pk:'old'},tg3:{pk:'old'}}),
+E('n',1,"Trasferta del martedì dopo quella del sabato: i 3 giocatori più anziani partono dalla panchina.",{lg:['C']}),
 E('n',1,"Un club di Premier corteggia il tuo allenatore: squadra distratta, difficoltà +1 livello.",{lg:['C']}),
 E('n',1,"{A} ha una clausola per la Premier e non vuole rischiare: massimo 60 minuti per 2 partite.",{lg:['C'],tg:TOP,fx:[eff(2,'{A} gioca al massimo 60 minuti')]}),
 E('n',1,"Tensione per la classifica: per 2 partite non puoi cambiare modulo durante la partita.",{lg:['C'],fx:[eff(2,'Non puoi cambiare modulo durante la partita')]}),
@@ -506,7 +502,7 @@ E('n',1,"Pausa nazionali: {A} torna affaticato e salta la partita.",{lg:['P'],tg
 E('n',1,"Polemiche sul VAR: per 3 partite ogni ammonito va sostituito entro 10 minuti.",{lg:['P'],fx:[eff(3,'Ogni ammonito va sostituito entro 10 minuti')]}),
 E('n',1,"Gli analisti avversari conoscono il tuo modulo: devi cambiarlo rispetto all'ultima partita.",{lg:['P']}),
 E('n',1,"Tournée commerciale in Asia a metà stagione: almeno 4 titolari diversi dalla formazione tipo.",{lg:['P']}),
-E('x',1,"Boxing Day: gioca con la terza maglia; {A} e {B} devono entrare dalla panchina.",{lg:['P'],tg:{u21:1},tg2:{u21:1}}),
+E('x',1,"Boxing Day: gioca con la terza maglia; 2 under 21 devono entrare dalla panchina.",{lg:['P']}),
 E('x',1,"Documentario sul club: la troupe segue {A}, che deve giocare tutti i 90 minuti.",{lg:['P'],tg:TOP})
 ];
 
@@ -527,10 +523,10 @@ E('n',1,'Osservatori licenziati: nessuna nuova missione giovanile fino alla pros
 E('n',.8,'Niente svincolati: quest\'anno non puoi tesserarne.',{sc:'sea',mod:{svi:-1}}),
 E('n',1,'Prezzi gonfiati: tutti sanno che hai soldi da spendere. In questa finestra ogni acquisto va pagato almeno il valore di mercato, niente sconti in trattativa.'),
 E('n',1,'Spogliatoio diviso: {A} e {B} non possono stare in campo insieme fino alla prossima sessione.',{tg:ANY,tg2:ANY}),
-E('n',1,'Crisi societaria: devi cedere o svincolare {A}, che guadagna più della media della rosa.',{tg:{wage:1}}),
+E('n',1,'Crisi societaria: devi cedere o svincolare {A}.',{tg:{wage:1}}),
 E('n',.8,'Sanzione della lega: -1 slot importante fino alla prossima sessione.',{mod:{imp:-1}}),
 E('n',1,'Rosa troppo lunga: chiudi la finestra con almeno 2 giocatori in meno del tetto.'),
-E('n',1,'Il portiere {A} chiede di andare via: se resta, perde il posto per le prime 3 partite.',{tg:{r:'POR',pk:'best'}}),
+E('n',1,'{A} chiede di andare via: se resta, perde il posto per le prime 3 partite.',{tg:{r:'POR',pk:'best'}}),
 E('n',.8,'Fuori lista: {A} non può giocare fino alla prossima sessione, salvo emergenze in porta.',{tg:{st:['turnover','sporadico']}}),
 
 E('p',1,'Colpo di mercato: un acquisto in questa finestra può superare la forbice fino a +5 OVR.'),
@@ -552,7 +548,7 @@ E('x',1,'Usato sicuro: almeno un acquisto deve avere 30 anni o più.'),
 E('n',1,'Il capitano {A} chiede un rinnovo da leader: rinnovalo con aumento entro la finestra o va in lista trasferimenti.',{tg:CAP}),
 E('n',1,'Il capitano {A} contesta il mercato del club: se non arriva almeno un acquisto con OVR pari al migliore della rosa, parte dalla panchina nelle prime 3 partite.',{tg:CAP}),
 E('x',1,'Il presidente vuole un nome: almeno metà del budget va su un solo giocatore.'),
-E('x',1,'Prestito obbligato: manda in prestito {A} per farlo crescere.',{tg:{u21:1}}),
+E('x',1,'Prestito obbligato: manda in prestito un under 21 per farlo crescere.'),
 E('n',1,'Offerta dell\'ultimo giorno: se arriva un\'offerta per {A} entro la chiusura del mercato, devi accettarla.',{when:'G',tg:BIG}),
 E('n',1,'Coppa continentale: {A} parte con la nazionale e salta 4 partite.',{when:'G',tg:ANY,fx:[out(4,'Nazionale')]}),
 E('x',1,'Rinforzi per la seconda metà di stagione: almeno 1 acquisto in questa finestra.',{when:'G'}),
@@ -560,7 +556,7 @@ E('n',1,'Tournée estiva estenuante: {A} e {B} saltano la prima partita.',{when:
 E('x',1,'Nuovo staff tecnico: cambia il modulo base fino alla prossima sessione.',{when:'E'}),
 E('p',1,'Ritiro impeccabile: il prossimo infortunio causato da un imprevisto scende di una fascia.',{when:'E',fx:[flag('med')],ne:1}),
 E('n',1,'Tribuna chiusa per lavori, incassi ridotti: in questa finestra puoi spendere al massimo metà del budget.',{lg:['B']}),
-E('n',1,'Proprietà in difficoltà: se arriva un\'offerta congrua per {A}, il più pagato della rosa, devi accettarla.',{lg:['B'],tg:{pk:'paid'}}),
+E('n',1,'Proprietà in difficoltà: se arriva un\'offerta congrua per {A}, devi accettarla.',{lg:['B'],tg:{pk:'paid'}}),
 E('p',1,'Gemellaggio con un club di Premier: +1 prestito in entrata, purché sia un under 21 di un club di Premier.',{lg:['B'],mod:{pin:1}}),
 E('p',1,'Un imprenditore locale entra in società: un acquisto può superare la forbice fino a +4 OVR.',{lg:['B']}),
 E('x',1,'Identità locale: almeno un acquisto deve essere della stessa nazione del club.',{lg:['B']}),
@@ -600,7 +596,7 @@ E('n',1,"Il direttore generale impone di vendere prima di comprare: nessun acqui
 E('n',1,"Niente pausa invernale: squadra stanca, nelle prossime 3 partite nessun cambio prima del 60'.",{when:'G',fx:[eff(3,"Nessun cambio prima del 60'")],ne:1}),
 E('n',1,"Pre-campionato disastroso: il prossimo prepartita avrà sicuramente un imprevisto.",{when:'E',fx:[flag('force')],ne:1}),
 E('n',1,"Mancano i soldi per gli osservatori: -1 stella agli osservatori fino alla prossima sessione.",{mod:{stel:-1}}),
-E('n',1,"Un senatore, {A}, annuncia il ritiro a fine stagione: non può essere rinnovato.",{tg:{pk:'old'},sc:'sea'}),
+E('n',1,"{A} annuncia il ritiro a fine stagione: non può essere rinnovato.",{tg:{pk:'old'},sc:'sea'}),
 E('p',1,"Plusvalenza record: +1 slot importante e +1 prestito in entrata fino alla prossima sessione.",{mod:{imp:1,pin:1}}),
 E('p',1,"Tournée estiva riuscita: nessun imprevisto prepartita nelle prime 2 partite.",{when:'E',fx:[flag('imm',2)],ne:1}),
 E('p',1,"Il nuovo DS ha ottimi contatti: un prestito in entrata può superare la forbice fino a +4 OVR."),
@@ -611,7 +607,7 @@ E('p',1,"Ritiro perfetto: chi è in fase di rientro torna subito disponibile.",{
 E('p',1,"Accordo con un club satellite: i prestiti in uscita non contano nel limite fino alla prossima sessione."),
 E('p',1,"Spirito natalizio, spogliatoio unito: cancellati tutti gli effetti che durano più partite.",{when:'G',fx:[{k:'cureall'}],ne:1}),
 E('x',1,"Svolta tattica: scegli un nuovo modulo base e usalo nelle prossime 5 partite.",{fx:[eff(5,'Usa il nuovo modulo base')],ne:1}),
-E('x',1,"Ricambio generazionale: cedi o non rinnovare {A}, il più anziano della rosa, e prendi almeno un under 21.",{tg:{pk:'old'}}),
+E('x',1,"Ricambio generazionale: cedi o non rinnovare {A} e prendi almeno un under 21.",{tg:{pk:'old'}}),
 E('x',1,"Jolly cercasi: almeno un acquisto deve saper giocare in due reparti diversi."),
 E('x',1,"Scambio di prestiti: per ogni giocatore che mandi in prestito, devi prenderne uno in prestito."),
 E('x',1,"Mercato silenzioso: al massimo 1 acquisto e 1 cessione in questa finestra.",{when:'G'}),
@@ -674,21 +670,22 @@ const isApp=x=>x.o?x.o==='app':x.why!=='Dal gioco'&&x.why!=='Squalifica'&&x.why!
 let CUR_C=null,CUR_D=null,CUR_E=null,FIXN=null,USEDN=[];
 const ief=()=>JSON.stringify({inf:S.inf,eff:S.eff,flags:S.flags});
 const unief=j=>{const b=JSON.parse(j);S.inf=b.inf;S.eff=b.eff;S.flags=Object.assign(blank().flags,b.flags)};
-function generic(tg,second){const r=tg.r?REPL[tg.r]:tg.st&&tg.st.length===1?RL[tg.st[0]].toLowerCase():'giocatore';let s;
- if(tg.same)s='un altro giocatore dello stesso reparto';else if(tg.nogk&&!tg.pk)s=(second?'un altro ':'un ')+'giocatore di movimento';else if(tg.loan)s='un giocatore in prestito da un altro club';else if(tg.wage)s='un giocatore con lo stipendio sopra la media';else if(tg.pk==='paid')s='il giocatore più pagato';else if(tg.pk==='youngweak')s='il giovane con l\'OVR più basso';else if(tg.pk==='best')s=second?`un altro dei tuoi migliori`:`il tuo miglior ${r}`;else if(tg.pk==='old')s=second?`un altro dei più anziani`:`il ${r} più anziano`;else if(tg.pk==='young')s=`il ${r} più giovane`;
+const ORD=['','secondo ','terzo ','quarto ','quinto '];const gameTg=tg=>!!(tg&&(tg.pk||tg.u21||tg.wage));
+function generic(tg,second){const r=tg.r?REPL[tg.r]:tg.st&&tg.st.length===1?RL[tg.st[0]].toLowerCase():'giocatore';const o=ORD[+second||0]||'';let s;
+ if(tg.same)s='un altro giocatore dello stesso reparto';else if(tg.nogk&&!tg.pk)s=(second?'un altro ':'un ')+'giocatore di movimento';else if(tg.loan)s='un giocatore in prestito da un altro club';else if(tg.wage)s='un giocatore con lo stipendio sopra la media';else if(tg.pk==='paid')s='il giocatore più pagato';else if(tg.pk==='youngweak')s='il giovane con l\'OVR più basso';else if(tg.pk==='best')s=o?`il ${o}miglior ${r}`:`il tuo miglior ${r}`;else if(tg.pk==='old')s=`il ${o}${r} più anziano`;else if(tg.pk==='young')s=`il ${o}${r} più giovane`;else if(tg.u21&&!tg.st)s=second?'un altro under 21':'un under 21';
  else{s=(second?'un altro ':'un ')+r;if(tg.st)s+=' '+tg.st.map(x=>RL[x].toLowerCase()).join(' o ');if(tg.u21)s+=' under 21';s+=' a tua scelta'}
  return s}
 function target(tg,ex,second,ref){
  if(tg.cap){const p=S.rosa.find(x=>x.id===S.cap&&x.tipo!=='OUT');if(!p)return S.cap&&inRosa().length?false:{name:'il tuo capitano',pid:null,id:'gcap'};if(ex.includes(p.id)||S.inf.some(e=>e.pid===p.id))return false;return{name:p.nome,pid:p.id,id:p.id}}
  if(tg.src){const L=S.inf.filter(x=>!ex.includes(x.id)&&(!tg.app||isApp(x))&&(tg.src==='inj'?(x.k==='inj'&&x.ph==='out'&&(x.out!=null)):tg.src==='rec'?x.ph==='rec':(x.k==='ban'&&x.ph==='out')));
   if(!L.length)return false;const e=L[rnd(0,L.length-1)];return{name:e.name,pid:e.pid,entry:e.id,id:e.id}}
- if(!inRosa().length){if(tg.pk&&second)return false;return{name:generic(tg,second),pid:null,id:'g'+uid()}}
+ if(!inRosa().length||gameTg(tg)||(tg.same&&ref&&!ref.rep))return{name:generic(tg,second),pid:null,id:'g'+uid()};
  let L=avail();if(tg.r)L=L.filter(p=>p.rep===tg.r);if(tg.same&&ref&&ref.rep)L=L.filter(p=>p.rep===ref.rep);if(tg.nogk)L=L.filter(p=>p.rep!=='POR');if(tg.loan)L=L.filter(p=>p.tipo==='IN');if(tg.wage){const R=inRosa();const m=R.reduce((a,p)=>a+(+p.stip||0),0)/(R.length||1);L=L.filter(p=>(+p.stip||0)>m)}if(tg.st)L=L.filter(p=>tg.st.includes(p.ruolo));if(tg.u21)L=L.filter(p=>+p.eta<21);
  L=L.filter(p=>!ex.includes(p.id));if(!L.length)return false;
  const by=(f)=>L.reduce((a,b)=>f(b,a)?b:a);
  const p=tg.pk==='best'?by((b,a)=>+b.ovr>+a.ovr):tg.pk==='old'?by((b,a)=>+b.eta>+a.eta):tg.pk==='young'?by((b,a)=>+b.eta<+a.eta):tg.pk==='paid'?by((b,a)=>(+b.stip||0)>(+a.stip||0)):tg.pk==='youngweak'?(()=>{const Y=L.filter(p=>+p.eta<21);const Z=Y.length?Y:L;return Z.reduce((a,b)=>(+b.ovr<+a.ovr||(+b.ovr===+a.ovr&&+b.eta<+a.eta))?b:a)})():L[rnd(0,L.length-1)];
  return{name:p.nome,pid:p.id,id:p.id,rep:p.rep}}
-const fill=(s,A,B,plain)=>{const f=x=>x?(plain?x.name:'<b>'+esc(x.name)+'</b>'):'';return(plain?s:esc(s)).replace('{A}',f(A)).replace('{B}',f(B)).replace('{C}',f(CUR_C)).replace('{D}',f(CUR_D)).replace('{E}',f(CUR_E))};
+const fill=(s,A,B,plain)=>{const cap=(x,i)=>i===0?x.charAt(0).toUpperCase()+x.slice(1):x;const f=(x,k)=>x?(plain?cap(x.name,k):'<b>'+esc(cap(x.name,k))+'</b>'):'';const h=(plain?s:esc(s)).replace(/\{([A-E])\}/g,(m,L,i)=>'{'+L+(i===0?'0':'')+'}');return h.replace('{A0}',f(A,0)).replace('{B0}',f(B,0)).replace('{A}',f(A)).replace('{B}',f(B)).replace('{C}',f(CUR_C)).replace('{D}',f(CUR_D)).replace('{E}',f(CUR_E))};
 
 function pickEvent(list,recent,when,opt={}){const tier=TIER[S.lega];
  for(let i=0;i<80;i++){const tone=wpick(Object.keys(TONEW).filter(k=>!opt.nonneg||k!=='n'),k=>TONEW[k]);
@@ -697,10 +694,10 @@ function pickEvent(list,recent,when,opt={}){const tier=TIER[S.lega];
   if(ev.fx.some(f=>f.k==='cure'||f.k==='cureall')&&!S.eff.some(x=>x.sc==='match'))continue;
   if(ev.fx.some(f=>f.k==='recall')&&!S.inf.some(x=>x.ph==='rec'))continue;
   let A=null,B=null,C=null;if(ev.tg){A=target(ev.tg,[],false);if(A===false)continue}
-  if(ev.tg2){B=target(ev.tg2,A?[A.id]:[],true,A);if(B===false)continue}
-  if(ev.tg3){C=target(ev.tg3,[A&&A.id,B&&B.id].filter(Boolean),true,A);if(C===false)continue}
-  let D=null,E5=null;if(ev.tg4){D=target(ev.tg4,[A,B,C].filter(Boolean).map(x=>x.id),true,A);if(D===false)continue}
-  if(ev.tg5){E5=target(ev.tg5,[A,B,C,D].filter(Boolean).map(x=>x.id),true,A);if(E5===false)continue}
+  if(ev.tg2){B=target(ev.tg2,A?[A.id]:[],1,A);if(B===false)continue}
+  if(ev.tg3){C=target(ev.tg3,[A&&A.id,B&&B.id].filter(Boolean),2,A);if(C===false)continue}
+  let D=null,E5=null;if(ev.tg4){D=target(ev.tg4,[A,B,C].filter(Boolean).map(x=>x.id),3,A);if(D===false)continue}
+  if(ev.tg5){E5=target(ev.tg5,[A,B,C,D].filter(Boolean).map(x=>x.id),4,A);if(E5===false)continue}
   CUR_C=C;CUR_D=D;CUR_E=E5;return{ev,A,B}}
  return null}
 
@@ -766,27 +763,25 @@ function rerollSes(k){const SL=S.sesLast;if(!SL||!S.sesSnap||!SL.items[k])return
 function checks(){const R=inRosa(),out=[];const ck=(ok,t,d)=>out.push({ok,t,d});
  const bImp=(+S.coppe||0)+(+S.magg||0)+modSum('imp'),bCru=(+S.magg||0)+modSum('cru');
  if(!R.length){ck(null,'Inserisci la rosa','I controlli partono appena aggiungi i giocatori.');}
- const cnt=R.filter(p=>+p.eta>=21).length;ck(cnt<=25,`Rosa: ${cnt}/25`,`Under 21 esclusi, prestiti in entrata inclusi. ${R.length-cnt} under 21 fuori dal conteggio.`);
+ const cnt=R.length;ck(cnt<=25?true:null,`Rosa: ${cnt}/25`,cnt<=25?'Prestiti in entrata inclusi, under 21 esclusi.':'Sopra 25: togli dal conto gli under 21, che non contano.');
  const per=REP.map(r=>[r,R.filter(p=>p.rep===r&&p.ruolo==='cruciale').length]);const exc=per.reduce((a,[,n])=>a+Math.max(0,n-1),0);
  ck(exc<=bCru,`Cruciali: ${per.map(([r,n])=>r+' '+n).join(' · ')}`,`Uno per reparto${bCru?`, più ${bCru} extra da trofei`:''}. In eccesso: ${exc}.`);
  const imp=R.filter(p=>p.ruolo==='importante').length,mImp=Math.max(0,7+bImp);ck(imp<=mImp,`Importanti: ${imp}/${mImp}`,bImp?`7 di base, ${bImp>0?'+':''}${bImp} da trofei ed effetti.`:'7 di base.');
- const cr=R.filter(p=>p.ruolo==='cruciale');
- if(!cr.length)ck(R.length?false:null,'Tetto ingaggi non definito','Serve almeno un cruciale: il suo stipendio fissa il tetto.');
- else{const cap=Math.max(...cr.map(p=>+p.stip||0));const over=R.filter(p=>p.ruolo!=='cruciale'&&(+p.stip||0)>cap);
-  ck(!over.length,`Tetto ingaggi: ${eur(cap)}/sett.`,over.length?'Sopra il tetto: '+over.map(p=>p.nome).join(', '):'Nessuno guadagna più del cruciale più pagato.')}
+ ck(null,'Tetto ingaggi','Nessuno può guadagnare più del tuo cruciale più pagato: controlla in game.');
  const pin=S.rosa.filter(p=>p.tipo==='IN').length,mPin=Math.max(0,5+modSum('pin'));ck(pin<=mPin,`Prestiti in entrata: ${pin}/${mPin}`,'');
  const pout=S.rosa.filter(p=>p.tipo==='OUT').length;ck(pout<=5,`Prestiti in uscita: ${pout}/5`,'');
- if(R.length){const top=Math.max(...R.map(p=>+p.ovr||0));const f=2+modSum('forb');ck(null,`Acquisti fino a OVR ${top+f}`,`Migliore in rosa ${top}, forbice ${f>=0?'+':''}${f}.`)}
- const mSvi=Math.max(0,(SVI[S.lega]||1)+modSum('svi'));ck((+S.svi||0)<=mSvi,`Svincolati: ${+S.svi||0}/${mSvi} quest'anno`,'');
+ const f=2+modSum('forb');ck(null,`Acquisti fino a ${f>=0?'+':''}${f} OVR rispetto al tuo migliore`,modSum('forb')?'Forbice cambiata da un imprevisto in corso.':'');
+ const mSvi=Math.max(0,(SVI[S.lega]||1)+modSum('svi'));ck(null,`Svincolati: massimo ${mSvi} quest'anno`,S.lega+(modSum('svi')?', con un imprevisto in corso':'')+'.');
  const st=STARS[S.lega];ck(null,st==null?'Osservatori: nessun limite':`Osservatori: massimo ${st+modSum('stel')} stelle`,S.lega);
  ck(null,S.reg5?'Obbligo offerte dai campioni: attivo':'Obbligo offerte dai campioni: disattivato','Champions, Europa League, Premier League, Conference League.');
  return out}
 const eur=n=>'€'+(+n||0).toLocaleString('it-IT');
 
+const asg=e=>!e.pid&&inRosa().length?`<select class="sm asg" data-id="${e.id}" aria-label="Chi è" style="width:auto;min-height:36px;margin-top:6px"><option value="">Chi è? Scegli il giocatore</option>${inRosa().map(p=>`<option value="${p.id}">${esc(p.nome)} (${p.rep})</option>`).join('')}</select>`:'';
 function infLine(e){const pill=e.ph==='rec'?'<span class="pill p-rec">Rientro</span>':e.k==='inj'?'<span class="pill p-inj">Infortunio</span>':e.k==='ban'?'<span class="pill p-ban">Squalifica</span>':`<span class="pill p-out">${esc(e.why)}</span>`;
  const pl=n=>n+' '+(n>1?'partite':'partita');
  const st=e.ph==='rec'?`rientrato: deve saltare ${pl(e.post)}`:e.out==null?`fuori fino al rientro nel gioco (${CLS[e.c]}), poi ${pl(e.post)} di rientro`:`fuori ${pl(e.out)}${e.k==='inj'&&e.post?` + ${e.post} dopo il rientro`:''}`;
- return `<div>${pill} <b>${esc(e.name)}</b><div class="muted">${st}</div></div>`}
+ return `<div>${pill} <b>${esc(e.name)}</b><div class="muted">${st}</div>${asg(e)}</div>`}
 
 function render(){
  $('#club').textContent=S.club||'La mia carriera';$('#lega').textContent=S.lega+(window.cloudOn?' · salvato online':'');
@@ -816,13 +811,13 @@ function render(){
  flipNext=false;
  // rosa
  $('#checks').innerHTML=checks().map(c=>`<div class="ck ${c.ok==null?'in':c.ok?'ok':'ko'}"><i>${c.ok==null?'i':c.ok?'✓':'!'}</i><div><b>${esc(c.t)}</b>${c.d?`<span class="muted">${esc(c.d)}</span>`:''}</div></div>`).join('');
- const ord={POR:0,DIF:1,CEN:2,ATT:3};const RO=Object.keys(RL),RS=[...S.rosa].sort((a,b)=>ord[a.rep]-ord[b.rep]||RO.indexOf(a.ruolo)-RO.indexOf(b.ruolo)||(+b.stip||0)-(+a.stip||0)||b.ovr-a.ovr);
+ const ord={POR:0,DIF:1,CEN:2,ATT:3};const RO=Object.keys(RL),RS=[...S.rosa].sort((a,b)=>ord[a.rep]-ord[b.rep]||RO.indexOf(a.ruolo)-RO.indexOf(b.ruolo)||a.nome.localeCompare(b.nome));
  const off=new Set(S.inf.map(e=>e.pid));
  const rc=$('#rCap');rc.innerHTML='<option value="">Nessuno</option>'+inRosa().map(p=>`<option value="${p.id}">${esc(p.nome)} (${p.rep})</option>`).join('');rc.value=inRosa().some(p=>p.id===S.cap)?S.cap:'';
  const GR=[['POR','Portieri'],['DIF','Difensori'],['CEN','Centrocampisti'],['ATT','Attaccanti']];
- const row=p=>`<tr${p.tipo==='OUT'?' class="dim"':''}><td class="nm" data-l="Nome">${p.tipo==='IN'?'<span class="arr in" title="Arrivato in prestito">←</span>':p.tipo==='OUT'?'<span class="arr" title="Via in prestito">→</span>':''}${esc(p.nome)}${p.id===S.cap?' <span class="pill cap" title="Capitano">C</span>':''}${+p.eta<21?' <span class="pill">U21</span>':''}${off.has(p.id)?' <span class="pill p-inj">out</span>':''}</td><td class="n" data-l="OVR">${p.ovr}</td><td class="n" data-l="Età">${p.eta}</td><td data-l="Ruolo">${RL[p.ruolo]}</td><td class="n" data-l="Stipendio">${eur(p.stip)}</td><td data-l=""><button class="sm" data-a="edit" data-id="${p.id}">Modifica</button> <button class="sm dang" data-a="delP" data-id="${p.id}">Elimina</button></td></tr>`;
+ const row=p=>`<tr${p.tipo==='OUT'?' class="dim"':''}><td class="nm" data-l="Nome">${p.tipo==='IN'?'<span class="arr in" title="Arrivato in prestito">←</span>':p.tipo==='OUT'?'<span class="arr" title="Via in prestito">→</span>':''}${esc(p.nome)}${p.id===S.cap?' <span class="pill cap" title="Capitano">C</span>':''}${off.has(p.id)?' <span class="pill p-inj">out</span>':''}</td><td data-l="Ruolo">${RL[p.ruolo]}</td><td data-l=""><button class="sm" data-a="edit" data-id="${p.id}">Modifica</button> <button class="sm dang" data-a="delP" data-id="${p.id}">Elimina</button></td></tr>`;
  const home=RS.filter(p=>p.tipo!=='OUT'),away=RS.filter(p=>p.tipo==='OUT');
- $('#rBody').innerHTML=S.rosa.length?GR.map(([r,n])=>{const L=home.filter(p=>p.rep===r),A=away.filter(p=>p.rep===r);return `<tr class="sep"><td colspan="6">${n} · ${L.length}${A.length?` <span class="muted">(+${A.length} via in prestito, fuori dal conteggio)</span>`:''}</td></tr>`+L.map(row).join('')+A.map(row).join('')}).join(''):'';
+ $('#rBody').innerHTML=S.rosa.length?GR.map(([r,n])=>{const L=home.filter(p=>p.rep===r),A=away.filter(p=>p.rep===r);return `<tr class="sep"><td colspan="3">${n} · ${L.length}${A.length?` <span class="muted">(+${A.length} via in prestito, fuori dal conteggio)</span>`:''}</td></tr>`+L.map(row).join('')+A.map(row).join('')}).join(''):'';
  $('#rEmpty').hidden=!!S.rosa.length;$('#rCount').textContent=S.rosa.length?S.rosa.length+' giocatori':'';
  // infermeria
  $('#infList').innerHTML=S.inf.length?S.inf.map(e=>`<li>${infLine(e)}<div class="acts">${e.ph==='out'&&e.k==='inj'&&e.post>0?`<button class="sm pri" data-a="back" data-id="${e.id}">Rientrato</button>`:''}<button class="sm dang" data-a="delI" data-id="${e.id}">Rimuovi</button></div></li>`).join(''):'<li class="empty">Nessuno in infermeria.</li>';
@@ -830,19 +825,19 @@ function render(){
  $('#iFreeL').hidden=!!ip.value;
  // impostazioni
  const set=(id,v)=>{const el=$(id);if(document.activeElement!==el)el.value=v};
- set('#sClub',S.club);set('#sLega',S.lega);set('#sProb',S.prob);$('#sProbV').textContent=S.prob+'%';set('#sCoppe',S.coppe);set('#sMagg',S.magg);set('#sSvi',S.svi);$('#sReg5').checked=!!S.reg5;
+ set('#sClub',S.club);set('#sLega',S.lega);set('#sProb',S.prob);$('#sProbV').textContent=S.prob+'%';set('#sCoppe',S.coppe);set('#sMagg',S.magg);$('#sReg5').checked=!!S.reg5;
 }
 
 // form rosa
 $('#fRuolo').innerHTML=RUOLI.map(r=>`<option value="${r}">${RL[r]}</option>`).join('');$('#fRuolo').value='turnover';
 function resetForm(){editId=null;$('#pForm').reset();$('#fRuolo').value='turnover';$('#fRep').value='CEN';$('#fTitle').textContent='Aggiungi giocatore';$('#fSave').textContent='Aggiungi';$('#fCancel').hidden=true}
-$('#pForm').addEventListener('submit',e=>{e.preventDefault();const p={nome:$('#fNome').value.trim(),rep:$('#fRep').value,ovr:+$('#fOvr').value||0,eta:+$('#fEta').value||0,ruolo:$('#fRuolo').value,stip:+$('#fStip').value||0,tipo:$('#fTipo').value};if(!p.nome)return;
+$('#pForm').addEventListener('submit',e=>{e.preventDefault();const p={nome:$('#fNome').value.trim(),rep:$('#fRep').value,ruolo:$('#fRuolo').value,tipo:$('#fTipo').value};if(!p.nome)return;
  if(editId){Object.assign(S.rosa.find(x=>x.id===editId),p);S.inf.forEach(x=>{if(x.pid===editId)x.name=p.nome})}else S.rosa.push({id:uid(),...p});resetForm();save();render()});
 $('#fCancel').addEventListener('click',resetForm);
 $('#rCap').addEventListener('change',e=>{S.cap=e.target.value||null;save();render()});
 $('#bImp').addEventListener('click',()=>{let n=0;$('#imp').value.split('\n').forEach(l=>{const c=l.split(/[;\t]/).map(x=>x.trim());if(!c[0])return;
- const rep=(c[1]||'').toUpperCase().slice(0,3);const ru=RUOLI.find(r=>r.startsWith((c[4]||'').toLowerCase().slice(0,3)))||'turnover';const t=(c[6]||'P').toUpperCase();
- S.rosa.push({id:uid(),nome:c[0],rep:REP.includes(rep)?rep:'CEN',ovr:+c[2]||60,eta:+c[3]||24,ruolo:ru,stip:+String(c[5]||'0').replace(/\D/g,'')||0,tipo:['IN','OUT'].includes(t)?t:'P'});n++});
+ const rep=(c[1]||'').toUpperCase().slice(0,3);const rest=c.slice(2).filter(x=>x&&!/^[\d.,€ ]+$/.test(x));const ruT=rest.find(x=>RUOLI.some(r=>r.startsWith(x.toLowerCase().slice(0,3))))||'';const ru=RUOLI.find(r=>r.startsWith(ruT.toLowerCase().slice(0,3)))||'turnover';const tT=(rest.find(x=>/^(P|IN|OUT)$/i.test(x))||'P').toUpperCase();
+ S.rosa.push({id:uid(),nome:c[0],rep:REP.includes(rep)?rep:'CEN',ruolo:ru,tipo:['IN','OUT'].includes(tT)?tT:'P'});n++});
  if(n){$('#imp').value='';save();render()}});
 
 // form infermeria
@@ -858,7 +853,7 @@ $('#iForm').addEventListener('submit',e=>{e.preventDefault();const pid=$('#iPl')
 
 // impostazioni
 const bind=(id,k,num)=>$(id).addEventListener('input',e=>{S[k]=num?Math.max(0,+e.target.value||0):e.target.value;save();render()});
-bind('#sClub','club');bind('#sLega','lega');bind('#sProb','prob',1);bind('#sCoppe','coppe',1);bind('#sMagg','magg',1);bind('#sSvi','svi',1);
+bind('#sClub','club');bind('#sLega','lega');bind('#sProb','prob',1);bind('#sCoppe','coppe',1);bind('#sMagg','magg',1);
 $('#sReg5').addEventListener('change',e=>{S.reg5=e.target.checked;save();render()});
 $('#bCopy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(JSON.stringify(S));$('#bMsg').textContent='Backup copiato: incollalo in una nota per sicurezza.'}catch(e){$('#bTxt').value=JSON.stringify(S);$('#bMsg').textContent='Copia non consentita: il backup è nel riquadro, selezionalo e copialo.'}});
 $('#bRest').addEventListener('click',()=>{try{const o=load($('#bTxt').value);snap('Backup ripristinato');S=o;$('#bTxt').value='';$('#bMsg').textContent='Ripristinato.';save();render()}catch(e){$('#bMsg').textContent='Testo non valido: incolla il backup completo.'}});
@@ -866,14 +861,14 @@ let resetArm=false;$('#bReset').addEventListener('click',e=>{if(!resetArm){reset
 
 // azioni
 $('#bEst').addEventListener('click',()=>trial(()=>drawSes('estate'),'ses'));$('#bGen').addEventListener('click',()=>trial(()=>drawSes('gennaio'),'ses'));
-document.addEventListener('change',e=>{if(e.target.classList.contains('tTog')){S.test=e.target.checked;save();render()}});
+document.addEventListener('change',e=>{if(e.target.classList.contains('asg')){const en=S.inf.find(x=>x.id===e.target.dataset.id),p=S.rosa.find(x=>x.id===e.target.value);if(en&&p){S.eff.forEach(x=>{x.s=x.s.split(en.name).join(p.nome)});en.pid=p.id;en.name=p.nome;save();render()}return}if(e.target.classList.contains('tTog')){S.test=e.target.checked;save();render()}});
 let keepArm=false;$('#bKeep').addEventListener('click',e=>{if(!keepArm){keepArm=true;e.target.textContent='Sicuro? Premi di nuovo';setTimeout(()=>{keepArm=false;e.target.textContent='Ricomincia tenendo la rosa'},4000);return}snap('Ripartito da zero');const n=blank();['club','lega','prob','coppe','magg','rosa'].forEach(k=>n[k]=S[k]);S=n;keepArm=false;e.target.textContent='Ricomincia tenendo la rosa';$('#bMsg').textContent='Infermeria, effetti, estrazioni e svincolati azzerati; rosa e impostazioni tenute.';save();render()});
 $('#bUndo').addEventListener('click',()=>{if(!undo)return;S=load(undo);undo=null;$('#toast').hidden=true;save();render()});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a,id=b.dataset.id;
  if(a==='draw')trial(drawPre,'pre');else if(a==='reroll')trial(rerollPre,'pre');else if(a==='sesre'){const k=+b.dataset.k;trial(()=>rerollSes(k),'ses')}
  else if(a==='delEff'){snap('Effetto rimosso');S.eff=S.eff.filter(x=>x.id!==id);save();render()}
  else if(a==='delP'){snap('Giocatore eliminato');S.rosa=S.rosa.filter(x=>x.id!==id);save();render()}
- else if(a==='edit'){const p=S.rosa.find(x=>x.id===id);editId=id;$('#fNome').value=p.nome;$('#fRep').value=p.rep;$('#fOvr').value=p.ovr;$('#fEta').value=p.eta;$('#fRuolo').value=p.ruolo;$('#fStip').value=p.stip;$('#fTipo').value=p.tipo;$('#fTitle').textContent='Modifica '+p.nome;$('#fSave').textContent='Salva';$('#fCancel').hidden=false;$('#fNome').focus()}
+ else if(a==='edit'){const p=S.rosa.find(x=>x.id===id);editId=id;$('#fNome').value=p.nome;$('#fRep').value=p.rep;$('#fRuolo').value=p.ruolo;$('#fTipo').value=p.tipo;$('#fTitle').textContent='Modifica '+p.nome;$('#fSave').textContent='Salva';$('#fCancel').hidden=false;$('#fNome').focus()}
  else{const en=S.inf.find(x=>x.id===id);if(!en)return;
   if(a==='dec'){en.out--;if(en.out<=0){if(en.k==='inj'&&en.post>0)en.ph='rec';else S.inf=S.inf.filter(x=>x!==en)}}
   else if(a==='inc')en.out++;
@@ -905,7 +900,7 @@ function fxTxt(e,isSes){const o=[];const pl=n=>n+' '+(n>1?'partite':'partita');
  if(!o.length)o.push('Solo per questa partita');
  return o.join('; ')}
 function lista(){const isSes=$('#eTipo').value==='ses',L=isSes?SES:PRE,t=$('#eTono').value,c=$('#eCat').value,q=$('#eQ').value.trim().toLowerCase();
- const rows=L.map((e,i)=>({e,i,txt:e.s.replace('{A}','['+tgTxt(e.tg,false)+']').replace('{B}','['+tgTxt(e.tg2,true)+']').replace('{C}','['+tgTxt(e.tg3,true)+']').replace('{D}','['+tgTxt(e.tg4,true)+']').replace('{E}','['+tgTxt(e.tg5,true)+']')}))
+ const rows=L.map((e,i)=>({e,i,txt:e.s.replace('{A}','['+tgTxt(e.tg,false)+']').replace('{B}','['+tgTxt(e.tg2,1)+']').replace('{C}','['+tgTxt(e.tg3,2)+']').replace('{D}','['+tgTxt(e.tg4,3)+']').replace('{E}','['+tgTxt(e.tg5,4)+']')}))
   .filter(r=>(!t||r.e.t===t)&&(!c||(c==='-'?!r.e.lg:(r.e.lg||[]).includes(c)))&&(!q||r.txt.toLowerCase().includes(q)));
  $('#eCount').textContent=`${rows.length} su ${L.length} imprevisti ${isSes?'di sessione':'prepartita'}. Tra parentesi quadre: il giocatore che l'app sceglie dalla tua rosa.`;
  $('#eBody').innerHTML=rows.map(r=>`<tr><td class="n" data-l="N.">${r.i+1}</td><td class="wrap" data-l="Imprevisto">${esc(r.txt)}</td><td data-l="Tono"><span class="pill p-${r.e.t}">${{n:'Negativo',p:'Positivo',x:'Neutro'}[r.e.t]}</span></td><td data-l="Dove e quando">${r.e.lg?LGN[r.e.lg[0]]:'Ovunque'}${r.e.when?' · '+(r.e.when==='E'?'solo estate':'solo gennaio'):''}</td><td class="wrap" data-l="Cosa fa">${esc(fxTxt(r.e,isSes))}</td></tr>`).join('')}
