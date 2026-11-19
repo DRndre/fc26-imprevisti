@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#0e4a2b">
 <meta name="apple-mobile-web-app-title" content="Imprevisti">
-<meta name="build" content="2026-11-19-1705">
+<meta name="build" content="2026-11-19-1710">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
@@ -106,6 +106,7 @@ td.wrap{white-space:normal;min-width:220px}.p-n{background:#e0322c;color:#fff}.p
 .pill.cap{background:var(--yel);color:#231c00}
 .updbar{position:fixed;left:50%;top:12px;transform:translateX(-50%);background:var(--yel);color:#231c00;padding:8px 10px 8px 16px;border-radius:12px;display:flex;gap:12px;align-items:center;z-index:10;max-width:92vw;font-weight:600;box-shadow:0 6px 20px rgba(0,0,0,.3)}.updbar[hidden]{display:none}.updbar .pri{background:#0e4a2b;color:#fff}
 tr.offrow td{opacity:.5}.pill.st{background:var(--line)}
+.eti{font:700 19px/1.15 "Barlow Condensed",Barlow,sans-serif;margin-bottom:2px}
 .toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#06281a;color:#fff;padding:10px 16px;border-radius:12px;display:flex;gap:12px;align-items:center;z-index:9;max-width:92vw}
 .toast[hidden]{display:none}
 @media(max-width:600px){table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}.stack td{display:flex;justify-content:space-between;gap:12px;border:0;padding:3px 0;white-space:normal}.stack td::before{content:attr(data-l);color:var(--mut)}.led b{font-size:26px}nav a{font-size:17px;padding:10px 10px}}
@@ -705,7 +706,7 @@ const unief=j=>{const b=JSON.parse(j);S.inf=b.inf;S.eff=b.eff;S.flags=Object.ass
 const ORD=['','secondo ','terzo ','quarto ','quinto '];const gameTg=tg=>!!(tg&&(tg.pk||tg.u21||tg.wage));
 function generic(tg,second){const r=tg.r?REPL[tg.r]:tg.st&&tg.st.length===1?RL[tg.st[0]].toLowerCase():'giocatore';const o=ORD[+second||0]||'';let s;
  if(tg.same)s='un altro giocatore dello stesso reparto';else if(tg.nogk&&!tg.pk)s=(second?'un altro ':'un ')+'giocatore di movimento';else if(tg.loan)s='un giocatore in prestito da un altro club';else if(tg.wage)s='un giocatore con lo stipendio sopra la media';else if(tg.pk==='paid')s='il giocatore più pagato';else if(tg.pk==='youngweak')s='il giovane con l\'OVR più basso';else if(tg.pk==='best')s=o?`il ${o}miglior ${r}`:`il tuo miglior ${r}`;else if(tg.pk==='old')s=`il ${o}${r} più anziano`;else if(tg.pk==='young')s=`il ${o}${r} più giovane`;else if(tg.u21&&!tg.st)s=second?'un altro under 21':'un under 21';
- else{s=(second?'un altro ':'un ')+r;if(tg.st)s+=' '+tg.st.map(x=>RL[x].toLowerCase()).join(' o ');if(tg.u21)s+=' under 21';s+=' a tua scelta'}
+ else{s=(second?'un altro ':'un ')+r;if(tg.st&&!(tg.st.length===1&&!tg.r))s+=' '+tg.st.map(x=>RL[x].toLowerCase()).join(' o ');if(tg.u21)s+=' under 21';s+=' a tua scelta'}
  return s}
 function target(tg,ex,second,ref){
  if(tg.cap){const p=S.rosa.find(x=>x.id===S.cap&&x.tipo!=='OUT');if(!p)return S.cap&&inRosa().length?false:{name:'il tuo capitano',pid:null,id:'gcap'};if(ex.includes(p.id)||S.inf.some(e=>e.pid===p.id))return false;return{name:p.nome,pid:p.id,id:p.id}}
@@ -932,13 +933,14 @@ function fxTxt(e,isSes){const o=[];const pl=n=>n+' '+(n>1?'partite':'partita');
  if(isSes&&!e.ne&&!e.fx.some(f=>['ses','inj','out','ban'].includes(f.k)))o.push((e.sc==='sea'?'Fino a fine stagione':'Fino alla prossima sessione')+(e.mod?' · '+modTxt(e.mod):''));
  if(!o.length)o.push('Solo per questa partita');
  return o.join('; ')}
-const txtOf=e=>{const t=splitTi(e);return(t.ti?t.ti+': ':'')+t.s.replace('{A}','['+tgTxt(e.tg,false)+']').replace('{B}','['+tgTxt(e.tg2,1)+']').replace('{C}','['+tgTxt(e.tg3,2)+']').replace('{D}','['+tgTxt(e.tg4,3)+']').replace('{E}','['+tgTxt(e.tg5,4)+']')};
+const bodyOf=e=>{const t=splitTi(e);return t.s.replace('{A}','['+tgTxt(e.tg,false)+']').replace('{B}','['+tgTxt(e.tg2,1)+']').replace('{C}','['+tgTxt(e.tg3,2)+']').replace('{D}','['+tgTxt(e.tg4,3)+']').replace('{E}','['+tgTxt(e.tg5,4)+']')};
+const txtOf=e=>{const t=splitTi(e);return(t.ti?t.ti+': ':'')+bodyOf(e)};
 function lista(){const k=$('#eTipo').value,isSes=k==='ses',t=$('#eTono').value,c=$('#eCat').value,q=$('#eQ').value.trim().toLowerCase(),showOff=$('#eOff').checked;
  const all=evAll(k);const rows=all.map(x=>({...x,txt:txtOf(x.e)})).filter(r=>(showOff||r.st!=='off')&&(!t||r.e.t===t)&&(!c||(c==='-'?!r.e.lg:(r.e.lg||[]).includes(c)))&&(!q||r.txt.toLowerCase().includes(q)));
  const act=all.filter(x=>x.st!=='off').length,off=all.length-act;
  $('#eCount').textContent=`${rows.length} mostrati · ${act} attivi${off?`, ${off} disattivati`:''} ${isSes?'di sessione':'prepartita'}. Tra parentesi quadre: il giocatore che l'app sceglie dalla tua rosa.`;
- const STL={mod:'Modificato',off:'Disattivato',new:'Tuo'};
- $('#eBody').innerHTML=rows.map(r=>`<tr${r.st==='off'?' class="offrow"':''}><td class="n" data-l="N.">${r.n}</td><td class="wrap" data-l="Imprevisto">${esc(r.txt)}${STL[r.st]?` <span class="pill st">${STL[r.st]}</span>`:''}</td><td data-l="Tono"><span class="pill p-${r.e.t}">${{n:'Negativo',p:'Positivo',x:'Neutro'}[r.e.t]}</span></td><td data-l="Dove e quando">${r.e.lg?LGN[r.e.lg[0]]:'Ovunque'}${r.e.when?' · '+(r.e.when==='E'?'solo estate':'solo gennaio'):''}</td><td class="wrap" data-l="Cosa fa">${esc(fxTxt(r.e,isSes))}</td><td data-l=""><button class="sm" data-a="edEv" data-id="${r.e.id}">Modifica</button></td></tr>`).join('')}
+ const STL={off:'Disattivato',new:'Tuo'};
+ $('#eBody').innerHTML=rows.map(r=>`<tr${r.st==='off'?' class="offrow"':''}><td class="n" data-l="N.">${r.n}</td><td class="wrap" data-l="Imprevisto">${splitTi(r.e).ti?`<div class="eti">${esc(splitTi(r.e).ti)}</div>`:''}${esc(bodyOf(r.e).replace(/^(\[?)(\S)/,(m,b,c)=>b+c.toUpperCase()))}${STL[r.st]?` <span class="pill st">${STL[r.st]}</span>`:''}</td><td data-l="Tono"><span class="pill p-${r.e.t}">${{n:'Negativo',p:'Positivo',x:'Neutro'}[r.e.t]}</span></td><td data-l="Dove e quando">${r.e.lg?LGN[r.e.lg[0]]:'Ovunque'}${r.e.when?' · '+(r.e.when==='E'?'solo estate':'solo gennaio'):''}</td><td class="wrap" data-l="Cosa fa">${esc(fxTxt(r.e,isSes))}</td><td data-l=""><button class="sm" data-a="edEv" data-id="${r.e.id}">Modifica</button></td></tr>`).join('')}
 // editor
 const TGO=[['none','Nessuno',null],['any','Un giocatore a caso',{}],['big','Un cruciale o importante',{st:['cruciale','importante']}],['cru','Un cruciale',{st:['cruciale']}],['imp','Un importante',{st:['importante']}],['low','Un turnover, sporadico o promessa',{st:['turnover','sporadico','promessa']}],['cap','Il capitano',{cap:1}],['POR','Un portiere',{r:'POR'}],['DIF','Un difensore',{r:'DIF'}],['CEN','Un centrocampista',{r:'CEN'}],['ATT','Un attaccante',{r:'ATT'}],['nogk','Un giocatore di movimento',{nogk:1}],['loan','Un giocatore arrivato in prestito',{loan:1}],['best','Il tuo miglior giocatore (controlli tu in game)',{pk:'best'}],['bestATT','Il tuo miglior attaccante (controlli tu)',{r:'ATT',pk:'best'}],['bestPOR','Il tuo miglior portiere (controlli tu)',{r:'POR',pk:'best'}],['old','Il più anziano (controlli tu)',{pk:'old'}],['young','Il più giovane (controlli tu)',{pk:'young'}],['u21','Un under 21 (controlli tu)',{u21:1}],['same','Uno dello stesso reparto del giocatore 1',{same:1}]];
 const tgKey=tg=>{if(!tg)return 'none';const j=JSON.stringify(tg);const f=TGO.find(o=>o[2]&&JSON.stringify(o[2])===j);return f?f[0]:'orig'};
